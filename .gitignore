@@ -1,0 +1,14 @@
+.tools/
+work/
+firmware/
+outputs/
+__pycache__/
+*.pyc
+*.log
+*.zip
+*.exe
+*.FIR
+*.fir
+*.BIN
+*.bin
+ROM*/

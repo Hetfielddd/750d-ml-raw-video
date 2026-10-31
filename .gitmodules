@@ -1,0 +1,3 @@
+[submodule "magiclantern"]
+	path = magiclantern
+	url = https://github.com/reticulatedpines/magiclantern_simplified.git
