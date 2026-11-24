@@ -40,3 +40,25 @@ Sources:
 - https://github.com/reticulatedpines/magiclantern_simplified/blob/142472e95054d73640f50789ac0fd66325499d82/platform/750D.110/Makefile
 - https://github.com/reticulatedpines/qemu-eos/blob/qemu-eos-v4.2.1/hw/eos/model_list.c
 - https://github.com/reticulatedpines/qemu-eos/blob/qemu-eos-v4.2.1/hw/eos/eos.c
+
+## Targeted 750D source audit and instruction candidates
+
+A further read-only audit on November 24, 2026 checked upstream 750D commit history and the Tragic Lantern main branch at `aa224f0bc8e177a456c119eba00263488ee51f5a`. No usable RAW channel, shadow-reader implementation, or fast-copy binding was found in the reviewed material. This is a scoped search result, not a claim that no private or unindexed implementation exists. Some broad GitHub searches timed out; narrower repository searches completed.
+
+The Tragic Lantern 750D `function_overrides.c` still implements `shamem_read` as `return 0`; its reviewed `internals.h` does not enable RAW Live View or EVF state synchronization, and its `consts.h` supplies no RAW channel definition. Its recent platform history concerns PTP/Lua and related development workflows. The PTP registration stub also exists in our pinned upstream source; discovering that commit is not a new RAW address finding.
+
+The upstream commit [aad23944](https://github.com/reticulatedpines/magiclantern_simplified/commit/aad2394431d388f11c54c0a872145e7b295f6127), despite mentioning crop_rec in its title, adds only `SRM_BUFFER_SIZE=0x296c000`. A memory-resource block size is not a RAW source pointer or evidence of working RAW capture.
+
+Two tempting tool paths were checked and excluded:
+
+- Upstream `tools/firmware/edmac_config.py` has a broad description, but its `CPU.DIGIC_6` constructor explicitly raises an unsupported error. DIGIC 7/8 configuration-table layouts cannot simply be applied to 750D.
+- [lclevy/d8_oracle](https://github.com/lclevy/d8_oracle) documents DIGIC 8 update decryption using an EOS R/RP ROM dump and emulated camera code. It supplies no dump and is not a demonstrated 750D/DIGIC 6 or FIR-only solution. No such decryption was performed here.
+
+Added [Thumb address-load candidate analysis](thumb-xrefs.md) to extend the existing literal-pointer search with instruction encoding checks. It finds narrow LDR-literal and adjacent MOVW/MOVT patterns and reports both ROM aliases. Tests use artificial images and GNU-assembled Thumb instructions. No plaintext 750D ROM, actual firmware reference, or validated capture address has been obtained by this step. The official FIR remains encrypted and the camera source/submodule pin remains unchanged.
+
+Reviewed primary source snapshots:
+
+- https://github.com/paweltokarz/tragiclantern/blob/aa224f0bc8e177a456c119eba00263488ee51f5a/platform/750D.110/function_overrides.c
+- https://github.com/paweltokarz/tragiclantern/blob/aa224f0bc8e177a456c119eba00263488ee51f5a/platform/750D.110/internals.h
+- https://github.com/paweltokarz/tragiclantern/blob/aa224f0bc8e177a456c119eba00263488ee51f5a/platform/750D.110/consts.h
+- https://github.com/reticulatedpines/magiclantern_simplified/blob/142472e95054d73640f50789ac0fd66325499d82/tools/firmware/edmac_config.py

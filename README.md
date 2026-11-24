@@ -36,6 +36,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Windows build instructions](docs/build-windows.md)
 - [Information needed from developers](docs/developer-request.md)
 - [Read-only ROM inspection and November research refresh](docs/rom-analysis.md)
+- [Read-only Thumb address-load candidate search](docs/thumb-xrefs.md)
 - [How related cameras reached RAW video and the 750D port strategy](docs/similar-camera-raw.md)
 - [Experimental C frame-copy component and ARM execution tests](docs/raw14-copy-core.md)
 - [Experimental frame queue and writer ownership](docs/raw14-queue.md)

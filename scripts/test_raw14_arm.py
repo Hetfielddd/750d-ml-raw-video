@@ -13,6 +13,62 @@ import struct
 import subprocess
 
 
+def check_thumb_candidates(compiler, build):
+    """Check candidate decoding against real GNU assembler instruction bytes."""
+    from find_thumb_xrefs import scan
+    assembly = build / 'thumb-xrefs.s'
+    assembly.write_text('''
+.syntax unified
+.cpu cortex-r4
+.thumb
+.text
+.global positive16, positive32, negative32, pair, wrong_pair, separated_pair
+positive16:
+    ldr r0, pool
+    nop
+positive32:
+    ldr.w r8, pool
+    b after_pool
+    .balign 4
+pool:
+    .word 0xfe123456
+after_pool:
+negative32:
+    ldr.w r9, pool
+pair:
+    movw r10, #0x3456
+    movt r10, #0xfe12
+wrong_pair:
+    movw r2, #0x3456
+    movt r3, #0xfe12
+separated_pair:
+    movw r4, #0x3456
+    nop
+    movt r4, #0xfe12
+''', encoding='ascii')
+    obj, binary = build / 'thumb-xrefs.o', build / 'thumb-xrefs.bin'
+    subprocess.run([str(compiler), '-mcpu=cortex-r4', '-mthumb', '-c', str(assembly),
+                    '-o', str(obj)], check=True)
+    objcopy = compiler.with_name(compiler.name.replace('gcc', 'objcopy'))
+    nm = compiler.with_name(compiler.name.replace('gcc', 'nm'))
+    subprocess.run([str(objcopy), '-O', 'binary', '--only-section=.text', str(obj), str(binary)], check=True)
+    symbols = {}
+    for line in subprocess.check_output([str(nm), str(obj)], text=True).splitlines():
+        parts = line.split()
+        if len(parts) == 3:
+            symbols[parts[2]] = int(parts[0], 16)
+    target = 0xfe123456
+    hits = scan(binary.read_bytes(), {target: True})[target]['candidates']
+    observed = {(int(h['file_offset'], 16), h['kind'], h['register']) for h in hits}
+    expected = {(symbols[name], kind, reg) for name, kind, reg in (
+        ('positive16', 'ldr-literal-t1', 0), ('positive32', 'ldr-literal-t2', 8),
+        ('negative32', 'ldr-literal-t2', 9), ('pair', 'adjacent-movw-movt', 10))}
+    if observed != expected:
+        raise RuntimeError(f'Thumb candidate decoding mismatch: {observed} != {expected}')
+    return {'passed': True, 'assembler_verified_candidates': len(expected),
+            'wrong_or_separated_pairs_rejected': True}
+
+
 def check_upstream_layout(compiler, source, build):
     """Compile assertions using actual upstream declarations, not our serializer."""
     text = (source / 'src/raw.h').read_text(encoding='utf-8')
@@ -133,6 +189,7 @@ def main():
              '-mcpu=cortex-r4', '-mthumb', '-nostdlib', '-Wl,-e,test_run',
              '-Wl,-Ttext=0x10000', '-Wl,-Tdata=0x20000']
     results = {}
+    results['thumb_candidates'] = check_thumb_candidates(compiler, build)
     if args.upstream_source:
         results['upstream_layout'] = check_upstream_layout(compiler, args.upstream_source.resolve(), build)
     for suite, sources in {
