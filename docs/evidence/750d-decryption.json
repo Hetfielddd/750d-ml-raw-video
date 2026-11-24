@@ -1,0 +1,101 @@
+{
+  "donor_sha256": "3fe42299deb577b269b6901f40597a1939ac5876f22c8c3a0b6ee47219fdd42e",
+  "fir_sha256": "91ae807b6ac27dcb9c2c6351557c131768cc06736957600fdd0f5014e5531450",
+  "native_header_verification_passed": true,
+  "native_firmware_verification_passed": true,
+  "native_decryption_passed": true,
+  "independent_decrypted_checksum_passed": true,
+  "updater_bytes": 2509264,
+  "updater_sha256": "08b416ba1152a3975a6102264ba9631b4446309f2f4bb0a3e87e4815fd506f06",
+  "firmware_bytes": 21117272,
+  "firmware_sha256": "7df2f81d098cb27ce315c3e90c665f5d1f01e385cd0793afa237633dca02b644",
+  "main_code_additive_signature": "0xf005931a",
+  "matches_upstream_750d_110_signature": true,
+  "records": [
+    {
+      "number": 1,
+      "tag": "0x200",
+      "payload_offset": "0xf8",
+      "bytes": 6733,
+      "destination": "0x0",
+      "auxiliary": 700,
+      "sha256": "d06d8127ed91b8f61f482d2d44864002141b8d364478e72754e8f794ed1157b7"
+    },
+    {
+      "number": 2,
+      "tag": "0x200",
+      "payload_offset": "0x1b48",
+      "bytes": 1405405,
+      "destination": "0x0",
+      "auxiliary": 44500,
+      "sha256": "31f5df27c5f78ce076e7f02ad5f67b536d1bdd8071a1cdae7ef8a58dc50d99d4"
+    },
+    {
+      "number": 3,
+      "tag": "0x100",
+      "payload_offset": "0x158d28",
+      "bytes": 1423024,
+      "destination": "0xfdcc0000",
+      "auxiliary": 3000,
+      "sha256": "5b10b12e4830d567d3df5c771aab60e92f0d79df119661baaba937d9732e8575"
+    },
+    {
+      "number": 4,
+      "tag": "0x100",
+      "payload_offset": "0x2b43d8",
+      "bytes": 20,
+      "destination": "0x0",
+      "auxiliary": 100,
+      "sha256": "234bd5f9e1566a4c36f55f46e05223cffe950453a95400631a88e7263e575328"
+    },
+    {
+      "number": 5,
+      "tag": "0x100",
+      "payload_offset": "0x2b43f0",
+      "bytes": 4565948,
+      "destination": "0xfd540000",
+      "auxiliary": 15000,
+      "sha256": "eadcee05e54fa3be6f7caba65ec84db14a2ac109c4c4e99e1f9d0f2916a8a2ec"
+    },
+    {
+      "number": 6,
+      "tag": "0x100",
+      "payload_offset": "0x70efb0",
+      "bytes": 13612680,
+      "destination": "0xfc0a0000",
+      "auxiliary": 101000,
+      "sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2"
+    },
+    {
+      "number": 7,
+      "tag": "0x100",
+      "payload_offset": "0x140a638",
+      "bytes": 16396,
+      "destination": "0xfd280000",
+      "auxiliary": 100,
+      "sha256": "27972284a8075a2e6b1228f06da69c3d09dcbc0585eee9523b0e9d86d9ff23c7"
+    },
+    {
+      "number": 8,
+      "tag": "0x108",
+      "payload_offset": "0x140e648",
+      "bytes": 62672,
+      "destination": "0x0",
+      "auxiliary": 600,
+      "sha256": "712052f7e92729c717b3db4ddd5639d1bea161e3e686cf23a3304c9f78dde686"
+    },
+    {
+      "number": 9,
+      "tag": "0x105",
+      "payload_offset": "0x141db18",
+      "bytes": 24124,
+      "destination": "0x0",
+      "auxiliary": 500,
+      "sha256": "91e9608fbe830dde909057db52a74c1c4e055fb0800399a447bbd6eb745055cc"
+    }
+  ],
+  "full_rom_reconstructed": false,
+  "camera_execution_performed": false,
+  "raw_video_recording_implemented": false,
+  "limits": "Update records are not a complete flash dump. Native verification is reported against this identified public donor, not independently authenticated Canon trust roots."
+}

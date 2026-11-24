@@ -1,0 +1,18 @@
+[
+  {
+    "section": "updater",
+    "mutated_file_offset": "0x120",
+    "outer_checksum_recomputed": true,
+    "expected_test_input_hash_adjusted": true,
+    "native_rejected": true,
+    "rejection_stage": "Verify header/updater regions"
+  },
+  {
+    "section": "firmware",
+    "mutated_file_offset": "0x264b70",
+    "outer_checksum_recomputed": true,
+    "expected_test_input_hash_adjusted": true,
+    "native_rejected": true,
+    "rejection_stage": "Verify firmware region"
+  }
+]

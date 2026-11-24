@@ -1,0 +1,69 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "entry_thumb_pointer": "0xfe308eb5",
+  "registration_site": "0xfe309854",
+  "state_address": "0x2af78",
+  "cases": [
+    {
+      "requested_value": 0,
+      "previous_auxiliary_value": 7,
+      "returned": true,
+      "only_expected_writes": true,
+      "writes": [
+        {
+          "address": "0x2af7c",
+          "bytes": 4,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "requested_value": 1,
+      "previous_auxiliary_value": 7,
+      "returned": true,
+      "only_expected_writes": true,
+      "writes": [
+        {
+          "address": "0x2af7c",
+          "bytes": 4,
+          "value": 1
+        },
+        {
+          "address": "0x2af84",
+          "bytes": 4,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "requested_value": 1,
+      "previous_auxiliary_value": 0,
+      "returned": true,
+      "only_expected_writes": true,
+      "writes": [
+        {
+          "address": "0x2af7c",
+          "bytes": 4,
+          "value": 1
+        }
+      ]
+    },
+    {
+      "requested_value": 0,
+      "previous_auxiliary_value": 0,
+      "returned": true,
+      "only_expected_writes": true,
+      "writes": [
+        {
+          "address": "0x2af7c",
+          "bytes": 4,
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "passed": true,
+  "camera_execution_performed": false,
+  "raw_capture_demonstrated": false,
+  "limits": "Only this setter and synthetic RAM execute. This does not validate Live View state, DMA, cache behavior, geometry, completed-frame ownership or sustained recording."
+}

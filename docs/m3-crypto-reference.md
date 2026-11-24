@@ -1,8 +1,10 @@
 # Public DIGIC 6 reference: EOS M3 1.01A
 
+Later result: a separate EOS 70D reference [successfully decrypted the 750D update](750d-plaintext-milestone.md). The M3 FI2 experiment below remains a useful negative comparison, not the successful decoder.
+
 On November 24, 2026, a readable 32 MiB EOS M3 ROM was obtained from the public CHDK firmware archive. This is a new analysis input, not the owner's camera and not a 750D ROM. A bounded experiment now executes its AES and CBC wrapper routines on the PC. Direct use of the M3 native key, IV and wrapper at the two identified 750D FIR payload starts fails the wrapper's length bounds.
 
-The 750D 1.1.0 FIR remains encrypted. This result does not prove different keys, determine the 750D framing, or exclude additional transformations.
+At this stage the 750D 1.1.0 FIR remained encrypted. This result did not prove different keys, determine the 750D framing, or exclude additional transformations.
 
 ## Provenance
 

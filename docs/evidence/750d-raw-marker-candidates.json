@@ -1,0 +1,133 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "segment_base": "0xfc0a0000",
+  "offsets_are_relative_to_record": 6,
+  "candidates": [
+    {
+      "marker": "lv_save_raw",
+      "segment_offset": "0x43c54",
+      "fc_address": "0xfc0e3c54",
+      "candidates": [
+        {
+          "file_offset": "0x4389c",
+          "instruction_address": "0xfc0e389c",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0e3c54"
+        },
+        {
+          "file_offset": "0x43926",
+          "instruction_address": "0xfc0e3926",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0e3c54"
+        },
+        {
+          "file_offset": "0x43974",
+          "instruction_address": "0xfc0e3974",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0e3c54"
+        },
+        {
+          "file_offset": "0x43a20",
+          "instruction_address": "0xfc0e3a20",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0e3c54"
+        }
+      ]
+    },
+    {
+      "marker": "lv_save_raw",
+      "segment_offset": "0x269b9c",
+      "fc_address": "0xfc309b9c",
+      "candidates": [
+        {
+          "file_offset": "0x269856",
+          "instruction_address": "0xfc309856",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc309b9c"
+        }
+      ]
+    },
+    {
+      "marker": "lv_raw_dump",
+      "segment_offset": "0x269bac",
+      "fc_address": "0xfc309bac",
+      "candidates": [
+        {
+          "file_offset": "0x269860",
+          "instruction_address": "0xfc309860",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc309bac"
+        }
+      ]
+    },
+    {
+      "marker": "evfReadOutDoneInterrupt",
+      "segment_offset": "0x219944",
+      "fc_address": "0xfc2b9944",
+      "candidates": [
+        {
+          "file_offset": "0x219550",
+          "instruction_address": "0xfc2b9550",
+          "kind": "adr-t1",
+          "register": 2,
+          "loaded_value": "0xfc2b9944"
+        }
+      ]
+    },
+    {
+      "marker": "CCDWriteEDmacCompleteCBR",
+      "segment_offset": "0x7851fc",
+      "fc_address": "0xfc8251fc",
+      "candidates": [
+        {
+          "file_offset": "0x78503e",
+          "instruction_address": "0xfc82503e",
+          "kind": "adr-t1",
+          "register": 2,
+          "loaded_value": "0xfc8251fc"
+        }
+      ]
+    },
+    {
+      "marker": "Nothing DMA ch now!",
+      "segment_offset": "0x1ecb24",
+      "fc_address": "0xfc28cb24",
+      "candidates": []
+    },
+    {
+      "marker": "OmarInit",
+      "segment_offset": "0x349ec",
+      "fc_address": "0xfc0d49ec",
+      "candidates": [
+        {
+          "file_offset": "0x34764",
+          "instruction_address": "0xfc0d4764",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0d49ec"
+        },
+        {
+          "file_offset": "0x3477a",
+          "instruction_address": "0xfc0d477a",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0d49ec"
+        },
+        {
+          "file_offset": "0x3478a",
+          "instruction_address": "0xfc0d478a",
+          "kind": "adr-t1",
+          "register": 0,
+          "loaded_value": "0xfc0d49ec"
+        }
+      ]
+    }
+  ],
+  "limits": "Aligned instruction-pattern candidates; code/data boundaries and function semantics require disassembly. No hardware binding is enabled."
+}

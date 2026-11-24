@@ -1,5 +1,7 @@
 # Read-only ROM inspection
 
+Current result: [the 750D 1.1.0 main-code update record is now decrypted](750d-plaintext-milestone.md). The older full-ROM inspector below still requires a complete 32 MiB ROM; do not pass a record to it or invent filler for missing regions. Earlier negative research entries describe the state at those stages.
+
 This PC-side tool prepares analysis of an independently supplied, owner-authorized plaintext ROM1 dump. It does not obtain a dump, connect to a camera, execute firmware, or modify the input.
 
 ```sh
