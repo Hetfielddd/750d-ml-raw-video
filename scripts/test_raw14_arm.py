@@ -23,6 +23,7 @@ def check_thumb_candidates(compiler, build):
 .thumb
 .text
 .global positive16, positive32, negative32, pair, wrong_pair, separated_pair
+.global adr16, adr_positive, adr_negative, adr_target
 positive16:
     ldr r0, pool
     nop
@@ -45,6 +46,16 @@ separated_pair:
     movw r4, #0x3456
     nop
     movt r4, #0xfe12
+adr16:
+    adr r2, adr_target
+adr_positive:
+    adr.w r8, adr_target
+    .balign 4
+adr_target:
+    nop
+    nop
+adr_negative:
+    adr.w r9, adr_target
 ''', encoding='ascii')
     obj, binary = build / 'thumb-xrefs.o', build / 'thumb-xrefs.bin'
     subprocess.run([str(compiler), '-mcpu=cortex-r4', '-mthumb', '-c', str(assembly),
@@ -65,7 +76,16 @@ separated_pair:
         ('negative32', 'ldr-literal-t2', 9), ('pair', 'adjacent-movw-movt', 10))}
     if observed != expected:
         raise RuntimeError(f'Thumb candidate decoding mismatch: {observed} != {expected}')
+    adr_address = 0xfe000000 + symbols['adr_target']
+    adr_hits = scan(binary.read_bytes(), {adr_address})[adr_address]['candidates']
+    adr_observed = {(int(h['file_offset'], 16), h['kind'], h['register']) for h in adr_hits}
+    adr_expected = {(symbols[name], kind, reg) for name, kind, reg in (
+        ('adr16', 'adr-t1', 2), ('adr_positive', 'adr-t3', 8),
+        ('adr_negative', 'adr-t2', 9))}
+    if adr_observed != adr_expected:
+        raise RuntimeError(f'ADR candidate decoding mismatch: {adr_observed} != {adr_expected}')
     return {'passed': True, 'assembler_verified_candidates': len(expected),
+            'assembler_verified_adr_candidates': len(adr_expected),
             'wrong_or_separated_pairs_rejected': True}
 
 

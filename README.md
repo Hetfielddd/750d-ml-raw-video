@@ -10,6 +10,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 - The upstream core and loader have been compiled and linked on Windows using Arm GNU Toolchain 13.3.Rel1, with `CONFIG_QEMU=y` and module/TCC support.
 - A Windows build script and a read-only FIR inspection script are included.
 - The official Canon 1.1.0 update container was inspected. Its structural checksum passes; the firmware payload remains encrypted.
+- A public EOS M3 DIGIC 6 ROM now supplies a working PC crypto reference: native AES and CBC wrapper tests pass, but direct application to the 750D FIR fails length bounds. See [the experiment and limits](docs/m3-crypto-reference.md).
 - The 7D Mark II frame-copying implementation has been reviewed as a possible reference for a future 750D port.
 - The experimental ARM copy/queue/MLV path now writes synthetic clips through a PC filesystem test bridge, including queue overflow and partial-write rollback checks.
 
@@ -37,6 +38,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Information needed from developers](docs/developer-request.md)
 - [Read-only ROM inspection and November research refresh](docs/rom-analysis.md)
 - [Read-only Thumb address-load candidate search](docs/thumb-xrefs.md)
+- [Public M3 DIGIC 6 ROM and bounded native crypto experiment](docs/m3-crypto-reference.md)
 - [How related cameras reached RAW video and the 750D port strategy](docs/similar-camera-raw.md)
 - [Experimental C frame-copy component and ARM execution tests](docs/raw14-copy-core.md)
 - [Experimental frame queue and writer ownership](docs/raw14-queue.md)

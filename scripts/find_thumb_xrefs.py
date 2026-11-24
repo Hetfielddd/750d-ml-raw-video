@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Read-only, narrow Thumb address-load candidate search for a 750D ROM1 image.
 
-Finds LDR literal T1/T2 and adjacent same-register MOVW/MOVT pairs.
+Finds LDR literal T1/T2, ADR T1/T2/T3 and adjacent MOVW/MOVT pairs.
 Not a disassembler, control-flow analyzer, function finder, or address verifier.
 """
 import argparse
@@ -14,7 +14,7 @@ from inspect_750d_rom import MARKERS, inspect, occurrences
 
 # Use a zero-width lookahead to examine every halfword candidate, including
 # overlapping encodings. Code/data boundaries and instruction starts are unknown.
-PREFIX = re.compile(rb'(?=(.[\x48-\x4f]|[\xdf\x5f]\xf8|[\x40-\x4f][\xf2\xf6]))', re.DOTALL)
+PREFIX = re.compile(rb'(?=(.[\x48-\x4f\xa0-\xa7]|[\xdf\x5f]\xf8|[\x40-\x4f][\xf2\xf6]|[\x0f\xaf][\xf2\xf6]))', re.DOTALL)
 
 
 def mov_imm(first, second, opcode):
@@ -44,7 +44,21 @@ def scan(data, targets, base=0xfe000000, limit=16):
         literal = None
         kind = None
         value = None
-        if first & 0xf800 == 0x4800:
+        if first & 0xf800 == 0xa000:
+            register = first >> 8 & 7
+            value = (pc + (first & 255) * 4) & 0xffffffff
+            kind = 'adr-t1'
+        elif first & 0xfbff in (0xf20f, 0xf2af) and offset + 4 <= len(data):
+            second = struct.unpack_from('<H', data, offset + 2)[0]
+            register = second >> 8 & 15
+            if second & 0x8000 or register >= 13:
+                continue
+            delta = ((first >> 10 & 1) << 11 | (second >> 12 & 7) << 8 |
+                     second & 255)
+            subtract = first & 0xfbff == 0xf2af
+            value = (pc + (-delta if subtract else delta)) & 0xffffffff
+            kind = 'adr-t2' if subtract else 'adr-t3'
+        elif first & 0xf800 == 0x4800:
             register = first >> 8 & 7
             literal = (pc + (first & 255) * 4) & 0xffffffff
             kind = 'ldr-literal-t1'

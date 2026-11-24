@@ -1,0 +1,34 @@
+{
+  "rom_sha256": "0545a9a2996b9fbd96dfc2c54d80c0f1b17867e1d9c2803660be9ca16c511fa2",
+  "fir_sha256": "91ae807b6ac27dcb9c2c6351557c131768cc06736957600fdd0f5014e5531450",
+  "emulator_cpu": "Cortex-A9, integer Thumb routines only",
+  "nist_aes128_decryption_passed": true,
+  "nist_aes128_encryption_passed": true,
+  "generated_cbc_wrapper_roundtrip_passed": true,
+  "generated_cbc_wrapper_payload_sizes": [
+    0,
+    12,
+    28,
+    44
+  ],
+  "instruction_limit_per_call": 100000,
+  "timeout_microseconds_per_call": 2000000,
+  "observations": [
+    {
+      "region": "updater",
+      "file_offset": "0x120",
+      "candidate_plaintext_length": 3706901770,
+      "encrypted_region_size": 2509264,
+      "candidate_fits_region": false
+    },
+    {
+      "region": "firmware",
+      "file_offset": "0x264b70",
+      "candidate_plaintext_length": 2334075864,
+      "encrypted_region_size": 21117280,
+      "candidate_fits_region": false
+    }
+  ],
+  "firmware_decrypted": false,
+  "conclusion": "The M3 native key/IV/wrapper applied directly at these two 750D payload starts fails its length bounds. This does not establish the 750D algorithm or key, or rule out another transformation or framing."
+}

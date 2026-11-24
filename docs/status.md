@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Obtained a public CHDK EOS M3 1.01A full ROM and traced its firmware-update parser to AES-128 and a CBC length wrapper. Native routines execute on the PC and pass a known-answer vector plus four generated-frame cases. Direct M3 key/IV/wrapper application to the 750D FIR fails length bounds; no 750D plaintext acquired. Added ADR candidate decoding with GNU assembler verification. Twenty-one Python tests, five ARM suites and 19 upstream layout assertions pass. See [the M3 experiment](m3-crypto-reference.md).
+
 - Read the previously reader-blocked public 750D forum in a browser and found a specific external 2017 image lead, described in later posts as firmware 1.0.0. The external folder was blocked by browser site safety; no image acquired or validated. An older image cannot establish 1.1.0 stubs. See [forum follow-up](rom-analysis.md#public-forum-access-and-an-older-image-lead).
 
 - Investigated the selected FIR-only/public-source route using primary DIGIC 6 research, the public installer dependency chain, and a local exact-marker scan of both actual ciphertext regions. No usable plaintext or decryption key acquired. Saved the bounded negative result and firmware-byte-free evidence in [ROM analysis](rom-analysis.md#fir-only-investigation-after-choosing-the-pc-only-route). Camera access remains outside scope.

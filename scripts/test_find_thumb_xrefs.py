@@ -7,6 +7,27 @@ from inspect_750d_rom import ROM_SIZE, ENTRY_OFFSET, EXPECTED_SIGNATURE
 
 
 class ThumbCandidateTests(unittest.TestCase):
+    def test_adr_encodings_and_pc_alignment(self):
+        # ADR T1 at 0x1002; ADDW/SUBW use aligned PC as well.
+        data = b'\0\0' + struct.pack('<HHHHH', 0xa101, 0xf20f, 0x0210,
+                                     0xf2af, 0x0304)
+        result = scan(data, {0x1008, 0x1018}, base=0x1000)
+        self.assertEqual([(h['file_offset'], h['kind'], h['register'])
+                          for h in result[0x1008]['candidates']],
+                         [('0x2', 'adr-t1', 1), ('0x8', 'adr-t2', 3)])
+        self.assertEqual(result[0x1018]['candidates'][0]['register'], 2)
+
+    def test_adr_high_immediate_and_invalid_register(self):
+        # imm12 = i:imm3:imm8 = 0xabc; T3 adds and T2 subtracts.
+        data = struct.pack('<HHHH', 0xf60f, 0x22bc, 0xf6af, 0x23bc)
+        result = scan(data, {0x1ac0, 0x54c}, base=0x1000)
+        self.assertEqual(result[0x1ac0]['candidates'][0]['kind'], 'adr-t3')
+        self.assertEqual(result[0x54c]['candidates'][0]['kind'], 'adr-t2')
+        for second in (0x8abc, 0x2dbc, 0x2ebc, 0x2fbc):
+            invalid = struct.pack('<HH', 0xf60f, second)
+            self.assertFalse(scan(invalid, {0x1ac0}, 0x1000)[0x1ac0]['candidates'])
+        self.assertFalse(scan(b'\x0f\xf2', {0x1004}, 0x1000)[0x1004]['candidates'])
+
     def test_pc_alignment_and_literal_bounds(self):
         # T1 at address 0x1002 uses Align(PC+4,4)==0x1004, plus imm8*4.
         data = b'\0\0' + struct.pack('<H', 0x4801) + b'\0' * 4 + struct.pack('<I', 0x12345678)
