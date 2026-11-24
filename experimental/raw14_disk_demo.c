@@ -3,16 +3,26 @@
  * their fallback bodies fail if no host bridge is installed. Not camera code.
  */
 #include "raw14_mlv.h"
+#ifdef RAW14_USE_FIO
+#include "raw14_fio.h"
+#endif
 #define WIDTH 64
 #define HEIGHT 32
 #define PITCH (WIDTH / 4 * 7)
 #define BYTES (PITCH * HEIGHT)
 static uint8_t capture[PITCH * (HEIGHT + 4)], storage[3][BYTES], info[160];
 volatile uint32_t disk_demo_fault;
+#ifdef RAW14_USE_FIO
+__attribute__((noipa)) int bridge_write(void *ctx, const void *data, size_t size)
+{ (void)ctx; (void)data; (void)size; return -1; }
+__attribute__((noipa)) int64_t bridge_seek(void *ctx, int64_t offset, int whence)
+{ (void)ctx; (void)offset; (void)whence; return -1; }
+#else
 __attribute__((noipa)) size_t bridge_write(void *ctx, const void *data, size_t size)
 { (void)ctx; (void)data; (void)size; return SIZE_MAX; }
 __attribute__((noipa)) int bridge_seek(void *ctx, uint64_t offset)
 { (void)ctx; (void)offset; return -1; }
+#endif
 __attribute__((noipa)) int bridge_truncate(void *ctx, uint64_t size)
 { (void)ctx; (void)size; return -1; }
 __attribute__((noipa)) int bridge_flush(void *ctx)
@@ -31,7 +41,13 @@ int test_run(void)
     struct raw14_engine engine={copy,0,0};
     struct raw14_frame source={capture,sizeof(capture),WIDTH,HEIGHT+4,PITCH,14}, buffers[3];
     struct raw14_mlv_writer writer;
+#ifdef RAW14_USE_FIO
+    struct raw14_fio adapter;
+    struct raw14_fio_ops ops={bridge_write,bridge_seek,bridge_flush};
+    struct raw14_mlv_io io;
+#else
     struct raw14_mlv_io io={0,bridge_write,bridge_seek,bridge_truncate,bridge_flush};
+#endif
     struct raw14_mlv_config config={WIDTH,HEIGHT,24,1,12345,1000000,info};
     unsigned id,i;
     for(i=0;i<3;++i) buffers[i]=(struct raw14_frame){storage[i],BYTES,WIDTH,HEIGHT,PITCH,14};
@@ -41,6 +57,9 @@ int test_run(void)
     put32(72,1); put32(76,0x02010100); put32(80,1);
     for(i=0;i<9;++i) { put32(84+i*8,i%4==0 ? 10000 : 0); put32(88+i*8,10000); }
     CHECK(raw14_queue_init(&queue,buffers,3,1)==RAW14_Q_OK);
+#ifdef RAW14_USE_FIO
+    CHECK(raw14_fio_init(&adapter,0,&ops,&io)==0);
+#endif
     CHECK(raw14_mlv_begin(&writer,&queue,&io,&config)==RAW14_MLV_OK);
     if(disk_demo_fault) {
         for(id=0;id<2;++id) {
@@ -51,7 +70,11 @@ int test_run(void)
         CHECK(raw14_mlv_write_next(&writer)==RAW14_MLV_OK);
         CHECK(raw14_mlv_write_next(&writer)==RAW14_MLV_IO_ERROR);
         CHECK(writer.frames==1 && queue.slots[1].state==RAW14_READY);
+#ifdef RAW14_USE_FIO
+        CHECK(!writer.tail_valid && raw14_mlv_finish(&writer)==RAW14_MLV_IO_ERROR);
+#else
         CHECK(raw14_mlv_finish(&writer)==RAW14_MLV_OK);
+#endif
         return 0;
     }
     for(id=0;id<48;++id) {

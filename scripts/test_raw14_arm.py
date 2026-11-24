@@ -139,6 +139,7 @@ def main():
         'copy': ['raw14_copy.c', 'test_raw14_copy.c'],
         'queue': ['raw14_copy.c', 'raw14_queue.c', 'test_raw14_queue.c'],
         'mlv': ['raw14_copy.c', 'raw14_queue.c', 'raw14_mlv.c', 'test_raw14_mlv.c'],
+        'fio': ['raw14_copy.c', 'raw14_queue.c', 'raw14_mlv.c', 'raw14_fio.c', 'test_raw14_fio.c'],
     }.items():
         elf = build / f'{suite}.elf'
         subprocess.run([str(compiler), *flags,

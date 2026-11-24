@@ -18,6 +18,8 @@ The bridge uses the AAPCS32 argument convention: a 64-bit seek/truncate argument
 
 ## Verified scenarios
 
+The harness now runs both the direct backend below and an [ML-style FIO contract adapter](raw14-fio-adapter.md), producing four files per run. The FIO variant makes no truncate calls: normal output finalizes, while a partial tail remains explicitly unfinalized. The rollback behavior described below applies to the direct backend, which has real host truncation available.
+
 - Normal: 48 synthetic 64x32 frame submissions into three slots, drained after every four submissions. The fourth submission in each group is rejected because the queue is full. The output contains 36 frames, preserves source frame-number gaps, and sets the dropped-frame flag. File size: 130,408 bytes.
 - Partial write: after one complete frame, the bridge accepts the next frame header and three payload bytes, then returns zero. The C writer rolls the real file back to the complete first frame and finalizes the 3,848-byte prefix with error flag 8. The failed frame remains READY rather than being falsely released as written.
 
