@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Followed manager resource fields `+0x710 -> +0x748` into ADST slot-2 descriptor population and EVF RAW preparation. The actual population code fixes the slot count at one. Four native scenarios pass, including zero/one assertion inputs; original allocation and per-frame timing are still unverified. See [descriptor population](750d-raw-population.md).
+
 - Identified the producer of candidate RAW preparation word `0x26BEC`: EVF activation reserves ADST slot 2 and stores descriptor word zero there. Four bounded native supplied-registry scenarios verify acquisition, repeat diagnostics, end-handler release and reacquisition. This establishes reservation behavior, not per-frame ownership. See [RAW memory reservation](750d-raw-reservation.md).
 
 - Traced the separately registered RAW return callback to EVF event 19 and the handler labeled `evfAfPathCompleteInterrupt`. Five bounded native stage checks and four independent small-pool checks pass; all ten table entries are decoded. This qualifies the earlier notification as an AF consumer path, with no proof of a recorder-ready frame or ownership of the earlier sensor buffer. See [the EVF RAW-return event](750d-evf-raw-event.md).

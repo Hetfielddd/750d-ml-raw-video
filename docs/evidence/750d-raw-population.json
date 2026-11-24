@@ -1,0 +1,37 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "supplied_pointer": "0x12345000",
+      "manager_resource": "0x12345000",
+      "slot_2_descriptor": "0x12345000",
+      "slot_2_count": 1,
+      "raw_preparation_pointer": "0x12345000",
+      "passed": true
+    },
+    {
+      "supplied_pointer": "0x56789000",
+      "manager_resource": "0x56789000",
+      "slot_2_descriptor": "0x56789000",
+      "slot_2_count": 1,
+      "raw_preparation_pointer": "0x56789000",
+      "passed": true
+    },
+    {
+      "supplied_pointer": "0x0",
+      "assertion_boundary": true,
+      "passed": true
+    },
+    {
+      "supplied_pointer": "0x1",
+      "assertion_boundary": true,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "pixels_mapped": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied manager initial address, owner token, registry table, available state and unrelated zero-count resources. Separate native resource-publication, population and reservation stages. No allocation, surrounding resource selection, actual buffer contents, DMA, timing, cache or frame lease is validated."
+}

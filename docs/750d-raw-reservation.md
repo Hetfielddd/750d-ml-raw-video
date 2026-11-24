@@ -36,6 +36,8 @@ Only the reservation halfword, EVF address/count words and supplied stack may be
 
 ## Consequences for recording
 
+The [next investigation](750d-raw-population.md) identifies descriptor population from manager fields and verifies that the reviewed code supplies one slot-2 address. Its original allocation and per-frame reuse timing remain unverified.
+
 We now know where the candidate preparation pointer comes from. Reserving memory for EVF and obtaining a completed image long enough to copy are separate requirements. Acquiring slot 2 while Canon already holds it reaches the native diagnostic path. The earlier [AF completion investigation](750d-evf-raw-event.md) also does not supply a frame lease.
 
 Next: trace slot-2 descriptor population and destination reuse/redirection between frames. Allocation contents, real geometry, DMA completion, cache coherence and copy throughput remain unverified. No camera provider or RAW recording mode is enabled.
