@@ -4,7 +4,8 @@ param(
     [Parameter(Mandatory=$true)][string]$MakePath,
     [Parameter(Mandatory=$true)][string]$PythonHome,
     [string]$SourceRoot = (Join-Path $PSScriptRoot '../magiclantern'),
-    [string]$BuildDate = (Get-Date -Format 'yyyy-MM-dd')
+    [string]$BuildDate = (Get-Date -Format 'yyyy-MM-dd'),
+    [switch]$ProbeRawBackend
 )
 $ErrorActionPreference = 'Stop'
 $tools = (Resolve-Path $ToolsDir).Path.Replace('\','/')
@@ -22,7 +23,12 @@ Push-Location (Join-Path $source 'platform/750D.110')
 try {
     $env:PATH = "$tools;$arm;$pythonDir;$priorPath"
     $env:PYTHONHOME = $pythonDir
-    & $make "SHELL=$tools/sh.exe" "ARM_BINPATH=$arm" PYTHON=python PYTHON3=python CONFIG_QEMU=y FATAL_WARNINGS=y "INCLUDE_ARGS=-I. -Iinclude -Ibuild-pc-full -I../../src" BUILD_DIR=build-pc-full "BUILD_DATE=$BuildDate" build-pc-full/autoexec -j4
+    if ($ProbeRawBackend) {
+        # Compile raw.c only; missing port definitions are expected diagnostics.
+        & $make "SHELL=$tools/sh.exe" "ARM_BINPATH=$arm" PYTHON=python PYTHON3=python CONFIG_QEMU=y FATAL_WARNINGS=y 'CFLAGS_PLATFORM=-mthumb -mlong-calls -DCONFIG_RAW_LIVEVIEW' BUILD_DIR=build-pc-raw-probe "BUILD_DATE=$BuildDate" build-pc-raw-probe/raw.o
+    } else {
+        & $make "SHELL=$tools/sh.exe" "ARM_BINPATH=$arm" PYTHON=python PYTHON3=python CONFIG_QEMU=y FATAL_WARNINGS=y "INCLUDE_ARGS=-I. -Iinclude -Ibuild-pc-full -I../../src" BUILD_DIR=build-pc-full "BUILD_DATE=$BuildDate" build-pc-full/autoexec -j4
+    }
     $buildExit = $LASTEXITCODE
 } finally {
     $env:PATH = $priorPath

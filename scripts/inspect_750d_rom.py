@@ -16,7 +16,9 @@ ENTRY_OFFSET = 0x000A0000
 SIGNATURE_WORDS = 0x10000
 EXPECTED_SIGNATURE = 0xF005931A
 MARKERS = (b'lv_raw_dump', b'lv_save_raw', b'lv_af_raw', b'lv_set_raw',
-           b'CCDWriteEDmacCompleteCBR', b'evfReadOutDoneInterrupt', b'OmarInit')
+           b'CCDWriteEDmacCompleteCBR', b'evfReadOutDoneInterrupt', b'OmarInit',
+           b'[MEM1DEV] Addr=%#x Data=%#x', b'Mem1 is Not Complete',
+           b'Nothing DMA ch now!', b'ResInfo')
 
 
 def occurrences(data, needle, limit=16):

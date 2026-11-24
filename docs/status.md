@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced the 7D2 RAW-enabling commit and the shared stream/callback/copy/MLV path; compared DIGIC 7 alternatives on 200D/6D2 and same-generation 80D/5D4 configurations. Added a compile-only 750D RAW probe that fails as expected on seven missing identifiers. The 750D shadow-register reader also remains a zero-return placeholder. See [similar-camera implementation details](similar-camera-raw.md).
+
 - Added a read-only ROM inspector with four synthetic tests. It checks the upstream additive firmware signature and searches selected RAW-related strings and literal pointer candidates. No real ROM was available for analysis; see [ROM analysis](rom-analysis.md).
 
 - Downloaded the upstream source at commit `142472e95054d73640f50789ac0fd66325499d82`.

@@ -42,6 +42,10 @@ Output: `magiclantern/platform/750D.110/build-pc-full/autoexec`, an ELF file.
 
 Exclude the generated build directory inside the submodule before staging any submodule changes. Use a fresh build directory or clean build when changing CONFIG options; upstream does not track those options as build dependencies.
 
+## Compile-only RAW backend probe
+
+Add `-ProbeRawBackend` to the build command to compile only `raw.c` in the separate `build-pc-raw-probe` directory, with RAW Live View forced through a compiler flag. No source addresses are substituted and no loader is linked. On the current 750D baseline this command is expected to exit nonzero, reporting seven missing definitions. See [the sibling-camera comparison](similar-camera-raw.md) for the interpretation. This is a diagnostic, not a working RAW build.
+
 ## Inspect a Canon update file
 
 Obtain the update independently from Canon, then run:
