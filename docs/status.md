@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Investigated the selected FIR-only/public-source route using primary DIGIC 6 research, the public installer dependency chain, and a local exact-marker scan of both actual ciphertext regions. No usable plaintext or decryption key acquired. Saved the bounded negative result and firmware-byte-free evidence in [ROM analysis](rom-analysis.md#fir-only-investigation-after-choosing-the-pc-only-route). Camera access remains outside scope.
+
 - Followed the original contributor's RAW/d6 branches and upstream EDMAC cleanup branch; reviewed 750D files still lack the RAW channel/copy/shadow-reader implementation. Rechecked the actual Canon FIR with stronger section-bound checks and explicit legacy-XOR exclusion for its extended header. Nineteen Python tests pass. No plaintext firmware or validated capture address acquired; see [the bounded follow-up](rom-analysis.md#older-branches-and-the-actual-fir-boundary).
 
 - Audited 750D history and current Tragic Lantern platform sources; no missing validated RAW addresses found in reviewed material. Excluded unsupported DIGIC 6 DMA-table decoding and a DIGIC 8 ROM-dependent decryptor as ready solutions. Added read-only Thumb address-load candidate scanning, checked against GNU-assembled instructions and a full artificial ROM fixture. Fifteen Python tests pass; see [source audit](rom-analysis.md) and [instruction candidate tool](thumb-xrefs.md).

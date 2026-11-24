@@ -1,0 +1,36 @@
+{
+  "input_sha256": "91ae807b6ac27dcb9c2c6351557c131768cc06736957600fdd0f5014e5531450",
+  "regions": {
+    "updater": {
+      "offset": "0x120",
+      "bytes": 2509264,
+      "marker_counts": {
+        "DRYOS version": 0,
+        "DRYOS PANIC": 0,
+        "gaonisoy": 0,
+        "lv_save_raw": 0,
+        "evfReadOutDoneInterrupt": 0,
+        "Mem1 is Not Complete": 0,
+        "CCDWriteEDmacCompleteCBR": 0
+      }
+    },
+    "firmware": {
+      "offset": "0x264b70",
+      "bytes": 21117280,
+      "marker_counts": {
+        "DRYOS version": 0,
+        "DRYOS PANIC": 0,
+        "gaonisoy": 0,
+        "lv_save_raw": 0,
+        "evfReadOutDoneInterrupt": 0,
+        "Mem1 is Not Complete": 0,
+        "CCDWriteEDmacCompleteCBR": 0
+      }
+    }
+  },
+  "limitations": "Exact byte-marker search only; absence is not proof of encryption, lack of code, or impossibility of decryption.",
+  "input_unchanged": true,
+  "analysis_date": "2026-11-24",
+  "input_model": "Canon EOS 750D firmware 1.1.0 official FIR",
+  "plaintext_recovered": false
+}
