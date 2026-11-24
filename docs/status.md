@@ -1,11 +1,13 @@
 # Research status
 
-Last updated: October 31, 2026.
+Last updated: November 24, 2026.
 
 Target: Canon EOS 750D / Rebel T6i, Canon firmware 1.1.0.
 Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
+
+- Added a read-only ROM inspector with four synthetic tests. It checks the upstream additive firmware signature and searches selected RAW-related strings and literal pointer candidates. No real ROM was available for analysis; see [ROM analysis](rom-analysis.md).
 
 - Downloaded the upstream source at commit `142472e95054d73640f50789ac0fd66325499d82`.
 - Compiled and linked the QEMU-configured core and loader as ARM ELF files on Windows, using Arm GNU Toolchain 13.3.Rel1.

@@ -34,6 +34,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Research status and remaining work](docs/status.md)
 - [Windows build instructions](docs/build-windows.md)
 - [Information needed from developers](docs/developer-request.md)
+- [Read-only ROM inspection and November research refresh](docs/rom-analysis.md)
 - `scripts/inspect_750d_fir.py`: read-only structural inspection of a locally supplied Canon update file.
 
 ## License and attribution
