@@ -2,6 +2,31 @@
 
 Source baseline: Magic Lantern `142472e95054d73640f50789ac0fd66325499d82`. Reviewed November 24, 2026. These are source-code findings and developer reports, not tests performed on these cameras by this project.
 
+## Forum and upstream refresh: November 25, 2026
+
+The user supplied a [CineD overview](https://www.cined.com/magic-lantern-canon-2026-raw-video-film-roll-soup-engine-m-film/) and [750D Midsummer discussion](https://www.magiclantern.fm/forum/index.php?topic=27318.0). Both were read directly, along with the current camera-development board, latest 7D2 porting page, 7D2 Midsummer discussion, upstream update thread and 750D PTP/Lua thread. This is a bounded review of these sources and the repositories below, not an exhaustive forum or GitHub search.
+
+CineD mainly covers established 5D3 RAW workflows and still-photo film-look projects (Soup Engine, Film Roll, M-Film and The Ritual). Its mention of ML support for the 750D does not announce RAW video support on that model. Its general mention of QEMU likewise does not establish emulation of the 750D sensor/DMA pipeline.
+
+In the supplied [June 27, 2025 message](https://www.magiclantern.fm/forum/index.php?msg=247879), names_are_hard reports an early 7D2 RAW result and expects 750D RAW to be possible. This is a feasibility expectation, not a 750D implementation. The reviewed topic has 17 replies, ending August 29, 2025; later posts do not provide a RAW port.
+
+The [September 2025 upstream summary](https://www.magiclantern.fm/forum/index.php?topic=26814.msg248197#msg248197) explains the actual 7D2 solution: a fast linear DryOS copy instead of a general rectangular EDMAC copy, full-width output, and a left black border removed in post. Reported full buffer widths are 1984 pixels in normal Live View and 3616 in 5x. These are 7D2 figures, not 750D targets. The [latest 7D2 porting page](https://www.magiclantern.fm/forum/index.php?topic=13746.625) also corrects an earlier approximately 599 MB/s copy benchmark: its sleep-based timing was wrong. The developer reports about 190 MB/s for the newly found function; this remains a donor measurement, not a 750D prediction. The open implementation commit is linked below in the existing donor analysis.
+
+The [October 26, 2026 upstream summary](https://www.magiclantern.fm/forum/index.php?topic=26814.msg249014#msg249014) names exactly our pinned baseline, `142472e95054d73640f50789ac0fd66325499d82`. It reports repeated-recording crash fixes for 200D/7D2/6D2, `sd_uhs` becoming `sd_clock`, an experimental M6 II port, and `raw_vidx`. It explicitly identifies DIGIC 6 EDMAC operations via RPC as a reason for ongoing API work. This supports investigating the message boundary we found; it supplies no 750D-specific completed-frame binding.
+
+The live GitHub checks found:
+
+- Upstream `dev` still points to our pinned baseline. No baseline/submodule update is needed merely to obtain the October summary's code.
+- Upstream `edmac_cleanup` points to `562c699589a98989e66ff2d0634748cf0f14bc44`, with 18 commits beyond the baseline. Commits dated November 21-22 reorganize copy APIs, move 7D2 copying into `src/edmac.c`, and select `CONFIG_EDMAC_COPY_RECT_V3` for the 7D2. [Pinned branch comparison](https://github.com/reticulatedpines/magiclantern_simplified/compare/142472e95054d73640f50789ac0fd66325499d82...562c699589a98989e66ff2d0634748cf0f14bc44).
+- V3 keeps fast linear copying and rejects unequal row strides/widths or nonzero horizontal offsets. Its `copy_rectangle()` interface returns after copying; module call sites no longer manage the old copy-completion semaphore themselves. This is useful integration guidance, not full direct ICU control of Omar EDMAC.
+- The comparison's only 750D platform-file change is an empty `platform/750D.110/edmac_per_cam.h`. The unmodified 750D shadow-reader placeholder still returns zero, and the reviewed platform does not gain RAW bindings from this branch.
+- The latest reviewed `dev` change specific to `platform/750D.110` is [PTP registration stub `7abf37a`](https://github.com/reticulatedpines/magiclantern_simplified/commit/7abf37a643d3d15c3bfbe3f3cbdcfd10035acda1), already in our baseline. The [750D PTP/Lua forum topic](https://www.magiclantern.fm/forum/index.php?topic=27405.0) concerns experimental USB file/memory operations and Lua, not sensor RAW recording. The public Tragic Lantern head remains `aa224f0bc8e177a456c119eba00263488ee51f5a` in this check.
+- Kitor's listed RAW draft and DIGIC 6 ROM-patching branch heads match the earlier recorded audit. A global GitHub commit search timed out; no claim about every public fork follows from this review.
+
+The [pinned `raw_vidx` source](https://github.com/reticulatedpines/magiclantern_simplified/tree/142472e95054d73640f50789ac0fd66325499d82/modules/raw_video/raw_vidx) is already available locally. It separates VSYNC/event production, a serial worker and MLV serialization. It still relies on `raw_lv_request()`, geometry in `raw_info`, `raw_lv_redirect_edmac()` and a working platform copy backend. The event producer has test crop offsets x=200/y=100; this horizontal crop conflicts with V3's full-width restriction. It is therefore a useful reference to adapt, not a module that can simply be enabled on the 750D. In particular, a simplified recorder does not remove the frame-lifetime and geometry gaps.
+
+Practical consequence: continue target-specific geometry/completion/copy analysis on the PC, use `raw_vidx` as an additional upstream lifecycle reference, and account for the newer copy API when implementing integration. Do not switch the upstream pin or enable a camera module without first validating the relevant bindings. No camera/SD access or communication with developers occurred during this review.
+
 ## Closest useful reference: 7D Mark II (DIGIC 6)
 
 The 750D and 7D2 both select `CONFIG_DIGIC_VI`, Cortex-R4, ARMv7-R, Thumb, and long calls. The 7D2 also selects `CONFIG_DUAL_DIGIC`, unlike the 750D. The shared generation makes it useful as a design reference, but does not make firmware addresses or DMA channels interchangeable.
