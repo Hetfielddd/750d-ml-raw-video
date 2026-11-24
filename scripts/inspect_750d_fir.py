@@ -42,6 +42,28 @@ def inspect_bytes(data):
     if not (0 < firmware_declared <= firmware_bytes == size - enc):
         raise ValueError('Invalid firmware ciphertext or declared content lengths')
     extended = any(data[header + 0x10:updater])
+    # The known 750D container has four region descriptors. Validate their
+    # geometry, without treating the descriptors or byte checksum as trusted.
+    if u32(0x44) != 4:
+        raise ValueError('Unsupported region descriptor count')
+    regions = [struct.unpack_from('<II', data, 0x48 + 8 * index) for index in range(4)]
+    expected_regions = [(0, 0x20), (0x24, 0x44),
+                        (header, firmware - header), (firmware, len(data) - firmware)]
+    if regions != expected_regions:
+        raise ValueError('Region descriptors do not match the known section layout')
+    if extended and (updater_bytes % 16 or firmware_bytes % 16):
+        raise ValueError('Extended-header ciphertext is not AES-block aligned')
+
+    crypto_headers = []
+    for name, start, end in (('updater', header, updater),
+                             ('firmware', firmware + dec, firmware + enc)):
+        # These 16/32/16/32 byte boundaries come from upstream enc_header().
+        # Their cryptographic roles are unknown here; do not label them keys,
+        # IVs or digests, or emit their bytes.
+        fields = [{'file_offset': hex(start + relative), 'bytes': count}
+                  for relative, count in ((0x10, 16), (0x20, 32), (0x40, 16), (0x50, 32))]
+        crypto_headers.append({'section': name, 'file_offset': hex(start),
+                               'bytes': end - start, 'opaque_fields': fields})
     return {
         'model': 'Canon EOS 750D', 'version': '1.1.0',
         'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(),
@@ -56,6 +78,14 @@ def inspect_bytes(data):
         'nonzero_extended_crypto_header': extended,
         'legacy_xor_extraction_policy': 'skip_extended_header' if extended else 'legacy_check_only',
         'crypto_classification_is_header_heuristic': True,
+        'region_descriptors_match_sections': True,
+        'region_descriptors': [{'file_offset': hex(start), 'bytes': count,
+                                'end_exclusive': hex(start + count)}
+                               for start, count in regions],
+        'crypto_headers': crypto_headers,
+        'authentication_fields': [{'file_offset': hex(start), 'bytes': 20,
+                                    'slot_bytes': 32} for start in (0x68, 0x88)],
+        'authentication_algorithm_verified': False,
         'decrypted': False,
         'note': 'Structural validation only; this file is not a ROM dump.'
     }

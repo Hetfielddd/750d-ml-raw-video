@@ -49,3 +49,13 @@ The last two observations reject this precise direct-application hypothesis. Nei
 The earlier Thumb candidate scanner missed these nearby strings because it did not implement ADR. It now handles T1, subtracting T2 and adding T3, with independent GNU assembler fixtures. Its 750D CLI identity check remains in place; the lower-level `scan()` function can examine a supplied donor segment. Candidate hits still require disassembly and context.
 
 The next firmware-analysis question is how the EOS DSLR update framing or key selection differs from this working M3 reference. No unknown 750D address, event callback, DMA channel or completed-frame source has been validated. The existing recorder still accepts only synthetic PC frames.
+
+## Follow-up: FI2 is not the 750D FIR framing
+
+Canon's [M3 1.2.1 support page](https://www.canon.com.au/support/sims-content?cid=1908CE3C822A4ADA9947695627D40D89&pid=7b3db57141704e0a8d45bcd362e0d980) identifies its update as `M3_121.FI2`. The CHDK [FI2 encoder](https://github.com/Anda2012/CHDK/blob/09a9a48ba84df3f61a633c4f1bd55be757b2bd1f/tools/packfi2/fi2enc.c) describes an encrypted header with a big-endian length, block descriptors and separately compressed/encrypted blocks. Its DryOS r55 descriptor is 40 bytes, matching the stride seen in the M3 updater. This identifies the M3 wrapper as a FI2 reference, not an identified EOS FIR decoder.
+
+The same mirror's [M3 platform configuration](https://github.com/Anda2012/CHDK/blob/09a9a48ba84df3f61a633c4f1bd55be757b2bd1f/platform/m3/makefile.inc) selects `KEYSYS=d4h` and disables FI2 startup for CHDK because of initialization issues. The key-family label is another reason not to infer common keys from the DIGIC number. Nothing was installed or started on a camera to check these observations.
+
+The actual 750D FIR instead contains a readable main header, four region descriptors and two separate 112-byte encryption headers. Its structural inspector now reports and validates those boundaries; [the metadata-only result](evidence/fir-region-layout.json) is reproducible from the existing private input. This validates input geometry, not plaintext or signatures.
+
+The public CHDK DSLR archive was rechecked: its visible entries include older 1000D/500D images and several EOS M models, but no 550D/60D reference was found in that folder. No claim is made about all public archives. The Canon M3 ZIP download did not complete through the web reader, so no official FI2 ciphertext was acquired or tested in this follow-up.

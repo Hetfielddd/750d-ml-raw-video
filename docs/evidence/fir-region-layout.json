@@ -1,0 +1,104 @@
+{
+  "model": "Canon EOS 750D",
+  "version": "1.1.0",
+  "bytes": 23626960,
+  "sha256": "91ae807b6ac27dcb9c2c6351557c131768cc06736957600fdd0f5014e5531450",
+  "container_checksum_valid": true,
+  "signature_authenticity_verified": false,
+  "updater_offset": "0x120",
+  "firmware_section_offset": "0x264af0",
+  "updater_ciphertext_bytes": 2509264,
+  "updater_declared_content_bytes": 2509264,
+  "firmware_ciphertext_bytes": 21117280,
+  "firmware_declared_content_bytes": 21117272,
+  "encrypted_payload_offset": "0x264b70",
+  "nonzero_extended_crypto_header": true,
+  "legacy_xor_extraction_policy": "skip_extended_header",
+  "crypto_classification_is_header_heuristic": true,
+  "region_descriptors_match_sections": true,
+  "region_descriptors": [
+    {
+      "file_offset": "0x0",
+      "bytes": 32,
+      "end_exclusive": "0x20"
+    },
+    {
+      "file_offset": "0x24",
+      "bytes": 68,
+      "end_exclusive": "0x68"
+    },
+    {
+      "file_offset": "0xb0",
+      "bytes": 2509376,
+      "end_exclusive": "0x264af0"
+    },
+    {
+      "file_offset": "0x264af0",
+      "bytes": 21117408,
+      "end_exclusive": "0x16884d0"
+    }
+  ],
+  "crypto_headers": [
+    {
+      "section": "updater",
+      "file_offset": "0xb0",
+      "bytes": 112,
+      "opaque_fields": [
+        {
+          "file_offset": "0xc0",
+          "bytes": 16
+        },
+        {
+          "file_offset": "0xd0",
+          "bytes": 32
+        },
+        {
+          "file_offset": "0xf0",
+          "bytes": 16
+        },
+        {
+          "file_offset": "0x100",
+          "bytes": 32
+        }
+      ]
+    },
+    {
+      "section": "firmware",
+      "file_offset": "0x264b00",
+      "bytes": 112,
+      "opaque_fields": [
+        {
+          "file_offset": "0x264b10",
+          "bytes": 16
+        },
+        {
+          "file_offset": "0x264b20",
+          "bytes": 32
+        },
+        {
+          "file_offset": "0x264b40",
+          "bytes": 16
+        },
+        {
+          "file_offset": "0x264b50",
+          "bytes": 32
+        }
+      ]
+    }
+  ],
+  "authentication_fields": [
+    {
+      "file_offset": "0x68",
+      "bytes": 20,
+      "slot_bytes": 32
+    },
+    {
+      "file_offset": "0x88",
+      "bytes": 20,
+      "slot_bytes": 32
+    }
+  ],
+  "authentication_algorithm_verified": false,
+  "decrypted": false,
+  "note": "Structural validation only; this file is not a ROM dump."
+}

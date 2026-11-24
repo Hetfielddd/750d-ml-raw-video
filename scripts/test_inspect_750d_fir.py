@@ -19,6 +19,10 @@ def fixture():
                           (0x38, len(data)), (0xb0, 16), (0xb4, 16)):
         struct.pack_into('<I', data, offset, value)
     data[0xc0] = 1
+    struct.pack_into('<I', data, 0x44, 4)
+    for index, (start, size) in enumerate(((0, 0x20), (0x24, 0x44),
+                                          (0xb0, 0x80), (0x130, 0x90))):
+        struct.pack_into('<II', data, 0x48 + 8 * index, start, size)
     struct.pack_into('<III', data, 0x130, 0x10, 0x80, 0x90)
     struct.pack_into('<II', data, 0x140, 16, 8)
     return checksum(data)
@@ -35,6 +39,29 @@ class FirInspectionTests(unittest.TestCase):
         self.assertEqual(result['updater_ciphertext_bytes'], 16)
         self.assertEqual(result['firmware_declared_content_bytes'], 8)
         self.assertEqual(data, original)
+        self.assertTrue(result['region_descriptors_match_sections'])
+        self.assertFalse(result['authentication_algorithm_verified'])
+        self.assertEqual(result['crypto_headers'][0]['bytes'], 112)
+        self.assertEqual(result['crypto_headers'][1]['opaque_fields'][-1],
+                         {'file_offset': '0x190', 'bytes': 32})
+
+    def test_rejects_forged_region_map_even_with_recomputed_checksum(self):
+        # Mutation cases cover an out-of-file end, overlap, omission, a wrong
+        # count and a table pointing into the authentication slots.
+        for offset, value in ((0x44, 5), (0x44, 0), (0x48, 0x68),
+                              (0x4c, 0x21), (0x58, 0xaf),
+                              (0x5c, 0x81), (0x64, 0xffffffff)):
+            with self.subTest(offset=offset, value=value):
+                data = fixture()
+                struct.pack_into('<I', data, offset, value)
+                with self.assertRaisesRegex(ValueError, 'region|Region'):
+                    inspect_bytes(checksum(data))
+
+    def test_rejects_unaligned_extended_ciphertext(self):
+        data = fixture()
+        struct.pack_into('<II', data, 0xb0, 15, 15)
+        with self.assertRaisesRegex(ValueError, 'aligned'):
+            inspect_bytes(checksum(data))
 
     def test_zero_header_is_not_a_decryption_success(self):
         data = fixture()

@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Distinguished the M3 FI2 wrapper from the target EOS FIR format using Canon's file description and CHDK source. Identified published cross-model unpacking evidence based on a 60D ROM, without obtaining a new EOS dump. Strengthened the actual 750D FIR inspector with region-map and extended-header alignment validation; 23 Python tests pass. See [the FIR follow-up](rom-analysis.md#fir-framing-follow-up-and-an-older-eos-reference-route).
+
 - Obtained a public CHDK EOS M3 1.01A full ROM and traced its firmware-update parser to AES-128 and a CBC length wrapper. Native routines execute on the PC and pass a known-answer vector plus four generated-frame cases. Direct M3 key/IV/wrapper application to the 750D FIR fails length bounds; no 750D plaintext acquired. Added ADR candidate decoding with GNU assembler verification. Twenty-one Python tests, five ARM suites and 19 upstream layout assertions pass. See [the M3 experiment](m3-crypto-reference.md).
 
 - Read the previously reader-blocked public 750D forum in a browser and found a specific external 2017 image lead, described in later posts as firmware 1.0.0. The external folder was blocked by browser site safety; no image acquired or validated. An older image cannot establish 1.1.0 stubs. See [forum follow-up](rom-analysis.md#public-forum-access-and-an-older-image-lead).
@@ -53,6 +55,19 @@ The 750D port does not enable RAW recording. Some EDMAC functions are empty plac
 - A verified fast-copy function for 750D 1.1.0, including channel, alignment, cache, and calling-context constraints.
 - Confirmation of frame synchronization and buffer lifetime.
 - Plaintext firmware analysis material for cross-reference analysis and QEMU execution.
+
+### Distance to a first real RAW recording
+
+The offline recorder logic is implemented and tested with synthetic frames. Its copy, queue, MLV writing, file-error handling and source-lifetime contracts are reusable work, but have not been integrated with Canon's actual capture events or filesystem.
+
+The first real recording still depends on these uncompleted stages:
+
+1. Obtain readable target firmware or a demonstrated applicable donor decoder, then validate 750D 1.1.0-specific bindings.
+2. Identify the actual RAW Live View stream, its geometry/packing, completed-frame event and buffer lifetime.
+3. Integrate verified copying, cache handling and Canon file operations with the recorder.
+4. With separate owner authorization for hardware work, capture and independently check a real frame, then a short sequence, then recording stability and throughput.
+
+No real sensor frame has been acquired by this project. Additional synthetic tests and donor crypto execution do not complete stage 2. The current phase is firmware research and offline preparation; a percentage-to-finished or a reliable completion date is not supported by the evidence. The PC-only constraint remains in effect.
 
 QEMU EOS test infrastructure requires `ROM1.BIN` for DIGIC 6 cameras. Existing 750D emulation patches bypass OmarInit; they do not demonstrate accurate RAW pipeline emulation.
 

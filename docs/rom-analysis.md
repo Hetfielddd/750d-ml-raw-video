@@ -115,3 +115,21 @@ An independently accessible older image could help compare code or investigate d
 The linked [February 2024 developer update](https://www.magiclantern.fm/forum/index.php?topic=26852.msg246162#msg246162) reports heder's 7D2 full-buffer RAW proof of concept, including black borders and 14-bit data. This supports the donor strategy; it supplies no validated 750D capture address. The existing pinned implementation remains our code reference.
 
 This research step improved access to primary sources and found a specific historical lead. It did not decrypt the official update, obtain readable firmware bytes, or advance the hardware driver. No recorder code changed, so no additional execution tests were needed.
+
+## FIR framing follow-up and an older EOS reference route
+
+The [M3 native crypto experiment](m3-crypto-reference.md) now has a more precise interpretation: the traced wrapper processes FI2, while our target uses an EOS FIR container. Its negative direct-application result does not establish that all DIGIC 6 crypto references are unsuitable.
+
+Laurent Clévy's [Hack.lu 2025 slides](https://github.com/lclevy/d8_oracle/blob/main/hacklu2025_slides/d8_oracle_hacklu_final.pdf), slides 11-12, distinguish pre-2018 FIR's 112-byte encryption headers from the later 32-byte headers and state that the older key fails on the new scheme. This motivates looking for older EOS firmware, without establishing the exact compatibility of any particular donor with 750D.
+
+Marius Muench's [2019 thesis](https://www.eurecom.fr/en/publication/5969), section 6.4.1 (printed pages 91-94), provides stronger cross-model evidence: routines extracted using an actual 60D dump unpacked the updater and firmware of 20 downloaded camera updates. The text does not name 750D among them. That experiment began with a camera dump, so it is not a ciphertext-only solution. A focused public repository search found no Groundhogger repository; this is not an exhaustive absence claim.
+
+The next useful donor input is therefore a readable older EOS image containing this FIR decoder, rather than another arbitrary FI2 image. A 60D or comparable EOS reference could reduce the required 750D-specific analysis if compatible; this remains an untested route. No such new dump or applicable decoder was obtained in this follow-up.
+
+### Actual target input checks
+
+`inspect_750d_fir.py` now validates the known four-entry region map against the section offsets. For our actual FIR its ranges are `[0,0x20)`, `[0x24,0x68)`, `[0xb0,0x264af0)` and `[0x264af0,0x16884d0)`. Both encryption headers are 112 bytes; their opaque extension boundaries are reported as 16/32/16/32-byte fields, following the pinned upstream `enc_header()` interpretation. The fields are not identified as keys, IVs or digests, and their bytes are not emitted.
+
+The inspector also rejects unaligned ciphertext for the extended-header case and reports the two 20-byte authentication field locations without verifying their algorithms or values. A recomputed byte checksum cannot make a malformed region map pass. The actual input passes and is unchanged; all 23 Python tests pass, including new adversarial map and alignment cases. [Saved result](evidence/fir-region-layout.json).
+
+These are checks of encrypted input structure. They cannot by themselves validate a proposed decryption, identify sensor buffers or demonstrate RAW recording.
