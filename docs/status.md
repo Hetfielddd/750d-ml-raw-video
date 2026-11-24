@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced width, height and a row-size selector from the actual EVF caller structure through the native publisher and reviewed mode configuration into DMA descriptor arithmetic/packing. Six native PC fixtures pass, including deliberately invalid inputs that demonstrate truncation and height underflow. Physical register writes and real dimensions/packing remain unverified. See [the geometry route](750d-raw-geometry.md).
+
 - Traced a reviewed preparation branch into a candidate DMA destination: channel index 1 / register base `0xD0004100`. Four native PC cases stop before the destination store, verify address alias clearing and zero-address skipping, and check channel callback registration/forwarding through an artificially invoked dispatch tail. No hardware interrupt, pixel capture or camera binding enabled. See [the destination trace and limits](750d-raw-destination.md).
 
 - Identified two actual 750D register-shadow readers and executed their pointer setters, shadow-only writers and readers with synthetic RAM: 28 reads and four expected unmapped-read faults pass. Traced RAW parameter submission to a Postman mailbox sender; 12 native command-preparation cases pass, stopping before mailbox writes. Peer delivery and DMA completion are unverified. No camera binding enabled. See [register shadows and the message boundary](750d-register-shadows.md).

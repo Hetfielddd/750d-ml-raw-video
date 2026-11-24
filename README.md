@@ -16,6 +16,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 - Actual 750D RAW address-selection and parameter-publication code now passes seven bounded PC scenarios. This traces a preparation address; a completed sensor frame is not yet acquired. See [the target route](docs/750d-raw-address-route.md).
 - Two actual 750D register-shadow readers now pass 28 synthetic-memory reads and four expected fault cases on the PC. Live-bank selection and RAW DMA completion remain unverified. See [the register shadows and message boundary](docs/750d-register-shadows.md).
 - A reviewed RAW preparation branch now reaches candidate DMA destination `0xD0004108` in bounded native PC execution, stopping before the physical store. Four cases also verify callback registration/forwarding; no pixels or hardware events are emulated. See [the destination trace](docs/750d-raw-destination.md).
+- Six native geometry cases now trace caller fields into configuration, row-size arithmetic and the DMA descriptor packer, including truncation/underflow cases. Real mode dimensions and pixel packing remain unverified. See [the geometry route](docs/750d-raw-geometry.md).
 
 Full-camera QEMU emulation has not been run. The separate experimental components execute under Unicorn ARM emulation. Camera modules and an installation ZIP have not been built. These tests do not validate RAW capture or operation on physical hardware.
 
@@ -46,6 +47,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [750D RAW address selection and parameter publication on the PC](docs/750d-raw-address-route.md)
 - [750D register-shadow readers and the writer's message boundary](docs/750d-register-shadows.md)
 - [750D candidate RAW DMA destination and channel callback route](docs/750d-raw-destination.md)
+- [750D RAW geometry fields, row-size arithmetic and DMA packing](docs/750d-raw-geometry.md)
 - [How related cameras reached RAW video and the 750D port strategy](docs/similar-camera-raw.md)
 - [Experimental C frame-copy component and ARM execution tests](docs/raw14-copy-core.md)
 - [Experimental frame queue and writer ownership](docs/raw14-queue.md)
