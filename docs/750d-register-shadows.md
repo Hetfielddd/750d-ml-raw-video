@@ -50,7 +50,7 @@ python scripts/probe_750d_path_messages.py /private/750d-analysis/record-06.bin
 
 [Machine-readable command-preparation result](evidence/750d-path-messages.json). The register-store ordering remains a static finding; the experiment does not execute those stores.
 
-The local receive callbacks at `0xFE3807BA` and `0xFE3807D0` invoke registered function pointers; `0xFE3807C8` signals the local semaphore. Their table is reached through `0xFE3806FE`. In particular, a returned sender call or a semaphore release cannot yet be labeled RAW DMA completion. The peer's receiving path, actual image writer and buffer lifetime remain to be traced.
+The local receive callbacks at `0xFE3807BA` and `0xFE3807D0` invoke registered function pointers; `0xFE3807C8` signals the local semaphore. Their table is reached through `0xFE3806FE`. In particular, a returned sender call or a semaphore release cannot yet be labeled RAW DMA completion. A [subsequent investigation](750d-raw-destination.md) follows reviewed peer-side helper functions to a candidate destination-register store and a channel callback route. Complete mailbox dispatch and buffer lifetime remain unverified.
 
 ## Relation to the 7D2 implementation and remaining work
 

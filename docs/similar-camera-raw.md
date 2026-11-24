@@ -55,6 +55,8 @@ The reviewed 80D.103 and 5D4.133 configurations also select DIGIC 6 but do not e
 
 Target firmware analysis now identifies [two register-shadow reader candidates](750d-register-shadows.md), with their native behavior tested on the PC. Their live-bank coherence and RAW-channel relevance are still unverified, so the platform placeholder remains in place.
 
+A later [target destination trace](750d-raw-destination.md) follows a reviewed branch to channel index 1 / register base `0xD0004100`, stopping before the hardware store. This differs from the 7D2 donor's channel base. It remains a branch-specific candidate, not a platform binding validated for active camera modes.
+
 ## Compile-only probe performed
 
 The Windows script now accepts `-ProbeRawBackend`. It compiles only `raw.c`, forcing `CONFIG_RAW_LIVEVIEW` through compiler flags in a separate build directory. It does not edit the camera source, supply invented register values, link a loader, or execute the result.

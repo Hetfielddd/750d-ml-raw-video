@@ -1,0 +1,60 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "plain",
+      "input_marker": "0x12345000",
+      "native_channel_index": 1,
+      "destination_register": "0xd0004108",
+      "prepared_destination": "0x12345000",
+      "stopped_before_physical_store": true,
+      "native_channel_callback_registered": "0x1bb709b",
+      "synthetic_irq_tail_forwarded_argument": "0x76543210",
+      "passed": true
+    },
+    {
+      "case": "alias_bit_30",
+      "input_marker": "0x52345000",
+      "native_channel_index": 1,
+      "destination_register": "0xd0004108",
+      "prepared_destination": "0x12345000",
+      "stopped_before_physical_store": true,
+      "native_channel_callback_registered": "0x1bb709b",
+      "synthetic_irq_tail_forwarded_argument": "0x76543210",
+      "passed": true
+    },
+    {
+      "case": "alias_bit_31",
+      "input_marker": "0x92345000",
+      "native_channel_index": 1,
+      "destination_register": "0xd0004108",
+      "prepared_destination": "0x12345000",
+      "stopped_before_physical_store": true,
+      "native_channel_callback_registered": "0x1bb709b",
+      "synthetic_irq_tail_forwarded_argument": "0x76543210",
+      "passed": true
+    },
+    {
+      "case": "no_pending_address",
+      "input_marker": "0x0",
+      "native_channel_index": 1,
+      "destination_register": null,
+      "prepared_destination": null,
+      "stopped_before_physical_store": false,
+      "native_channel_callback_registered": "0x1bb709b",
+      "synthetic_irq_tail_forwarded_argument": "0x76543210",
+      "passed": true
+    }
+  ],
+  "source_alias_hypotheses": {
+    "application_delta": "0xfcc82368",
+    "driver_delta": "0x7e7473e0"
+  },
+  "native_calls_stubbed": false,
+  "mmio_regions_mapped": false,
+  "physical_stores_executed": false,
+  "raw_capture_demonstrated": false,
+  "camera_binding_enabled": false,
+  "limits": "Separate native stages; supplied incoming registers, channel-classifier RAM and narrow function/table aliases. Reviewed mode-3 path only. Boot relocation, mailbox delivery, hardware channel activity, IRQ status/acknowledgement, frame geometry and completion are not validated. Address markers are never pixel buffers."
+}
