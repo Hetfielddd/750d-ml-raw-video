@@ -1,0 +1,623 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "raw_only",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x0",
+          "mask_after": "0x10",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x0"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 0,
+      "final_mask": "0x10",
+      "passed": true
+    },
+    {
+      "case": "raw_last",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0xf",
+          "mask_after": "0x2f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x2f",
+          "mask_after": "0x6f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x6f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x6f"
+            },
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 1,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "raw_first",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x0",
+          "mask_after": "0x10",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x0"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x10",
+          "mask_after": "0x11",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x11",
+          "mask_after": "0x13",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x13",
+          "mask_after": "0x17",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x17",
+          "mask_after": "0x1f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 1,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "raw_repeated_before_others",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x0",
+          "mask_after": "0x10",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x0"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x10",
+          "mask_after": "0x10",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x10"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x10",
+          "mask_after": "0x11",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x11",
+          "mask_after": "0x13",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x13",
+          "mask_after": "0x17",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x17",
+          "mask_after": "0x1f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 2,
+      "aggregate_callback_calls": 1,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "missing_one_component",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0xf",
+          "mask_after": "0x1f",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0xf"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 0,
+      "final_mask": "0x3f",
+      "passed": true
+    },
+    {
+      "case": "two_complete_cycles",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0xf",
+          "mask_after": "0x1f",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0xf"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0xf",
+          "mask_after": "0x1f",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0xf"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 2,
+      "aggregate_callback_calls": 2,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "preseeded_other_components",
+      "initial_mask": "0x6f",
+      "events": [
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x6f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x6f"
+            },
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 1,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "extra_bit_blocks_equality",
+      "initial_mask": "0x80",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x80",
+          "mask_after": "0x81",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x81",
+          "mask_after": "0x83",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x83",
+          "mask_after": "0x87",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x87",
+          "mask_after": "0x8f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0x8f",
+          "mask_after": "0x9f",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0x8f"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x9f",
+          "mask_after": "0xbf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0xbf",
+          "mask_after": "0xff",
+          "callbacks": []
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 0,
+      "final_mask": "0xff",
+      "passed": true
+    },
+    {
+      "case": "raw_callback_absent",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0xf",
+          "mask_after": "0x1f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": [
+            {
+              "kind": "aggregate",
+              "argument": "0x55667788",
+              "mask_at_callback": "0x7f"
+            }
+          ]
+        }
+      ],
+      "raw_callback_calls": 0,
+      "aggregate_callback_calls": 1,
+      "final_mask": "0x0",
+      "passed": true
+    },
+    {
+      "case": "aggregate_callback_absent",
+      "initial_mask": "0x0",
+      "events": [
+        {
+          "component_bit": "0x1",
+          "mask_before": "0x0",
+          "mask_after": "0x1",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x2",
+          "mask_before": "0x1",
+          "mask_after": "0x3",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x4",
+          "mask_before": "0x3",
+          "mask_after": "0x7",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x8",
+          "mask_before": "0x7",
+          "mask_after": "0xf",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x10",
+          "mask_before": "0xf",
+          "mask_after": "0x1f",
+          "callbacks": [
+            {
+              "kind": "raw",
+              "argument": "0x11223344",
+              "mask_at_callback": "0xf"
+            }
+          ]
+        },
+        {
+          "component_bit": "0x20",
+          "mask_before": "0x1f",
+          "mask_after": "0x3f",
+          "callbacks": []
+        },
+        {
+          "component_bit": "0x40",
+          "mask_before": "0x3f",
+          "mask_after": "0x0",
+          "callbacks": []
+        }
+      ],
+      "raw_callback_calls": 1,
+      "aggregate_callback_calls": 0,
+      "final_mask": "0x0",
+      "passed": true
+    }
+  ],
+  "task_notification_cases": [
+    {
+      "case": "raw_component_task_event",
+      "stored_callback": "0x1b8d9b9",
+      "event_number": 7,
+      "passed": true
+    },
+    {
+      "case": "aggregate_task_event",
+      "stored_callback": "0x1b8d9d5",
+      "event_number": 6,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "os_helpers_executed": false,
+  "hardware_irq_or_dma_emulated": false,
+  "pixel_buffers_mapped": false,
+  "raw_capture_demonstrated": false,
+  "camera_binding_enabled": false,
+  "limits": "Synthetic event order, callback registrations and saved frames. Separate native slices stop before event-flag and IRQ-restore helpers and resume at reviewed continuations. Callback endpoints are existing native BX LR leaves. Actual application task callbacks are checked separately before the queue operation. No queue delivery, timing, ownership, cache, pixel contents or actual delivery of events is validated."
+}

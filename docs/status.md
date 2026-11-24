@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Distinguished RAW-component notification from seven-bit aggregate completion in the actual driver. Ten native synthetic-order scenarios verify callback ordering, repeated events and mask reset; two separate native checks identify application task events 7 and 6, stopping before queue delivery. This does not establish frame identity or buffer lifetime. See [completion events](750d-completion-events.md).
+
 - Traced width, height and a row-size selector from the actual EVF caller structure through the native publisher and reviewed mode configuration into DMA descriptor arithmetic/packing. Six native PC fixtures pass, including deliberately invalid inputs that demonstrate truncation and height underflow. Physical register writes and real dimensions/packing remain unverified. See [the geometry route](750d-raw-geometry.md).
 
 - Traced a reviewed preparation branch into a candidate DMA destination: channel index 1 / register base `0xD0004100`. Four native PC cases stop before the destination store, verify address alias clearing and zero-address skipping, and check channel callback registration/forwarding through an artificially invoked dispatch tail. No hardware interrupt, pixel capture or camera binding enabled. See [the destination trace and limits](750d-raw-destination.md).
