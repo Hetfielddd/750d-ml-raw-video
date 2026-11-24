@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Read the previously reader-blocked public 750D forum in a browser and found a specific external 2017 image lead, described in later posts as firmware 1.0.0. The external folder was blocked by browser site safety; no image acquired or validated. An older image cannot establish 1.1.0 stubs. See [forum follow-up](rom-analysis.md#public-forum-access-and-an-older-image-lead).
+
 - Investigated the selected FIR-only/public-source route using primary DIGIC 6 research, the public installer dependency chain, and a local exact-marker scan of both actual ciphertext regions. No usable plaintext or decryption key acquired. Saved the bounded negative result and firmware-byte-free evidence in [ROM analysis](rom-analysis.md#fir-only-investigation-after-choosing-the-pc-only-route). Camera access remains outside scope.
 
 - Followed the original contributor's RAW/d6 branches and upstream EDMAC cleanup branch; reviewed 750D files still lack the RAW channel/copy/shadow-reader implementation. Rechecked the actual Canon FIR with stronger section-bound checks and explicit legacy-XOR exclusion for its extended header. Nineteen Python tests pass. No plaintext firmware or validated capture address acquired; see [the bounded follow-up](rom-analysis.md#older-branches-and-the-actual-fir-boundary).
