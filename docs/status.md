@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Executed the ARM recorder against real PC file operations through a test bridge. Independently verified all 36 recorded payloads from a 48-submission queue-overflow scenario and a separate partial-write recovery file. Reviewed upstream FIO contracts and identified the missing public truncation operation as an adapter design requirement. See [disk bridge and FIO findings](raw14-disk-bridge.md).
+
 - Connected synthetic frames through the ARM copy core and queue to a C MLV writer with short-write handling, rollback, and error finalization. Exported a two-frame test clip to disk and independently checked payloads/metadata in Python. All three ARM suites, 19 actual-upstream wire-layout assertions, and nine Python tests pass. This is an offline pipeline, not sensor recording or verified editor compatibility. See [the MLV writer](raw14-mlv-writer.md).
 
 - Added a fixed-buffer frame queue with successful-copy publication, FIFO writer ownership, explicit overflow handling, and stale-lease protection. Both the copy and queue C suites execute successfully under ARM emulation; the queue suite includes a 1,000-step reference-FIFO scenario. No camera/DMA/filesystem integration is implied. See [the queue contract](raw14-queue.md).
@@ -57,4 +59,4 @@ Produced the core ELF, its embedded binary image, and the loader ELF. The loader
 
 The linker reports RWX load segments. Bundled TCC uses its own warning settings. A reduced build with modules and TCC disabled failed to link because of `module_exec_cbr`; the successful configuration uses the default module support.
 
-No emulator execution, physical-camera execution, RAW frame capture, recording throughput measurement, or stability test has occurred.
+No full-camera QEMU execution, physical-camera execution, real RAW frame capture, camera recording throughput measurement, or camera stability test has occurred. Experimental C components have executed under Unicorn ARM emulation, including real PC file operations through a test bridge.

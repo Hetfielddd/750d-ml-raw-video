@@ -11,8 +11,9 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 - A Windows build script and a read-only FIR inspection script are included.
 - The official Canon 1.1.0 update container was inspected. Its structural checksum passes; the firmware payload remains encrypted.
 - The 7D Mark II frame-copying implementation has been reviewed as a possible reference for a future 750D port.
+- The experimental ARM copy/queue/MLV path now writes synthetic clips through a PC filesystem test bridge, including queue overflow and partial-write rollback checks.
 
-The emulator has not been run. Separate camera modules and an installation ZIP have not been built. Successful compilation does not validate RAW capture or operation on physical hardware.
+Full-camera QEMU emulation has not been run. The separate experimental components execute under Unicorn ARM emulation. Camera modules and an installation ZIP have not been built. These tests do not validate RAW capture or operation on physical hardware.
 
 ## Getting the source
 
@@ -39,6 +40,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Experimental C frame-copy component and ARM execution tests](docs/raw14-copy-core.md)
 - [Experimental frame queue and writer ownership](docs/raw14-queue.md)
 - [Experimental MLV writer and end-to-end verification](docs/raw14-mlv-writer.md)
+- [ARM recording to PC files and Canon FIO integration findings](docs/raw14-disk-bridge.md)
 - `scripts/inspect_750d_fir.py`: read-only structural inspection of a locally supplied Canon update file.
 
 ## License and attribution

@@ -49,7 +49,8 @@ def check_upstream_layout(compiler, source, build):
     return {'passed': True, 'assertions': len(checks)}
 
 
-def execute(elf, test_source, symbols=None, sample=None):
+def execute(elf, test_source, symbols=None, sample=None, io_bridge=None,
+            instruction_limit=2_000_000):
     from unicorn import Uc, UC_ARCH_ARM, UC_MODE_THUMB, UC_HOOK_CODE
     from unicorn.arm_const import (UC_ARM_REG_SP, UC_ARM_REG_LR, UC_ARM_REG_R0,
                                    UC_CPU_ARM_CORTEX_R5, UC_ARM_REG_PC)
@@ -83,9 +84,11 @@ def execute(elf, test_source, symbols=None, sample=None):
             uc.emu_stop()
 
     emulator.hook_add(UC_HOOK_CODE, stop_at_return)
+    if io_bridge is not None:
+        io_bridge.attach(emulator, symbols)
     emulator.reg_write(UC_ARM_REG_SP, 0x4e000)
     emulator.reg_write(UC_ARM_REG_LR, sentinel | 1)
-    emulator.emu_start(entry | 1, 0x50000, timeout=5_000_000, count=2_000_000)
+    emulator.emu_start(entry | 1, 0x50000, timeout=10_000_000, count=instruction_limit)
     if not stopped:
         raise RuntimeError(f'Test did not return (PC={emulator.reg_read(UC_ARM_REG_PC):#x})')
     line = emulator.reg_read(UC_ARM_REG_R0)
