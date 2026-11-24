@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced the RAW setter's consumers into the actual 750D Live View preparation handler. Seven bounded native-code PC cases verify flag-dependent address selection, counter restriction, fallback behavior and propagation into two parameter locations. The selected address is not established as a completed frame; DMA channel, geometry and ownership timing remain unverified. See [the address route](750d-raw-address-route.md).
+
 - Decrypted the actual 750D 1.1.0 updater and nine-record firmware container using isolated native crypto from a public 70D 1.1.2 ROM. Both native verification calls pass, deliberately corrupted ciphertext is rejected, the decoded checksum matches, and main record 6 matches `SIG_750D_110`. Executed the target's identified `lv_save_raw` setter against synthetic RAM in four bounded cases. All 27 Python tests pass. This is readable target code and function-level evidence, not real-frame capture. See [the plaintext milestone](750d-plaintext-milestone.md).
 
 - Distinguished the M3 FI2 wrapper from the target EOS FIR format using Canon's file description and CHDK source. Identified published cross-model unpacking evidence based on a 60D ROM, without obtaining a new EOS dump. Strengthened the actual 750D FIR inspector with region-map and extended-header alignment validation; 23 Python tests pass. See [the FIR follow-up](rom-analysis.md#fir-framing-follow-up-and-an-older-eos-reference-route).
@@ -65,7 +67,7 @@ The offline recorder logic is implemented and tested with synthetic frames. Its 
 The first real recording still depends on these uncompleted stages:
 
 1. Readable target firmware is now obtained. Validate 750D 1.1.0-specific bindings beyond the small RAW-control setter already tested on the PC.
-2. Identify the actual RAW Live View stream, its geometry/packing, completed-frame event and buffer lifetime.
+2. A RAW preparation-address route is now traced and tested. Identify its actual writer, stream geometry/packing, completed-frame event and buffer lifetime.
 3. Integrate verified copying, cache handling and Canon file operations with the recorder.
 4. With separate owner authorization for hardware work, capture and independently check a real frame, then a short sequence, then recording stability and throughput.
 

@@ -66,4 +66,6 @@ python scripts/probe_750d_lv_toggle.py /private/new-750d-analysis/record-06.bin
 
 We can now trace the actual 750D RAW-control state and image-transfer callbacks. The next work is to follow the setter's consumers and identify the RAW Live View source, its dimensions/packing and the event that makes a buffer safe to copy. Then the existing offline recorder needs verified target copy and file-operation integration.
 
+Follow-up: [the setter-to-preparation-address route is now traced and tested](750d-raw-address-route.md). Completed-frame ownership remains unresolved.
+
 The update does not contain every flash region, calibration value or boot dependency. No fabricated full ROM with guessed filler has been created; full-camera QEMU boot is still unverified. No camera or SD-card access occurred. Real RAW recording remains unimplemented, but the project has moved from searching for readable target code to analyzing it directly.

@@ -1,0 +1,78 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "disabled_clean",
+      "selected_address": "0x56789000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 0,
+      "passed": true
+    },
+    {
+      "case": "disabled_pending",
+      "selected_address": "0x56789000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 0,
+      "passed": true
+    },
+    {
+      "case": "enabled",
+      "selected_address": "0x12345000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 1,
+      "passed": true
+    },
+    {
+      "case": "enabled_clears_auxiliary",
+      "selected_address": "0x12345000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 1,
+      "passed": true
+    },
+    {
+      "case": "selected_frame_matches",
+      "selected_address": "0x12345000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 1,
+      "passed": true
+    },
+    {
+      "case": "selected_frame_mismatch",
+      "selected_address": "0x56789000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 18,
+      "debug_logger_calls_stubbed": 1,
+      "passed": true
+    },
+    {
+      "case": "caller_route_inactive",
+      "selected_address": "0x56789000",
+      "published_address_1": "0x6b370",
+      "published_address_2": "0x6b3e0",
+      "selection_tag_after": 0,
+      "debug_logger_calls_stubbed": 0,
+      "passed": true
+    }
+  ],
+  "actual_native_code": [
+    "lv_save_raw setter",
+    "address-selection slice and getters",
+    "parameter publisher"
+  ],
+  "mmio_regions_mapped": false,
+  "pixel_buffers_mapped": false,
+  "raw_capture_demonstrated": false,
+  "limits": "Synthetic caller state; only a slice of the preparation handler executes. Logger is stubbed. The selected address is a preparation parameter, not a proven completed-frame lease."
+}
