@@ -1,0 +1,137 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "operation": 0,
+      "wrapper": "0xfe38074e",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000200",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 0,
+      "wrapper": "0xfe38074e",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000200",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 1,
+      "wrapper": "0xfe38075a",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000201",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 1,
+      "wrapper": "0xfe38075a",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000201",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 2,
+      "wrapper": "0xfe380766",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000202",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 2,
+      "wrapper": "0xfe380766",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000202",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 3,
+      "wrapper": "0xfe380772",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000203",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 3,
+      "wrapper": "0xfe380772",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000203",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 4,
+      "wrapper": "0xfe3807a0",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000204",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 4,
+      "wrapper": "0xfe3807a0",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000204",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 5,
+      "wrapper": "0xfe3807ac",
+      "counter_before": 0,
+      "counter_after": 1,
+      "prepared_command": "0x2000205",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    },
+    {
+      "operation": 5,
+      "wrapper": "0xfe3807ac",
+      "counter_before": 255,
+      "counter_after": 0,
+      "prepared_command": "0x2000205",
+      "payload_marker": "0x12345000",
+      "next_store_address": "0xd2000104",
+      "passed": true
+    }
+  ],
+  "actual_native_code": [
+    "Live View command wrappers",
+    "service wrapper",
+    "separate sender-packing slice"
+  ],
+  "native_calls_stubbed": false,
+  "mmio_regions_mapped": false,
+  "mailbox_stores_executed": false,
+  "peer_delivery_demonstrated": false,
+  "raw_capture_demonstrated": false,
+  "limits": "Stops at the transport entry, then executes a separate packing slice with supplied incoming registers. Semaphore and interrupt setup, mailbox stores and receiver do not execute. The payload is an unmapped marker, never dereferenced."
+}

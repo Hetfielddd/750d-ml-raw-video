@@ -53,6 +53,8 @@ The reviewed 80D.103 and 5D4.133 configurations also select DIGIC 6 but do not e
 - Missing `SHAD_GAIN_REGISTER` and no 750D branch defining `PACK32_MODE` / mode constants in `raw_lv_request_bpp()`.
 - Recording lifecycle property handling and real frame geometry remain unvalidated.
 
+Target firmware analysis now identifies [two register-shadow reader candidates](750d-register-shadows.md), with their native behavior tested on the PC. Their live-bank coherence and RAW-channel relevance are still unverified, so the platform placeholder remains in place.
+
 ## Compile-only probe performed
 
 The Windows script now accepts `-ProbeRawBackend`. It compiles only `raw.c`, forcing `CONFIG_RAW_LIVEVIEW` through compiler flags in a separate build directory. It does not edit the camera source, supply invented register values, link a loader, or execute the result.

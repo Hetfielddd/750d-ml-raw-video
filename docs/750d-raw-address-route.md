@@ -47,4 +47,6 @@ The handler labeled `evfReadOutDoneInterrupt` starts at `0xFE2B9536` and calls a
 
 A literal matching the 7D2 donor's `0xD0004200` does occur in the target image. The directly reviewed reference is a diagnostic read, and another raw-byte match is inside an unrelated instruction encoding. Neither identifies the 750D RAW Live View channel. The donor address has not been copied into the camera platform.
 
+The [next investigation](750d-register-shadows.md) identifies two target register-shadow readers and traces parameter submission into a Postman mailbox sender. It does not yet identify the peer's image writer or establish DMA completion.
+
 Next work is to identify the writer that fills the selected region, its geometry/packing and a completion event with a demonstrable buffer lifetime. Only then can a real provider satisfy the offline recorder's completed-frame lease contract. No real frame acquisition, full-camera emulation, hardware execution or RAW recording is claimed here.

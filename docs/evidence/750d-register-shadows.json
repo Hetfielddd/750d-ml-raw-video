@@ -1,0 +1,121 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "banks": [
+    {
+      "bank": "primary_bank",
+      "reader": "0xfe40a6d8",
+      "global_pointer_word": "0x28f10",
+      "formula": "*uint32(global_pointer + (address & 0x7ffff))",
+      "synthetic_bank_bytes": 393216,
+      "cases": [
+        {
+          "offset": "0x0",
+          "value": "0x13579bdf",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4",
+          "value": "0x125598db",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4208",
+          "value": "0x11539dd7",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4210",
+          "value": "0x105192d3",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4214",
+          "value": "0x175f97cf",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x12340",
+          "value": "0x165d94cb",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x5fffc",
+          "value": "0x155b89c7",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        }
+      ],
+      "uninitialized_read_fault_observed": true,
+      "read_beyond_initialized_size_fault_observed": true,
+      "passed": true
+    },
+    {
+      "bank": "secondary_bank_candidate",
+      "reader": "0xfe753834",
+      "global_pointer_word": "0x1ac40a4",
+      "formula": "*uint32(global_pointer + (address & 0x7ffff))",
+      "synthetic_bank_bytes": 393216,
+      "cases": [
+        {
+          "offset": "0x0",
+          "value": "0x13579bdf",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4",
+          "value": "0x125598db",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4208",
+          "value": "0x11539dd7",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4210",
+          "value": "0x105192d3",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x4214",
+          "value": "0x175f97cf",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x12340",
+          "value": "0x165d94cb",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        },
+        {
+          "offset": "0x5fffc",
+          "value": "0x155b89c7",
+          "upper_address_bit_19_ignored": true,
+          "passed": true
+        }
+      ],
+      "uninitialized_read_fault_observed": true,
+      "read_beyond_initialized_size_fault_observed": true,
+      "passed": true
+    }
+  ],
+  "cpu_model": "Cortex-A9 / compatible Thumb instruction subset",
+  "native_calls_stubbed": false,
+  "mmio_regions_mapped": false,
+  "sensor_or_pixel_buffers_mapped": false,
+  "camera_binding_enabled": false,
+  "raw_capture_demonstrated": false,
+  "limits": "Exact target readers, pointer setters and shadow-only writers execute against synthetic RAM. MMIO-like arguments are values only. Live initialization, cross-core visibility, freshness, RAW channel selection and frame completion are unverified."
+}
