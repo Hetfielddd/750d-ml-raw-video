@@ -37,6 +37,8 @@ Static registration review adds an important mode distinction. The earlier revie
 
 ## Reproduce and limits
 
+The [next investigation](750d-evf-raw-event.md) follows the separately registered RAW handler to EVF event 19, labeled `evfAfPathCompleteInterrupt`. This further qualifies its meaning; a RAW-component notification is not by itself a recorder-ready frame.
+
 ```sh
 python scripts/probe_750d_completion_dispatch.py /private/750d-analysis/record-06.bin
 ```

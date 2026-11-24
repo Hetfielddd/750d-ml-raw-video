@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced the separately registered RAW return callback to EVF event 19 and the handler labeled `evfAfPathCompleteInterrupt`. Five bounded native stage checks and four independent small-pool checks pass; all ten table entries are decoded. This qualifies the earlier notification as an AF consumer path, with no proof of a recorder-ready frame or ownership of the earlier sensor buffer. See [the EVF RAW-return event](750d-evf-raw-event.md).
+
 - Followed supplied completion events through the native task dispatcher and actual application table: event 6 prepares return operation 2, event 7 prepares operation 6. Ten dispatch cases and four separately invoked receiver checks pass. Static review identifies mode-dependent registration of the separate RAW callback. No queue/transport delivery or safe frame ownership is established. See [completion dispatch](750d-completion-dispatch.md).
 
 - Distinguished RAW-component notification from seven-bit aggregate completion in the actual driver. Ten native synthetic-order scenarios verify callback ordering, repeated events and mask reset; two separate native checks identify application task events 7 and 6, stopping before queue delivery. This does not establish frame identity or buffer lifetime. See [completion events](750d-completion-events.md).

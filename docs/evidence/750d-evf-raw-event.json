@@ -1,0 +1,115 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "native_cases": [
+    {
+      "case": "post_raw_event",
+      "stopped_before": "0xfe3ce01c",
+      "passed": true
+    },
+    {
+      "case": "post_without_context",
+      "stopped_before": "0xfe52fa48",
+      "passed": true
+    },
+    {
+      "case": "worker_forward",
+      "stopped_before": "0xfe3ce004",
+      "passed": true
+    },
+    {
+      "case": "handler_af_branch",
+      "stopped_before": "0xfe247768",
+      "passed": true
+    },
+    {
+      "case": "handler_skip_af_branch",
+      "stopped_before": "0xfe548550",
+      "passed": true
+    }
+  ],
+  "separate_downstream_pool_cases": [
+    {
+      "initial_index": 0,
+      "next_index": 1,
+      "returned_pointer": "0x41740",
+      "passed": true
+    },
+    {
+      "initial_index": 1,
+      "next_index": 0,
+      "returned_pointer": "0x41080",
+      "passed": true
+    },
+    {
+      "initial_index": 2,
+      "next_index": 0,
+      "returned_pointer": "0x41080",
+      "passed": true
+    },
+    {
+      "initial_index": 255,
+      "next_index": 0,
+      "returned_pointer": "0x41080",
+      "passed": true
+    }
+  ],
+  "decoded_event_19_transitions": [
+    {
+      "old_state": 0,
+      "next_state": 0,
+      "stored_handler": "0x0"
+    },
+    {
+      "old_state": 1,
+      "next_state": 1,
+      "stored_handler": "0x0"
+    },
+    {
+      "old_state": 2,
+      "next_state": 2,
+      "stored_handler": "0xfe2ba913"
+    },
+    {
+      "old_state": 3,
+      "next_state": 3,
+      "stored_handler": "0xfe2b969f"
+    },
+    {
+      "old_state": 4,
+      "next_state": 4,
+      "stored_handler": "0xfe2b969f"
+    },
+    {
+      "old_state": 5,
+      "next_state": 5,
+      "stored_handler": "0xfe2b969f"
+    },
+    {
+      "old_state": 6,
+      "next_state": 6,
+      "stored_handler": "0xfe2b969f"
+    },
+    {
+      "old_state": 7,
+      "next_state": 7,
+      "stored_handler": "0xfe2ba913"
+    },
+    {
+      "old_state": 8,
+      "next_state": 8,
+      "stored_handler": "0xfe2ba913"
+    },
+    {
+      "old_state": 9,
+      "next_state": 9,
+      "stored_handler": "0x0"
+    }
+  ],
+  "event_19_handler_label": "evfAfPathCompleteInterrupt",
+  "native_calls_stubbed": false,
+  "os_or_transport_executed": false,
+  "pixels_or_buffer_lease_validated": false,
+  "camera_binding_enabled": false,
+  "limits": "Supplied EVF context, handles, descriptor address and branch flag. Separate native slices; logger not executed or stubbed. EVF matrix is decoded only, low-memory OS dispatcher and queue not executed. AF processing and common continuation stop before execution. No actual frame, buffer reuse, cache or timing is demonstrated."
+}
