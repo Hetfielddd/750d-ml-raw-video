@@ -104,7 +104,7 @@ def verify(path, fault, fio=False):
     ids = [0] if fault else [i for i in range(48) if i % 4 != 3]
     expected = []
     for frame_id in ids:
-        crop_y = 2 * (frame_id % 3)
+        crop_y = 2
         payload = bytes((frame_id * 17 + i) % 256
                         for i in range(crop_y * 112, crop_y * 112 + 3584))
         expected.append({'number': frame_id, 'timestamp_us': frame_id * 1000000 // 24,
@@ -131,7 +131,7 @@ def main():
                     '-ffreestanding', '-fno-builtin', '-mcpu=cortex-r4', '-mthumb',
                     '-nostdlib', '-Wl,-e,test_run', '-Wl,-Ttext=0x10000', '-Wl,-Tdata=0x20000',
                     *[str(project / 'experimental' / f) for f in
-                      ('raw14_copy.c', 'raw14_queue.c', 'raw14_mlv.c', 'raw14_disk_demo.c')],
+                      ('raw14_copy.c', 'raw14_queue.c', 'raw14_capture.c', 'raw14_mlv.c', 'raw14_disk_demo.c')],
                     '-lgcc']
     nm = compiler.with_name(compiler.name.replace('gcc', 'nm'))
     results = {}

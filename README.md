@@ -42,6 +42,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Experimental MLV writer and end-to-end verification](docs/raw14-mlv-writer.md)
 - [ARM recording to PC files and Canon FIO integration findings](docs/raw14-disk-bridge.md)
 - [FIO contract adapter and recording without truncation](docs/raw14-fio-adapter.md)
+- [Completed-frame source ownership and donor callback analysis](docs/raw14-capture-source.md)
 - `scripts/inspect_750d_fir.py`: read-only structural inspection of a locally supplied Canon update file.
 
 ## License and attribution

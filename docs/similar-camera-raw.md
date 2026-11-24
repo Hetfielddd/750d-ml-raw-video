@@ -10,6 +10,8 @@ The decisive upstream change is [8d5b5c9: 7D2 mlv_lite raw video, full width onl
 
 ### End-to-end path
 
+The completed-frame ownership layer now has [a deeper callback/lifecycle analysis and PC implementation](raw14-capture-source.md). In particular, the donor programs the upcoming DMA destination and processes the opposite buffer after startup skipping; reading the current channel pointer alone is not a completed-frame protocol.
+
 1. `raw_lv_request()` reaches `raw_lv_enable()` in `src/raw.c`. After waiting for Live View to settle, the non-SLURP path calls Canon's named event procedure `lv_save_raw(1)`. It later disables the stream with `lv_save_raw(0)`. The principle is to ask Canon to produce its own RAW stream, rather than implement sensor readout from scratch. Availability and behavior on the 750D still require evidence.
 2. The 7D2 defines `RAW_LV_EDMAC_CHANNEL_ADDR=0xd0004200`. The common backend reads `ram_addr` for the current buffer and `yn_xn`/`yb_xb` for geometry through `shamem_read`. This read function is essential; a zero-return placeholder cannot provide valid frame geometry or buffer pointers.
 3. `CONFIG_EVF_STATE_SYNC` routes the `EVF_STATE` old-state 5 / input 5 transition to `vsync_func()`, which dispatches `CBR_VSYNC`. The recorder registers `raw_rec_vsync_cbr` for that callback. The exact state transition must be verified for the 750D.

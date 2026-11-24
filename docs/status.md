@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Added a completed-frame source lifecycle/lease layer, gated to PC synthetic sources. It validates fixed RAW14 geometry and sequence, holds source ownership through synchronous copy, releases dropped frames, and retries failed cleanup. Integrated it into all four disk scenarios with immediate source-buffer overwrite after release; recorded payloads remain correct. Five ARM suites pass. Traced donor callback ordering and startup ownership; no 750D firmware calls enabled. See [source integration](raw14-capture-source.md).
+
 - Added a portable adapter for ML-style signed writes and absolute-position seeks, with verified unchanged-EOF checks when truncation is unavailable. Normal synthetic recording finalizes without truncation; partial-tail errors refuse false success. Four ARM suites and four real-PC-file scenarios pass. This uses injected operations, not camera firmware bindings. See [FIO adapter](raw14-fio-adapter.md).
 
 - Executed the ARM recorder against real PC file operations through a test bridge. Independently verified all 36 recorded payloads from a 48-submission queue-overflow scenario and a separate partial-write recovery file. Reviewed upstream FIO contracts and identified the missing public truncation operation as an adapter design requirement. See [disk bridge and FIO findings](raw14-disk-bridge.md).

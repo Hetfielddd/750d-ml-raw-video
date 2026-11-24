@@ -18,6 +18,8 @@ The bridge uses the AAPCS32 argument convention: a 64-bit seek/truncate argument
 
 ## Verified scenarios
 
+The synthetic recorder now obtains frames through the [completed-frame source layer](raw14-capture-source.md). It uses a fixed two-row crop and immediately overwrites source memory on release, before queued output is written. Payload verification therefore also checks that the output owns its copy.
+
 The harness now runs both the direct backend below and an [ML-style FIO contract adapter](raw14-fio-adapter.md), producing four files per run. The FIO variant makes no truncate calls: normal output finalizes, while a partial tail remains explicitly unfinalized. The rollback behavior described below applies to the direct backend, which has real host truncation available.
 
 - Normal: 48 synthetic 64x32 frame submissions into three slots, drained after every four submissions. The fourth submission in each group is rejected because the queue is full. The output contains 36 frames, preserves source frame-number gaps, and sets the dropped-frame flag. File size: 130,408 bytes.
