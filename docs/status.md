@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Followed the original contributor's RAW/d6 branches and upstream EDMAC cleanup branch; reviewed 750D files still lack the RAW channel/copy/shadow-reader implementation. Rechecked the actual Canon FIR with stronger section-bound checks and explicit legacy-XOR exclusion for its extended header. Nineteen Python tests pass. No plaintext firmware or validated capture address acquired; see [the bounded follow-up](rom-analysis.md#older-branches-and-the-actual-fir-boundary).
+
 - Audited 750D history and current Tragic Lantern platform sources; no missing validated RAW addresses found in reviewed material. Excluded unsupported DIGIC 6 DMA-table decoding and a DIGIC 8 ROM-dependent decryptor as ready solutions. Added read-only Thumb address-load candidate scanning, checked against GNU-assembled instructions and a full artificial ROM fixture. Fifteen Python tests pass; see [source audit](rom-analysis.md) and [instruction candidate tool](thumb-xrefs.md).
 
 - Added a completed-frame source lifecycle/lease layer, gated to PC synthetic sources. It validates fixed RAW14 geometry and sequence, holds source ownership through synchronous copy, releases dropped frames, and retries failed cleanup. Integrated it into all four disk scenarios with immediate source-buffer overwrite after release; recorded payloads remain correct. Five ARM suites pass. Traced donor callback ordering and startup ownership; no 750D firmware calls enabled. See [source integration](raw14-capture-source.md).

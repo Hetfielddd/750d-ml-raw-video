@@ -62,3 +62,26 @@ Reviewed primary source snapshots:
 - https://github.com/paweltokarz/tragiclantern/blob/aa224f0bc8e177a456c119eba00263488ee51f5a/platform/750D.110/internals.h
 - https://github.com/paweltokarz/tragiclantern/blob/aa224f0bc8e177a456c119eba00263488ee51f5a/platform/750D.110/consts.h
 - https://github.com/reticulatedpines/magiclantern_simplified/blob/142472e95054d73640f50789ac0fd66325499d82/tools/firmware/edmac_config.py
+
+## Older branches and the actual FIR boundary
+
+The follow-up audit checked these immutable branch snapshots from the original port contributor's fork:
+
+- [`raw_draft`](https://github.com/kitor/magiclantern_simplified/tree/623fe9ce969510b5fa71a839448ebb7b372f5ff9)
+- [`raw_draft_v2`](https://github.com/kitor/magiclantern_simplified/tree/26822466884ba43bc21cefc49346706638cb7fa3)
+- [`d6_rom_patching`](https://github.com/kitor/magiclantern_simplified/tree/fcc52129d9a65250d477af45e2ea4f974531fa8f)
+- Upstream [`edmac_cleanup`](https://github.com/reticulatedpines/magiclantern_simplified/tree/562c699589a98989e66ff2d0634748cf0f14bc44)
+
+The reviewed 750D internals/constants/overrides/stubs in the three contributor branches still supply no RAW channel or fast-copy binding and retain the zero-return `shamem_read`. The reviewed cleanup-branch constants/overrides retain the same gaps. A branch named RAW is not proof of 750D support: the inspected `raw_draft_v2` RAW history includes EOS R work. The `d6_rom_patching` head reads CPU debug registers; it does not provide the missing sensor transfer implementation. None of these branches was installed, executed, or merged into the project.
+
+Two older QEMU changes mentioning 750D were also inspected: [MEMDIV initialization](https://github.com/reticulatedpines/magiclantern_simplified/commit/cd374396a1378a8504f6afb514139bc912cfe63d) and [serial-flash DMA](https://github.com/reticulatedpines/magiclantern_simplified/commit/2ae6ea82819303ed25cc24da75a72fd0a2912a0c). The first adds modeled shared-memory setup behavior, while the second models serial-flash transfers. Neither establishes a RAW Live View channel or complete-frame lifetime. Their MMIO addresses and DMA identifiers must not be substituted for sensor-channel evidence.
+
+A filename-only search in the configured Codex working folders found the already known official update and upstream `detect_rom_test_files` samples. The latter `rom1.bin`/`rom0.bin` are only 64/69 bytes, not full firmware images. This was not a search of the entire computer. No usable plaintext 750D image was found.
+
+The actual `CCF23110.FIR` was rechecked with the enhanced read-only inspector. Its SHA-256 remains `91ae807b6ac27dcb9c2c6351557c131768cc06736957600fdd0f5014e5531450` and its container checksum passes. The updater ciphertext is 2,509,264 bytes; firmware ciphertext is 21,117,280 bytes with declared content length 21,117,272 bytes. These are container fields, not extracted code or validated RAM mappings.
+
+The extended updater header is nonzero. The reviewed modern `fir_tool2.py` extraction policy skips its legacy XOR decoder in this case. The enhanced inspector reports `skip_extended_header` and `decrypted: false`; this header heuristic does not establish an encryption key, exact cryptographic scheme, or signature authenticity. Running the old XOR transform regardless would not demonstrate successful decryption.
+
+The inspector now checks updater overlap, supported header spacing, firmware ciphertext bounds, and declared lengths in addition to identity and checksum. Four new tests include malformed sections with recomputed valid checksums, demonstrating why checksum success alone is insufficient. All 19 Python tests pass, and the real FIR passes the strengthened structural checks. The tool writes no firmware or decoded output.
+
+At this checkpoint the remaining obstacle to finding actual capture addresses is readable 750D firmware material or independently substantiated address findings. Further synthetic recorder tests cannot substitute for that evidence. An already saved PC-side image would permit further analysis without interacting with the camera; no camera-side extraction has been requested or performed.
