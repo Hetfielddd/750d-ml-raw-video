@@ -13,7 +13,7 @@ import struct
 import subprocess
 
 
-def execute(elf):
+def execute(elf, test_source):
     from unicorn import Uc, UC_ARCH_ARM, UC_MODE_THUMB, UC_HOOK_CODE
     from unicorn.arm_const import (UC_ARM_REG_SP, UC_ARM_REG_LR, UC_ARM_REG_R0,
                                    UC_CPU_ARM_CORTEX_R5, UC_ARM_REG_PC)
@@ -54,7 +54,7 @@ def execute(elf):
         raise RuntimeError(f'Test did not return (PC={emulator.reg_read(UC_ARM_REG_PC):#x})')
     line = emulator.reg_read(UC_ARM_REG_R0)
     if line:
-        raise RuntimeError(f'ARM test assertion failed at test_raw14_copy.c:{line}')
+        raise RuntimeError(f'ARM test assertion failed at {test_source}:{line}')
     return {'passed': True, 'target': 'ARMv7-R Thumb, Cortex-R4 compiler target',
             'emulator_cpu': 'Cortex-R5 (Unicorn)',
             'elf_sha256': hashlib.sha256(data).hexdigest(),
@@ -72,15 +72,21 @@ def main():
     compiler = args.toolchain.resolve() / 'arm-none-eabi-gcc'
     if compiler.with_suffix('.exe').exists():
         compiler = compiler.with_suffix('.exe')
-    elf = build / 'test.elf'
     flags = ['-std=c99', '-Wall', '-Wextra', '-Werror', '-Os', '-ffreestanding',
              '-fno-builtin', '-fno-unwind-tables', '-fno-asynchronous-unwind-tables',
              '-mcpu=cortex-r4', '-mthumb', '-nostdlib', '-Wl,-e,test_run',
              '-Wl,-Ttext=0x10000', '-Wl,-Tdata=0x20000']
-    subprocess.run([str(compiler), *flags, str(project / 'experimental/raw14_copy.c'),
-                    str(project / 'experimental/test_raw14_copy.c'), '-lgcc',
-                    '-o', str(elf)], check=True)
-    print(json.dumps(execute(elf), indent=2))
+    results = {}
+    for suite, sources in {
+        'copy': ['raw14_copy.c', 'test_raw14_copy.c'],
+        'queue': ['raw14_copy.c', 'raw14_queue.c', 'test_raw14_queue.c'],
+    }.items():
+        elf = build / f'{suite}.elf'
+        subprocess.run([str(compiler), *flags,
+                        *[str(project / 'experimental' / name) for name in sources],
+                        '-lgcc', '-o', str(elf)], check=True)
+        results[suite] = execute(elf, sources[-1])
+    print(json.dumps({'passed': True, 'suites': results}, indent=2))
 
 
 if __name__ == '__main__':

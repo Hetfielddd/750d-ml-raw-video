@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "raw14_copy.h"
 
-static enum raw14_status validate(const struct raw14_frame *frame)
+enum raw14_status raw14_validate_frame(const struct raw14_frame *frame)
 {
     size_t expected_pitch;
     if (!frame || !frame->data || !frame->width_pixels || !frame->height_rows)
@@ -37,9 +37,9 @@ enum raw14_status raw14_copy_rows(struct raw14_engine *engine,
         return RAW14_BUSY;
     if (!engine->copy)
         return RAW14_NOT_READY;
-    status = validate(src);
+    status = raw14_validate_frame(src);
     if (status != RAW14_OK) return status;
-    status = validate(dst);
+    status = raw14_validate_frame(dst);
     if (status != RAW14_OK) return status;
     if (src->width_pixels != dst->width_pixels || (src_y | dst_y | rows) & 1u)
         return RAW14_UNSUPPORTED;

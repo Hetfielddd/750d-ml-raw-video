@@ -37,6 +37,7 @@ The `magiclantern` directory points to an exact upstream revision. Camera source
 - [Read-only ROM inspection and November research refresh](docs/rom-analysis.md)
 - [How related cameras reached RAW video and the 750D port strategy](docs/similar-camera-raw.md)
 - [Experimental C frame-copy component and ARM execution tests](docs/raw14-copy-core.md)
+- [Experimental frame queue and writer ownership](docs/raw14-queue.md)
 - `scripts/inspect_750d_fir.py`: read-only structural inspection of a locally supplied Canon update file.
 
 ## License and attribution

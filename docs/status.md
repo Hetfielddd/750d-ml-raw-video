@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Added a fixed-buffer frame queue with successful-copy publication, FIFO writer ownership, explicit overflow handling, and stale-lease protection. Both the copy and queue C suites execute successfully under ARM emulation; the queue suite includes a 1,000-step reference-FIFO scenario. No camera/DMA/filesystem integration is implied. See [the queue contract](raw14-queue.md).
+
 - Implemented an original experimental RAW14 full-width copy component in C, with explicit buffer bounds and an injected synchronous backend. Compiled it for Cortex-R4/Thumb and executed its C tests under Unicorn's Cortex-R5 ARMv7-R model. This is tested transfer logic, not yet integrated into Magic Lantern or Canon DMA. See [the component and tests](raw14-copy-core.md).
 
 - Traced the 7D2 RAW-enabling commit and the shared stream/callback/copy/MLV path; compared DIGIC 7 alternatives on 200D/6D2 and same-generation 80D/5D4 configurations. Added a compile-only 750D RAW probe that fails as expected on seven missing identifiers. The 750D shadow-register reader also remains a zero-return placeholder. See [similar-camera implementation details](similar-camera-raw.md).

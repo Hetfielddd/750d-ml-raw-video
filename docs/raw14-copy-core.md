@@ -44,6 +44,8 @@ These tests execute the actual compiled C implementation with 32-bit ARM pointer
 
 ## Integration work remaining
 
+A separate [frame queue](raw14-queue.md) now provides publication and writer ownership. The ARM test runner executes both suites; neither is wired into the upstream recorder yet.
+
 1. Supply descriptors from verified Canon/ML buffer allocation metadata.
 2. Wrap a verified 750D synchronous copy primitive with the correct cache and channel contract.
 3. Connect the successful completion path to recorder slot publication; reject or discard failed frames.

@@ -28,6 +28,8 @@ struct raw14_engine {
     unsigned busy;
 };
 
+enum raw14_status raw14_validate_frame(const struct raw14_frame *frame);
+
 /* One caller at a time. busy detects reentrancy; it is not a thread/ISR lock.
  * Caller owns buffer lifetime and handles DMA cache aliases before submission.
  * Full row width only; source/destination vertical offsets preserve Bayer parity.
