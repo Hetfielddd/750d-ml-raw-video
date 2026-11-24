@@ -1,0 +1,58 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "one_entry",
+      "supplied_count": 1,
+      "selected_pointer": "0x12345000",
+      "state_sequence": [
+        1,
+        2,
+        2,
+        1,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "case": "two_entries",
+      "supplied_count": 2,
+      "selected_pointer": "0x12345000",
+      "state_sequence": [
+        1,
+        2,
+        2,
+        1,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "case": "zero_count",
+      "supplied_count": 0,
+      "selected_pointer": "0x12345000",
+      "state_sequence": [
+        1,
+        2,
+        2,
+        1,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "case": "already_reserved",
+      "diagnostic_boundary": true,
+      "passed": true
+    }
+  ],
+  "slot": 2,
+  "descriptor_stride": 20,
+  "selected_descriptor_word": 0,
+  "native_calls_stubbed": false,
+  "pixels_mapped": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied ADST table, descriptor pointers/counts, EVF globals and saved caller context. Native setup and teardown slices only. Busy paths stop before diagnostic/exception handling. No allocator, actual buffers, whole start/stop, IRQ, DMA, cache or frame timing is modeled. Reservation ownership is not per-frame ownership."
+}

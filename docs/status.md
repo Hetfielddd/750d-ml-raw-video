@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Identified the producer of candidate RAW preparation word `0x26BEC`: EVF activation reserves ADST slot 2 and stores descriptor word zero there. Four bounded native supplied-registry scenarios verify acquisition, repeat diagnostics, end-handler release and reacquisition. This establishes reservation behavior, not per-frame ownership. See [RAW memory reservation](750d-raw-reservation.md).
+
 - Traced the separately registered RAW return callback to EVF event 19 and the handler labeled `evfAfPathCompleteInterrupt`. Five bounded native stage checks and four independent small-pool checks pass; all ten table entries are decoded. This qualifies the earlier notification as an AF consumer path, with no proof of a recorder-ready frame or ownership of the earlier sensor buffer. See [the EVF RAW-return event](750d-evf-raw-event.md).
 
 - Followed supplied completion events through the native task dispatcher and actual application table: event 6 prepares return operation 2, event 7 prepares operation 6. Ten dispatch cases and four separately invoked receiver checks pass. Static review identifies mode-dependent registration of the separate RAW callback. No queue/transport delivery or safe frame ownership is established. See [completion dispatch](750d-completion-dispatch.md).
