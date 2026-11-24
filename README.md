@@ -18,6 +18,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 - A reviewed RAW preparation branch now reaches candidate DMA destination `0xD0004108` in bounded native PC execution, stopping before the physical store. Four cases also verify callback registration/forwarding; no pixels or hardware events are emulated. See [the destination trace](docs/750d-raw-destination.md).
 - Six native geometry cases now trace caller fields into configuration, row-size arithmetic and the DMA descriptor packer, including truncation/underflow cases. Real mode dimensions and pixel packing remain unverified. See [the geometry route](docs/750d-raw-geometry.md).
 - Ten native completion scenarios distinguish RAW-component notification from seven-component aggregate completion; two task-request checks verify their separate event numbers. Timing and buffer ownership remain unverified. See [completion events](docs/750d-completion-events.md).
+- Native task dispatch now maps aggregate event 6 to return operation 2 and RAW event 7 to operation 6. Ten supplied dispatch cases and four separate receiver checks pass; mode-dependent callback registrations still need a buffer-lifetime contract. See [completion dispatch](docs/750d-completion-dispatch.md).
 
 Full-camera QEMU emulation has not been run. The separate experimental components execute under Unicorn ARM emulation. Camera modules and an installation ZIP have not been built. These tests do not validate RAW capture or operation on physical hardware.
 

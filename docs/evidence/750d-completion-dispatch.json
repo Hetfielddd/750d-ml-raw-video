@@ -1,0 +1,163 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "event_6_route_00020002_arg_0",
+      "event": 6,
+      "handler_runtime": "0x1b8daa8",
+      "postman_operation": 2,
+      "supplied_route": "0x20002",
+      "transport_arguments": [
+        "0x5",
+        "0x2",
+        "0x202",
+        "0x0"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_6_route_00020002_arg_12345678",
+      "event": 6,
+      "handler_runtime": "0x1b8daa8",
+      "postman_operation": 2,
+      "supplied_route": "0x20002",
+      "transport_arguments": [
+        "0x5",
+        "0x2",
+        "0x202",
+        "0x12345678"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_6_route_00030007_arg_0",
+      "event": 6,
+      "handler_runtime": "0x1b8daa8",
+      "postman_operation": 2,
+      "supplied_route": "0x30007",
+      "transport_arguments": [
+        "0x5",
+        "0x3",
+        "0x702",
+        "0x0"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_6_route_00030007_arg_12345678",
+      "event": 6,
+      "handler_runtime": "0x1b8daa8",
+      "postman_operation": 2,
+      "supplied_route": "0x30007",
+      "transport_arguments": [
+        "0x5",
+        "0x3",
+        "0x702",
+        "0x12345678"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_7_route_00020002_arg_0",
+      "event": 7,
+      "handler_runtime": "0x1b8daba",
+      "postman_operation": 6,
+      "supplied_route": "0x20002",
+      "transport_arguments": [
+        "0x5",
+        "0x2",
+        "0x206",
+        "0x0"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_7_route_00020002_arg_12345678",
+      "event": 7,
+      "handler_runtime": "0x1b8daba",
+      "postman_operation": 6,
+      "supplied_route": "0x20002",
+      "transport_arguments": [
+        "0x5",
+        "0x2",
+        "0x206",
+        "0x12345678"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_7_route_00030007_arg_0",
+      "event": 7,
+      "handler_runtime": "0x1b8daba",
+      "postman_operation": 6,
+      "supplied_route": "0x30007",
+      "transport_arguments": [
+        "0x5",
+        "0x3",
+        "0x706",
+        "0x0"
+      ],
+      "passed": true
+    },
+    {
+      "case": "event_7_route_00030007_arg_12345678",
+      "event": 7,
+      "handler_runtime": "0x1b8daba",
+      "postman_operation": 6,
+      "supplied_route": "0x30007",
+      "transport_arguments": [
+        "0x5",
+        "0x3",
+        "0x706",
+        "0x12345678"
+      ],
+      "passed": true
+    },
+    {
+      "case": "invalid_signature",
+      "return_code": 7,
+      "passed": true
+    },
+    {
+      "case": "event_outside_limit",
+      "return_code": 3,
+      "passed": true
+    }
+  ],
+  "separate_receiver_cases": [
+    {
+      "operation": 2,
+      "callback_slot": 0,
+      "supplied_callback_enabled": false,
+      "callback_source": "0xfe28d2d0",
+      "passed": true
+    },
+    {
+      "operation": 2,
+      "callback_slot": 0,
+      "supplied_callback_enabled": true,
+      "callback_source": "0xfe28d2d0",
+      "passed": true
+    },
+    {
+      "operation": 6,
+      "callback_slot": 8,
+      "supplied_callback_enabled": false,
+      "callback_source": "0xfe293028",
+      "passed": true
+    },
+    {
+      "operation": 6,
+      "callback_slot": 8,
+      "supplied_callback_enabled": true,
+      "callback_source": "0xfe293028",
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "queue_or_transport_executed": false,
+  "camera_binding_enabled": false,
+  "raw_capture_demonstrated": false,
+  "limits": "Supplied object/context, state zero, routes and event delivery. Scoped page copies are not validated boot relocations. Native dispatcher and table select native application handlers; stop before transport veneer. Separate receiver calls use supplied slots and stop before the selected callbacks. No queue, MMIO, pixels, timing, cache or buffer ownership is demonstrated."
+}

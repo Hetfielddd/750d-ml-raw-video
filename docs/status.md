@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Followed supplied completion events through the native task dispatcher and actual application table: event 6 prepares return operation 2, event 7 prepares operation 6. Ten dispatch cases and four separately invoked receiver checks pass. Static review identifies mode-dependent registration of the separate RAW callback. No queue/transport delivery or safe frame ownership is established. See [completion dispatch](750d-completion-dispatch.md).
+
 - Distinguished RAW-component notification from seven-bit aggregate completion in the actual driver. Ten native synthetic-order scenarios verify callback ordering, repeated events and mask reset; two separate native checks identify application task events 7 and 6, stopping before queue delivery. This does not establish frame identity or buffer lifetime. See [completion events](750d-completion-events.md).
 
 - Traced width, height and a row-size selector from the actual EVF caller structure through the native publisher and reviewed mode configuration into DMA descriptor arithmetic/packing. Six native PC fixtures pass, including deliberately invalid inputs that demonstrate truncation and height underflow. Physical register writes and real dimensions/packing remain unverified. See [the geometry route](750d-raw-geometry.md).

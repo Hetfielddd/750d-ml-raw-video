@@ -66,4 +66,6 @@ The duplicate-event scenario is supplied by the experiment; it is not evidence t
 
 ## What remains before a frame lease
 
+The [next bounded investigation](750d-completion-dispatch.md) follows supplied events through the actual task dispatcher to return operations 2 and 6, and separately checks primary-side callback selection. Delivery and buffer ownership remain unverified.
+
 The target now has a traced candidate destination, [geometry arithmetic](750d-raw-geometry.md), and distinct component/aggregate task notifications. The missing bridge is the actual receiving state-machine path, its relationship to the next buffer reuse, and live timing/cache behavior. The earlier donor VSYNC old-state/input condition must not be substituted for these checks. No camera hook, platform binding or completed-frame provider is enabled by this experiment.
