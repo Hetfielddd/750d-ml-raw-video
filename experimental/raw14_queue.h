@@ -15,6 +15,7 @@ struct raw14_slot {
     enum raw14_slot_state state;
     uint64_t ticket, write_token, frame_id, timestamp_us;
     size_t bytes;
+    uint32_t source_y;
 };
 struct raw14_queue {
     struct raw14_slot slots[RAW14_QUEUE_MAX_SLOTS];
@@ -27,6 +28,7 @@ struct raw14_write_view {
     struct raw14_frame frame;
     uint64_t frame_id, timestamp_us;
     size_t bytes;
+    uint32_t source_y;
 };
 
 /* Serialized callers only: no atomics, locks, DMA, or filesystem access.

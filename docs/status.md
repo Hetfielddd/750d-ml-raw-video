@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Connected synthetic frames through the ARM copy core and queue to a C MLV writer with short-write handling, rollback, and error finalization. Exported a two-frame test clip to disk and independently checked payloads/metadata in Python. All three ARM suites, 19 actual-upstream wire-layout assertions, and nine Python tests pass. This is an offline pipeline, not sensor recording or verified editor compatibility. See [the MLV writer](raw14-mlv-writer.md).
+
 - Added a fixed-buffer frame queue with successful-copy publication, FIFO writer ownership, explicit overflow handling, and stale-lease protection. Both the copy and queue C suites execute successfully under ARM emulation; the queue suite includes a 1,000-step reference-FIFO scenario. No camera/DMA/filesystem integration is implied. See [the queue contract](raw14-queue.md).
 
 - Implemented an original experimental RAW14 full-width copy component in C, with explicit buffer bounds and an injected synchronous backend. Compiled it for Cortex-R4/Thumb and executed its C tests under Unicorn's Cortex-R5 ARMv7-R model. This is tested transfer logic, not yet integrated into Magic Lantern or Canon DMA. See [the component and tests](raw14-copy-core.md).

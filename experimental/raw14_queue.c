@@ -39,6 +39,7 @@ enum raw14_queue_status raw14_queue_init(struct raw14_queue *q,
         q->slots[i].ticket = q->slots[i].frame_id = q->slots[i].timestamp_us = 0;
         q->slots[i].write_token = 0;
         q->slots[i].bytes = 0;
+        q->slots[i].source_y = 0;
     }
     return RAW14_Q_OK;
 }
@@ -87,6 +88,7 @@ enum raw14_queue_status raw14_queue_push(struct raw14_queue *q,
     }
     slot->frame_id = frame_id;
     slot->timestamp_us = timestamp_us;
+    slot->source_y = source_y;
     slot->state = RAW14_READY;
     q->last_frame_id = frame_id;
     q->has_frame_id = 1;
@@ -119,6 +121,7 @@ enum raw14_queue_status raw14_queue_take(struct raw14_queue *q,
     view->frame_id = slot->frame_id;
     view->timestamp_us = slot->timestamp_us;
     view->bytes = slot->bytes;
+    view->source_y = slot->source_y;
     return RAW14_Q_OK;
 }
 

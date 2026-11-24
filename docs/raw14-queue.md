@@ -1,6 +1,6 @@
 # Experimental frame queue
 
-`experimental/raw14_queue.{h,c}` adds the producer/writer ownership layer on top of the experimental synchronous RAW14 copy component. It is not yet integrated into Magic Lantern and does not access Canon hardware or write a file.
+`experimental/raw14_queue.{h,c}` adds the producer/writer ownership layer on top of the experimental synchronous RAW14 copy component. It is not yet integrated into Magic Lantern and does not access Canon hardware or write a file itself. The [separate MLV writer](raw14-mlv-writer.md) now consumes its leases and handles file rollback.
 
 ## Buffer lifecycle
 
