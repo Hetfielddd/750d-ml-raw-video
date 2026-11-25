@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Identified a message-37 receiver branch that supplies pool constants `0x58830000` / `0x06B48000`. Two bounded native cases propagate these through six setup stages to candidate RAW preparation address `0x5C62C000`. Service dispatch and resource configuration are supplied; live activation, pixels and per-frame ownership remain unverified. No platform binding enabled. See [constant-pool provenance](750d-pool-provenance.md).
+
 - Identified the asynchronous pool request's actual callback, 48-byte service object and minimum-size contract. Five native boundary checks verify request/object preparation and callback publication versus undersized assertion. The 90 MiB threshold does not establish actual allocation capacity; OS allocation/delivery and per-frame timing remain unexecuted. See [the pool request](750d-pool-request.md).
 
 - Identified the original manager address writer: resource-22 lookup, expected count one, actual class-2 provider for reviewed configuration modes 1/2. Seven native cases now include pool-base setup/alignment to 16 KiB, the pool-relative address, reported 30,791,680-byte resource size, skip and diagnostic behavior. Static mode-selection callers are identified; live configuration and sensor frames remain unobserved. See [the RAW resource route](750d-raw-resource.md).

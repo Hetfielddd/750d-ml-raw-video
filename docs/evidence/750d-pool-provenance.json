@@ -1,0 +1,34 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "supplied_service_dispatch_index": 0,
+      "supplied_resource_provider_mode": 2,
+      "pool_base_from_native_branch": "0x58830000",
+      "pool_size_from_native_callback": "0x6b48000",
+      "resource_inside_reported_pool": true,
+      "resource_22_address": "0x5c62c000",
+      "resource_22_size_bytes": 30791680,
+      "evf_raw_preparation_pointer": "0x5c62c000",
+      "passed": true
+    },
+    {
+      "supplied_service_dispatch_index": 2,
+      "supplied_resource_provider_mode": 2,
+      "pool_base_from_native_branch": "0x58830000",
+      "pool_size_from_native_callback": "0x6b48000",
+      "resource_inside_reported_pool": true,
+      "resource_22_address": "0x5c62c000",
+      "resource_22_size_bytes": 30791680,
+      "evf_raw_preparation_pointer": "0x5c62c000",
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "pool_or_pixels_mapped": false,
+  "os_delivery_or_boot_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Six separate native stages with fresh supplied stack frames. Service dispatch indices 0/2, resource provider mode 2, registry availability and unrelated zero-count resources are supplied. The pool base/size come from the selected native branch. Other states/configurations and live activation are unverified. Cortex-A15 executes compatible instructions only. No task delivery, RAM allocation, cache, DMA, pixels or frame timing."
+}

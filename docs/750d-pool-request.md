@@ -35,6 +35,8 @@ The minimum-size check alone is not proof that every configured subregion lies w
 
 ## Reproduce and scope
 
+The [next investigation](750d-pool-provenance.md) identifies a receiver branch with fixed pool constants and follows them into a concrete preparation-address candidate. Its live activation and frame timing remain unverified.
+
 ```sh
 python scripts/probe_750d_pool_request.py /private/750d-analysis/record-06.bin
 ```
