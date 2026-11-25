@@ -2,6 +2,8 @@
 
 The [snapshot/override candidate](750d-raw-redirection.md) is not a drop-in A/B-buffer switch. Eleven additional native PC scenarios now characterize repeated use and geometry, bringing the probe to **19 scenarios**. They execute actual firmware functions with artificial register RAM and unmapped image pointers. No capture or channel start occurs.
 
+An alternative [normal parameter-routing experiment](750d-raw-param-lifetime.md) follows the registered configuration service and identifies a separate parameter-storage lifetime requirement. It does not require invoking this snapshot/override pair or establish a live recording path.
+
 ## Actual configuration setter and unresolved caller
 
 Entry `0xFE75598E` stores R0 and R1 to the shared pair at `0x01AC40F4` and `0x01AC40F8`, then returns through the existing `BX LR` leaf at `0xFE755262`. New scenarios execute this real setter rather than supplying those globals directly.

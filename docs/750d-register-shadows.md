@@ -38,6 +38,8 @@ Four negative executions also behave as expected: each reader faults with an unm
 
 ## The writer route crosses a message boundary
 
+The later [parameter-lifetime investigation](750d-raw-param-lifetime.md) executes native receiver/service registration and dispatch across explicit mailbox/queue cuts. It identifies a pointer-envelope lifetime requirement; real cross-core delivery and source-frame ownership remain unverified.
+
 Further static tracing of [the RAW preparation route](750d-raw-address-route.md) finds that the reviewed mode-3 configuration method copies its input field at offset 80 into driver-parameter offset 200, then sends the parameter block through `0xFE3807A0`. The latter sends operation 4 for service identifier `0x20002`. The readout descriptor path uses `0xFE380766`, operation 2 for the same service.
 
 The wrapper at `0xFE443016` passes these to the Postman implementation at `0xFE48D25C`: transport argument 4, destination identifier 2, operation word `0x200 | operation`, and the original parameter pointer. The reviewed sender adds the destination in bits 24..31 and writes two words, command then payload, to the same mailbox register `0xD2000104`. For operations 2 and 4 the command words are respectively `0x02000202` and `0x02000204`.

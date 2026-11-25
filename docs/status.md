@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced native service `0x20002` registration, command routing, 16-byte task-envelope construction, worker/state dispatch and separately entered RAW pending-address consumption in eight PC checks. Reusing the parameter block before consumption changes the address read later; operations 4/5 return through a no-op leaf rather than the operation-3 semaphore signal. Real delivery/ordering and image-buffer lifetime remain unverified. See [RAW parameter lifetime](750d-raw-param-lifetime.md).
+
 - Executed the real shared override-configuration setter and expanded the RAW redirection probe from eight to 19 scenarios. Native sequences verify repeat-override snapshot loss, a restore/configure/switch sequence, duplicate-restore overwrite and seven geometry boundaries. Bounded reference searches did not establish the intended caller. No channel start, sensor pixels, frame ownership or camera binding validated. See [override lifecycle and geometry](750d-raw-override-contract.md).
 
 - Traced RAW destination overwrite and a native snapshot/override/restore mechanism. Eight PC scenarios verify pending-address precedence, the correct 44-byte flag-row stride, native flag-controlled suppression, ten-word restore and auxiliary state that remains changed. This is a destination-control candidate; channel start, physical completion, source lifetime and safe use remain unverified. See [RAW redirection](750d-raw-redirection.md).

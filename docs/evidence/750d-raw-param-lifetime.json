@@ -1,0 +1,86 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "unchanged_block",
+      "native_operation_and_event": 4,
+      "original_payload_pointer": "0x102000",
+      "queued_payload_pointer": "0x102000",
+      "native_envelope_bytes": 16,
+      "parameter_contents_read_by_envelope_stages": false,
+      "first_prepared_address": "0x5c62c000",
+      "consumed_pending_address": "0x5c62c000",
+      "prepared_dma_address": "0x1c62c000",
+      "supplied_geometry_unchanged_in_reviewed_address_path": true,
+      "channel_start_executed": false,
+      "passed": true
+    },
+    {
+      "case": "same_block_republished",
+      "native_operation_and_event": 4,
+      "original_payload_pointer": "0x102000",
+      "queued_payload_pointer": "0x102000",
+      "native_envelope_bytes": 16,
+      "parameter_contents_read_by_envelope_stages": false,
+      "first_prepared_address": "0x5c62c000",
+      "consumed_pending_address": "0x5e000000",
+      "prepared_dma_address": "0x1e000000",
+      "supplied_geometry_unchanged_in_reviewed_address_path": true,
+      "channel_start_executed": false,
+      "passed": true
+    },
+    {
+      "case": "separate_block_prepared",
+      "native_operation_and_event": 4,
+      "original_payload_pointer": "0x102000",
+      "queued_payload_pointer": "0x102000",
+      "native_envelope_bytes": 16,
+      "parameter_contents_read_by_envelope_stages": false,
+      "first_prepared_address": "0x5c62c000",
+      "consumed_pending_address": "0x5c62c000",
+      "prepared_dma_address": "0x1c62c000",
+      "supplied_geometry_unchanged_in_reviewed_address_path": true,
+      "channel_start_executed": false,
+      "passed": true
+    },
+    {
+      "case": "native_service_unregistered",
+      "native_queue_boundary_reached": false,
+      "passed": true
+    },
+    {
+      "case": "start_operation",
+      "native_operation_and_event": 2,
+      "payload_pointer": "0x102000",
+      "stopped_before": "0x1becf28",
+      "passed": true
+    },
+    {
+      "case": "operation_five",
+      "native_operation_and_event": 5,
+      "payload_pointer": "0x102000",
+      "stopped_before": "0x1becf38",
+      "passed": true
+    },
+    {
+      "case": "primary_return_dispatch_leaf",
+      "operation": 4,
+      "semaphore_signal_executed": false,
+      "passed": true
+    },
+    {
+      "case": "primary_return_dispatch_leaf",
+      "operation": 5,
+      "semaphore_signal_executed": false,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "native_registration_and_dispatch_executed": true,
+  "mailbox_or_queue_delivery_executed": false,
+  "channel_start_or_dma_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied task/context/state objects, queue handle, receive-channel map and separately entered stage order. Native sender values are passed across explicit unexecuted mailbox loads/stores and queue-delivery cuts. Queue wrapper checks its supplied object and reaches the allocator boundary; a separate post-allocation envelope slice uses supplied scratch storage, not a fabricated allocator return. Actual allocation, enqueue/dequeue and scheduler do not execute. Driver RAW tail is separately entered past unexecuted other component configuration calls. Actual parameter RAM is retained, not deep-copied or replaced between stages except the named native republication fixtures. Artificial register RAM and supplied channel state/classifier/geometry. No hardware timing, cross-core visibility, allocation, completed pixels or ownership demonstrated."
+}
