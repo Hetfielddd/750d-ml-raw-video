@@ -2,6 +2,8 @@
 
 The [pointer-provenance investigation](750d-pool-provenance.md) established a conditional preparation-address candidate. This step follows the reviewed non-alternate RAW start route and compares its synchronization requirements with the pinned 7D Mark II implementation. It does not start DMA or prove a completed frame.
 
+The later [complete software command-order experiment](750d-raw-command-order.md) executes this RAW sub-handler through its real return on artificial register RAM, including native IRQ helpers and pending clear. It removes the internal cuts described below for those supplied RAM scenarios, without modeling device command acceptance or sensor capture.
+
 ## Reviewed start sequence
 
 Driver function source `0xFE750E1C` clears its component mask and chooses a branch using driver state offset 8. In the zero branch, it calls ARM veneer `0xFE74F118` at `0xFE750E52`; the stored target is `0x01BB725D`, corresponding to application source `0xFE8395C4` under the previously scoped mapping. The other branch calls `0xFE74F120`, target source `0xFE839642`. Surrounding OS event operations and the entire driver function are not executed by this experiment.

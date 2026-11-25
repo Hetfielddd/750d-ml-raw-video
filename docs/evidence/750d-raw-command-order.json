@@ -1,0 +1,397 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "format_0_irq_0",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5c0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "format_0_irq_80",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5c0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": true
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "format_22_irq_0",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "format_22_irq_80",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": true
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "format_ffffffff_irq_0",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5ff",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "format_ffffffff_irq_80",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5ff",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": true
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "skip_address_flag",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "republished_invocation_stores": [],
+      "destination_after_first_invocation": "0x1e000000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": false,
+      "passed": true
+    },
+    {
+      "case": "empty_pending_callback",
+      "callback_boundary_reached": true,
+      "register_writes": [],
+      "callback_body_executed": false,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_callback",
+      "callback_boundary_reached": true,
+      "register_writes": [],
+      "callback_body_executed": false,
+      "passed": true
+    },
+    {
+      "case": "repeated_calls_and_republication",
+      "software_handler_returned": true,
+      "first_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "republished_invocation_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1e000000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "destination_after_first_invocation": "0x1c62c000",
+      "pending_cleared_after_command_stores": true,
+      "irq_mask_restored": true,
+      "geometry_unchanged": true,
+      "republication_sequence_checked": true,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "register_addresses_are_artificial_ram": true,
+  "dma_or_peripheral_behavior_modeled": false,
+  "pixel_memory_mapped": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied initialized/non-alternate channel-1 state, shadow base, register RAM, packing markers and optional skip-address flag. Scoped driver/peer-kernel copies are experiment mappings, not validated boot relocation. Full reviewed RAW software handler executes register stores and native IRQ helpers; ordinary RAM acceptance is not peripheral command acceptance. Empty branches stop before the supplied callback. No scheduler, transport, sensor, DMA, pixels, cache coherence or completion is modeled."
+}
