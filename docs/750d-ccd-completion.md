@@ -2,7 +2,9 @@
 
 Five native PC cases now trace the `CCDWriteEDmacCompleteCBR` candidate through real callback registration, task-request preparation and a separately entered actual state dispatcher to return-message preparation. The callback belongs to a reviewed conditional **channel-2** writer branch and the `ShtCapture` service route **`0x00010000`**. The previously studied RAW auxiliary route uses channel 1 and service `0x00020002`.
 
-This is a new concrete completion route to investigate, not a qualified source of completed RAW frames. The receiver of its return message, relationship to EVF `ReadOutDone`, live mode activation and buffer lifetime remain unverified.
+This is a concrete completion route to investigate, not a qualified source of completed RAW frames. Its relationship to EVF `ReadOutDone`, live mode activation and buffer lifetime remain unverified.
+
+The later [primary-receiver investigation](750d-ccd-receiver.md) now identifies operation 13's registered CMOS callback and a separate primary task-event-7 preparation. It resolves the receiver selection for checked branches; the EVF relationship and completed RAW-frame contract remain unverified.
 
 ## Actual writer callback and channel preparation
 

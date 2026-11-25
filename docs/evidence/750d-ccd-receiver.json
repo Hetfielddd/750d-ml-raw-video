@@ -1,0 +1,77 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "caller": "capture_path",
+      "operation": 13,
+      "registered_callback": "0xfe13e913",
+      "registered_argument": "0x100000",
+      "receiver": "0xfe1ee0ec",
+      "post_callback_signal_mask": "0x1000",
+      "separate_primary_task_preparation": {
+        "task_event": 7,
+        "payload": 0,
+        "queue_operation_executed": false
+      },
+      "callback_finished_or_signal_executed": false,
+      "passed": true
+    },
+    {
+      "caller": "capture_path",
+      "operation": 14,
+      "registered_callback": "0xfe13e8bf",
+      "registered_argument": "0x100000",
+      "receiver": "0xfe1ee0ec",
+      "post_callback_signal_mask": "0x2000",
+      "separate_primary_task_preparation": null,
+      "callback_finished_or_signal_executed": false,
+      "passed": true
+    },
+    {
+      "caller": "capture_path",
+      "case": "native_callbacks_cleared",
+      "operations_still_prepare_signal": [
+        13,
+        14
+      ],
+      "passed": true
+    },
+    {
+      "caller": "alternate_path",
+      "operation": 13,
+      "registered_callback": "0xfe142209",
+      "registered_argument": "0x100000",
+      "receiver": "0xfe1ee0ec",
+      "post_callback_signal_mask": "0x1000",
+      "separate_primary_task_preparation": null,
+      "callback_finished_or_signal_executed": false,
+      "passed": true
+    },
+    {
+      "caller": "alternate_path",
+      "operation": 14,
+      "registered_callback": "0xfe1421b5",
+      "registered_argument": "0x100000",
+      "receiver": "0xfe1ee0ec",
+      "post_callback_signal_mask": "0x2000",
+      "separate_primary_task_preparation": null,
+      "callback_finished_or_signal_executed": false,
+      "passed": true
+    },
+    {
+      "caller": "alternate_path",
+      "case": "native_callbacks_cleared",
+      "operations_still_prepare_signal": [
+        13,
+        14
+      ],
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "transport_or_os_signal_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Actual caller slices and registration API with explicit logger/OS-clear cuts. Primary service row, event handle, owner/parameter objects and mode-query argument are supplied. Receive delivery is separately invoked. Actual callbacks stop at body/query boundaries; separate post-logger or post-callback continuations do not fabricate successful returns. No queue, event signal, sensor, DMA, pixel data or EVF association validated."
+}
