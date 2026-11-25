@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Executed actual primary semaphore fast paths and connected wrapper admission, native cache-dispatch/descriptor preparation, separately invoked IRQ signaling and actual take/result/unlock paths across an explicit omitted hardware-start store. Twenty-nine scenarios include zero-size, absent/stale signals, uninterrupted native IRQ unlock-to-callback preparation, channel initialization and Canon property-save channel-0 use. Corrected reversed source/destination labels in the earlier direct-builder probe. Scheduling, live context/channel ownership, cache coherence, pixels and hardware completion remain unverified. See [copy synchronization and channel use](750d-copy-sync.md).
+
 - Executed copy-engine IRQ cleanup through signal/unlock boundaries, separately checked callback forwarding and all 16 post-wait status nibbles, and verified shared-status dependency across two supplied channel IRQs. All 53 cases pass. Zero and eight both decode to zero; OS synchronization and concurrency constraints are still required before treating any return as verified completion. No DMA or OS calls executed. See [copy completion](750d-copy-completion.md).
 
 - Executed the actual primary copy descriptor builder, ARM zero helper, address conversion and linked-list publication in ten two-descriptor scenarios. Nine separately entered submission preparations consume those native-written structures and stop before the start store after six checked payload writes to artificial register RAM. No DMA transfer, OS synchronization or completion validated. See [copy descriptors and submission](750d-copy-descriptor.md).

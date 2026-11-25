@@ -93,7 +93,7 @@ def probe(data):
             reached.clear()
             put(uc, stack, [count, flags])
             for register, value in ((UC_ARM_REG_R0, descriptor), (UC_ARM_REG_R1, channel),
-                                    (UC_ARM_REG_R2, source), (UC_ARM_REG_R3, destination),
+                                    (UC_ARM_REG_R2, destination), (UC_ARM_REG_R3, source),
                                     (UC_ARM_REG_SP, stack), (UC_ARM_REG_LR, stop | 1)):
                 uc.reg_write(register, value)
             uc.emu_start(0xfe133bf5, base + len(data), count=512, timeout=500_000)
@@ -102,7 +102,7 @@ def probe(data):
             if uc.reg_read(UC_ARM_REG_SP) != stack:
                 raise RuntimeError('Descriptor builder did not restore stack')
             actual = words(uc, descriptor, 6)
-            expected = [(count - 1) & 0xffffffff, destination, source,
+            expected = [(count - 1) & 0xffffffff, source, destination,
                         0x20004 if flags & 1 else 0x10500,
                         0x20004 if flags & 2 else 0x30900, 0]
             if actual != expected:

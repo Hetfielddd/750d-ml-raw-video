@@ -4,13 +4,15 @@ The actual 750D 1.1.0 descriptor builder at `0xFE133BF4` now executes on the PC,
 
 Follow-up: [copy IRQ cleanup and status decoding](750d-copy-completion.md) now tests the notification branches and separately entered return slice. OS synchronization and physical completion remain unverified.
 
+The subsequent [longer wrapper and semaphore experiment](750d-copy-sync.md) executes actual semaphore fast paths and independently verifies source/destination order from the full caller, correcting the earlier builder labels used here. Hardware start and physical completion remain unexecuted.
+
 ## Descriptor construction
 
-The builder takes descriptor pointer, channel, source and destination in R0–R3, with byte count and flags on the caller's stack. It clears 24 bytes and fills six words:
+The builder takes descriptor pointer, channel, destination and source in R0–R3, with byte count and flags on the caller's stack. The list core at `0xFE133E4C` supplies R2 from list offset 0 (destination) and R3 from list offset 4 (source). This corrects the earlier reversed source/destination labels used for the direct builder probe; the public wrapper's triplet remains `[destination, source, count]`. The builder clears 24 bytes and fills six words:
 
 - Offset 0: byte count minus one.
-- Offset 4: destination after actual address converter `0xFE175544`.
-- Offset 8: source after that converter.
+- Offset 4: source after actual address converter `0xFE175544`.
+- Offset 8: destination after that converter.
 - Offset 12: first control word, mode bits 16–17, burst field bits 8–11 and flag bit 2.
 - Offset 16: second control word with corresponding fields.
 - Offset 20: next-descriptor pointer in bits 4–31, with link bit 0.

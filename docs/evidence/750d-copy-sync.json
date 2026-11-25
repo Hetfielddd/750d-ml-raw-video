@@ -1,0 +1,262 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "native_take_then_give",
+      "supplied_irq_mask": 0,
+      "count_sequence": [
+        1,
+        0,
+        1
+      ],
+      "irq_mask_restored": true,
+      "passed": true
+    },
+    {
+      "case": "native_take_then_give",
+      "supplied_irq_mask": 128,
+      "count_sequence": [
+        1,
+        0,
+        1
+      ],
+      "irq_mask_restored": true,
+      "passed": true
+    },
+    {
+      "case": "empty_take_zero_timeout",
+      "stopped_before": "0x80000960",
+      "native_count": "-1",
+      "timeout_pointer": "0x0",
+      "passed": true
+    },
+    {
+      "case": "give_full_binary_object",
+      "native_result": 0,
+      "count_remains": 1,
+      "passed": true
+    },
+    {
+      "case": "invalid_take_handle",
+      "supplied_kind": "zero",
+      "stopped_before": "0x1e0c",
+      "passed": true
+    },
+    {
+      "case": "invalid_take_handle",
+      "supplied_kind": "odd",
+      "stopped_before": "0x1e0c",
+      "passed": true
+    },
+    {
+      "case": "invalid_take_handle",
+      "supplied_kind": "wrong_generation",
+      "stopped_before": "0x1e0c",
+      "passed": true
+    },
+    {
+      "case": "invalid_take_handle",
+      "supplied_kind": "index_out_of_range",
+      "stopped_before": "0x1e0c",
+      "passed": true
+    },
+    {
+      "case": "supplied_context_gate",
+      "global_44f8": 1,
+      "stopped_before": "0x1e0c",
+      "passed": true
+    },
+    {
+      "case": "actual_irq_to_native_signal_then_take",
+      "channel": 0,
+      "supplied_status": 8,
+      "count_sequence": [
+        0,
+        1,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "case": "actual_irq_to_native_signal_then_take",
+      "channel": 1,
+      "supplied_status": 8,
+      "count_sequence": [
+        0,
+        1,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "case": "actual_irq_to_native_signal_then_take",
+      "channel": 2,
+      "supplied_status": 8,
+      "count_sequence": [
+        0,
+        1,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "case": "actual_irq_to_native_signal_then_take",
+      "channel": 3,
+      "supplied_status": 8,
+      "count_sequence": [
+        0,
+        1,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "case": "actual_irq_native_unlock_to_callback_boundary",
+      "channel": 0,
+      "lock_count_sequence": [
+        0,
+        1
+      ],
+      "callback_argument_preserved": true,
+      "callback_executed": false,
+      "passed": true
+    },
+    {
+      "case": "actual_irq_native_unlock_to_callback_boundary",
+      "channel": 1,
+      "lock_count_sequence": [
+        0,
+        1
+      ],
+      "callback_argument_preserved": true,
+      "callback_executed": false,
+      "passed": true
+    },
+    {
+      "case": "actual_irq_native_unlock_to_callback_boundary",
+      "channel": 2,
+      "lock_count_sequence": [
+        0,
+        1
+      ],
+      "callback_argument_preserved": true,
+      "callback_executed": false,
+      "passed": true
+    },
+    {
+      "case": "actual_irq_native_unlock_to_callback_boundary",
+      "channel": 3,
+      "lock_count_sequence": [
+        0,
+        1
+      ],
+      "callback_argument_preserved": true,
+      "callback_executed": false,
+      "passed": true
+    },
+    {
+      "case": "native_wrapper_zero_size",
+      "native_result": 0,
+      "submission_skipped": true,
+      "passed": true
+    },
+    {
+      "case": "native_wrapper_with_explicit_start_cut",
+      "supplied_scenario": "irq_status_8",
+      "native_result": 0,
+      "hardware_start_store_omitted": true,
+      "source_register": "0xd6030014",
+      "destination_register": "0xd6030018",
+      "passed": true
+    },
+    {
+      "case": "native_wrapper_with_explicit_start_cut",
+      "supplied_scenario": "irq_status_1",
+      "native_result": 1,
+      "hardware_start_store_omitted": true,
+      "source_register": "0xd6030014",
+      "destination_register": "0xd6030018",
+      "passed": true
+    },
+    {
+      "case": "native_wrapper_with_explicit_start_cut",
+      "supplied_scenario": "missing_signal",
+      "native_result": "blocked_before_wait_queue",
+      "hardware_start_store_omitted": true,
+      "source_register": "0xd6030014",
+      "destination_register": "0xd6030018",
+      "passed": true
+    },
+    {
+      "case": "native_wrapper_with_explicit_start_cut",
+      "supplied_scenario": "stale_signal",
+      "native_result": 0,
+      "hardware_start_store_omitted": true,
+      "source_register": "0xd6030014",
+      "destination_register": "0xd6030018",
+      "passed": true
+    },
+    {
+      "case": "channel_init_to_irq_enable_boundary",
+      "channel": 0,
+      "native_irq": "0x13e",
+      "native_table_row": "0x3ad90",
+      "channel_available_mask_still_zero": true,
+      "physical_irq_enable_executed": false,
+      "passed": true
+    },
+    {
+      "case": "channel_init_to_irq_enable_boundary",
+      "channel": 1,
+      "native_irq": "0x14e",
+      "native_table_row": "0x3ae10",
+      "channel_available_mask_still_zero": true,
+      "physical_irq_enable_executed": false,
+      "passed": true
+    },
+    {
+      "case": "channel_init_to_irq_enable_boundary",
+      "channel": 2,
+      "native_irq": "0x15e",
+      "native_table_row": "0x3ae90",
+      "channel_available_mask_still_zero": true,
+      "physical_irq_enable_executed": false,
+      "passed": true
+    },
+    {
+      "case": "channel_init_to_irq_enable_boundary",
+      "channel": 3,
+      "native_irq": "0x16e",
+      "native_table_row": "0x3af10",
+      "channel_available_mask_still_zero": true,
+      "physical_irq_enable_executed": false,
+      "passed": true
+    },
+    {
+      "case": "controller_init",
+      "supplied_already_initialized": false,
+      "controller_is_artificial_ram": true,
+      "passed": true
+    },
+    {
+      "case": "controller_init",
+      "supplied_already_initialized": true,
+      "controller_is_artificial_ram": false,
+      "passed": true
+    },
+    {
+      "case": "property_init_and_separate_copy_caller",
+      "native_selected_channel": 0,
+      "camera_property_path_executed_fully": false,
+      "camera_channel_zero_exclusive": false,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "native_semaphore_fast_paths_executed": true,
+  "scheduler_or_wait_queue_executed": false,
+  "hardware_irq_delivery_or_dma_executed": false,
+  "camera_binding_enabled": false,
+  "limits": "Artificial kernel object table, generation-tagged handles, current task, context globals, controller RAM and directly invoked IRQs. Scoped primary low/high kernel imports, not full boot or a running OS. Native CPSR save/mask/restore executes in the emulator only. Empty wait stops before queue/scheduler; assertion paths stop before logger. Wrapper sequences explicitly omit the hardware-start store and restore a saved CPU context after an independently invoked IRQ; RAM retains native effects. Classifier flag4 is supplied and native DSB executes without a cache/coherence model. No successful OS return is fabricated. No scheduling, blocked-task wakeup, real completion, cache coherence or source lease established."
+}

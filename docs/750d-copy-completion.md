@@ -2,6 +2,8 @@
 
 The actual copy-engine IRQ body `0xFE1339B4` now executes in bounded PC experiments. It saves the supplied controller status, clears channel software state and chooses either a completion-signal boundary or an unlock-before-callback boundary. The [descriptor/submission experiment](750d-copy-descriptor.md) stopped before starting this separate copy engine; this follow-up does not supply hardware completion or copied pixels.
 
+Further work now executes [actual semaphore fast paths and longer wrapper scenarios](750d-copy-sync.md), including an explicit hardware-start cut, native IRQ-to-signal propagation and Canon channel-use analysis. The boundary-only checks below remain a separate, narrower probe.
+
 ## IRQ-to-channel mapping and cleanup
 
 The handler recognizes IRQ identifiers `0x13E`, `0x14E`, `0x15E` and `0x16E` as channels 0–3. These are distinct from sensor RAW channel IRQ `0x41` reviewed elsewhere. No physical IRQ delivery or registration is exercised here.
