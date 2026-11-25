@@ -2,6 +2,8 @@
 
 The [real readout methods](750d-readout-methods.md) prepare another StartDriver request inside completion processing. This experiment examines the receiving driver's event-bit gate. The gate requires all bits of `0x8000007F`, but a separate registered timer callback can request setting the entire mask. Passing this gate alone therefore does not independently establish RAW-DMA completion or permission to copy pixels.
 
+The later [no-work RAW notification checks](750d-raw-notification.md) add a second qualification: an empty RAW entry sets its event bit through real kernel lookup/update, and the actual ALL-bit wait accepts the result when other bits were explicitly preseeded. No sensor transfer, live timing or blocked wakeup is inferred.
+
 ## Native wait and clear requests
 
 Driver state is based at `0x01AC1830` (G). Start routine `0xFE750E1C` loads mask `0x8000007F` at `0xFE750E2E`. Its wait wrapper `0xFE74FBAA` prepares low-level call `0xFE749DBA` with the encoded event handle from G + 44 shifted right one, the mask, options 4 and an output pointer. A zero timeout input becomes a null timeout pointer. The experiment stops before low-level interrupt/object lookup, without entering scheduling.

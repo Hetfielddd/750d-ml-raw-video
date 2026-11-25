@@ -2,6 +2,8 @@
 
 The [start-gate investigation](750d-start-gate.md) established that event bits alone cannot prove RAW completion. This experiment executes the channel-1 interrupt body, its real register-write helpers and the RAW application's callback forwarding together. It reaches the driver's registered callback in eight supplied status/flag combinations, including a zero status word. Four additional cases first execute native channel configuration and start, deriving the two software flags rather than supplying their IRQ-entry values. The meaning of the interrupt delivered by the controller remains unverified.
 
+The [later no-work notification experiment](750d-raw-notification.md) now executes this driver's callback through actual kernel event lookup/update and return, with optional application task callbacks null. Empty RAW entries reach the same event bit without mapped capture registers; separate IRQ cases use the real forwarding wrapper. This qualifies software synchronization, not physical completion.
+
 ## Actual table and callback route
 
 Channel table source `0xFE756CB4`, stride 12, has channel-1 row `[0x41, 0xD0004100, 0x8000D1ED]`. The IRQ number is **hexadecimal `0x41` (65 decimal)**. Stored handler `0x8000D1ED` corresponds to source body `0xFE7545CC` under the reviewed driver mapping.

@@ -1,11 +1,13 @@
 # Research status
 
-Last updated: November 25, 2026.
+Last updated: November 26, 2026.
 
 Target: Canon EOS 750D / Rebel T6i, Canon firmware 1.1.0.
 Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
+
+- Executed no-work RAW entry -> real driver callback -> actual kernel event lookup/update -> return in eight supplied-state/IRQ scenarios, plus two direct IRQ/forwarding controls. The no-work path sets bit `0x10` without any capture-register page mapped. With other bits explicitly preseeded, native ALL-bit wait first reaches its blocking boundary, and a separate post-notification wait returns zero. Application RAW/aggregate task callbacks are null; no task delivery, blocked wakeup, live stale-event sequence or completed sensor frame is asserted. See [RAW notification qualification](750d-raw-notification.md).
 
 - Executed the complete reviewed non-alternate RAW software sub-handler in ten supplied-RAM scenarios, including actual address/control/command/format writers, native CPSR save/restore, pending clear and return. The six-bit format RMW follows the channel-command store; pending clear follows both command stores. Skip-address still permits command submission. Repeated invocation requires republication to emit another nonempty command sequence. This validates software ordering only, without peripheral acceptance, sensor pixels or a frame lease. See [RAW command order](750d-raw-command-order.md).
 
