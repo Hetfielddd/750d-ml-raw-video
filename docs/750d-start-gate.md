@@ -18,13 +18,23 @@ Static initialization review at `0xFE750D16` finds event creation with initial b
 
 The OS event flags examined here are separate from software component mask G + 4. The earlier [component and aggregate callback experiment](750d-completion-events.md) remains evidence about that software mask and callback order, not proof of physical frame completion.
 
+## Timer enable lifecycle and the preceding wait
+
+The actual application transition table at source `0xFE9744F8` maps event 2 / state zero to `0xFE80FDAE` under the scoped application mapping. The handler calls ARM veneer `0xFE86F290` first, then forwards its saved parameter through `0xFE86F288`. Their actual stored targets `0x80009AAB` and `0x80009A3D` correspond to source `0xFE750E8A` and `0xFE750E1C` under the reviewed driver mapping. The probe verifies these table/veneer words and independently executes the two handler slices to their imported-call boundaries. It does not execute the first imported call and pretend it returned.
+
+This identifies a preparation function **before** the start function. Its post-IRQ-disable slice at `0xFE750E90` writes G + 40 = 1, enabling the timer notification, and stops before IRQ restore. A separately entered post-restore slice at `0xFE750E9A` prepares a wait for **`0x7F`**, options 4, with a null timeout pointer. The pure decision core confirms that `0x7F` satisfies this preceding wait, whereas `0x6F` does not. Neither the enable slice nor this wrapper preparation changes software component mask G + 4.
+
+Thus the full-mask start wait is preceded by another ALL-bit wait for the seven component bits. Both concern the same event handle; the enabled timer callback can request all seven bits as part of its full mask. The preceding wait therefore does not independently resolve the completion ambiguity. This is a call-order and condition result, not an observed live timer sequence or proof that every event-2 call returns.
+
+The reviewed cleanup body beginning `0xFE750FE4` contains a separate post-IRQ-disable slice at `0xFE75102C` that clears G + 40 using zero R5 prepared at `0xFE751024`. The probe enters that slice with supplied zero R5 and stops before IRQ restore. Static code then calls unregister veneer `0xFE74F218` and deletes the event through `0xFE74FA80`; those operations and the earlier cleanup calls are not executed. No timer-flag clear occurs in the reviewed start body `0xFE750E1C`–`0xFE750E8A`. This is scoped lifecycle evidence, not a claim that all writers throughout the firmware have been enumerated.
+
 ## Reproduction and limits
 
 ```sh
 python scripts/probe_750d_start_gate.py /private/750d-analysis/record-06.bin
 ```
 
-[Evidence](evidence/750d-start-gate.json): 14 native cases, comprising eight ALL/ANY decisions, wait/clear preparation, disabled/enabled callback preparation and two pure flag updates. Inputs include an artificial even handle, event object, flags, zero OS guard globals and no waiters. Wrapper and pure-core stages are separate; OS object lookup is not simulated as successful.
+[Evidence](evidence/750d-start-gate.json): 21 native cases, comprising ten ALL/ANY decisions, wait/clear preparation, disabled/enabled callback preparation, three lifecycle/preparation slices, two event-2 handler slices and two pure flag updates. Inputs include an artificial even handle, event object, flags, zero OS guard globals and no waiters. Wrapper and pure-core stages are separate; OS object lookup is not simulated as successful.
 
 The exact main-record size and SHA-256 are checked before importing Unicorn. Cortex-A9 executes a compatible instruction subset, not a Cortex-R4 camera system. Firmware and return sentinel are read/execute; supplied data and stack are read/write without execute permission. Guards restrict code ranges and writes. Each stage is bounded to 128 instructions / 0.5 seconds. No native calls are stubbed into success. No firmware bytes are published.
 

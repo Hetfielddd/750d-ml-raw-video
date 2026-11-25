@@ -6,7 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
-- Fourteen native PC checks now verify the driver's ALL-bit start gate and a timer callback capable of setting the entire gate mask. Passing the wait alone cannot prove RAW-DMA completion. See [the gate and limits](docs/750d-start-gate.md).
+- Twenty-one native PC checks now verify the driver's ALL-bit start gate, preceding preparation wait and timer enable/cleanup slices. The enabled timer callback can satisfy either wait's bit condition, so neither wait alone proves RAW-DMA completion. See [the gate and limits](docs/750d-start-gate.md).
 - Magic Lantern is pinned as a Git submodule at commit `142472e95054d73640f50789ac0fd66325499d82`.
 - The upstream core and loader have been compiled and linked on Windows using Arm GNU Toolchain 13.3.Rel1, with `CONFIG_QEMU=y` and module/TCC support.
 - A Windows build script and a read-only FIR inspection script are included.

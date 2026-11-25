@@ -5,6 +5,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x0",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": false,
       "passed": true
@@ -12,6 +13,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x10",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": false,
       "passed": true
@@ -19,6 +21,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x7f",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": false,
       "passed": true
@@ -26,6 +29,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x80000000",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": false,
       "passed": true
@@ -33,6 +37,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x8000006f",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": false,
       "passed": true
@@ -40,6 +45,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x8000007f",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": true,
       "passed": true
@@ -47,6 +53,7 @@
     {
       "case": "event_decision",
       "supplied_flags": "0xffffffff",
+      "requested_bits": "0x8000007f",
       "options": 4,
       "immediate_success": true,
       "passed": true
@@ -54,8 +61,56 @@
     {
       "case": "event_decision",
       "supplied_flags": "0x10",
+      "requested_bits": "0x8000007f",
       "options": 0,
       "immediate_success": true,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x6f",
+      "requested_bits": "0x7f",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x7f",
+      "requested_bits": "0x7f",
+      "options": 4,
+      "immediate_success": true,
+      "passed": true
+    },
+    {
+      "case": "prepare_enables_timer",
+      "timer_enabled": 1,
+      "component_mask_unchanged": true,
+      "stopped_before": "0xfe74b106",
+      "passed": true
+    },
+    {
+      "case": "prepare_wait_request",
+      "timer_enabled": 1,
+      "component_mask_unchanged": true,
+      "stopped_before": "0xfe749dba",
+      "passed": true
+    },
+    {
+      "case": "cleanup_disables_timer",
+      "timer_enabled": 0,
+      "component_mask_unchanged": true,
+      "stopped_before": "0xfe74b106",
+      "passed": true
+    },
+    {
+      "case": "event2_first_call",
+      "stopped_before": "0xfe86f290",
+      "passed": true
+    },
+    {
+      "case": "event2_later_call",
+      "stopped_before": "0xfe86f288",
       "passed": true
     },
     {
@@ -90,9 +145,11 @@
     }
   ],
   "driver_gate_mask": "0x8000007f",
+  "preparation_gate_mask": "0x7f",
+  "event2_table_and_veneer_targets_checked": true,
   "native_calls_stubbed": false,
   "scheduler_or_irq_helpers_executed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Supplied event object, flags, encoded handle, zero OS guard globals and no waiters. Pure ready/missing decisions and flag updates are native; wrapper stages stop before OS lookup/IRQ work, missing-bit stages before blocking. Timer callback invocation is supplied; its registration/timing is not executed. No hardware completion, DMA, pixels, cache or ownership proof."
+  "limits": "Supplied event object, flags, encoded handle, zero OS guard globals and no waiters. Pure ready/missing decisions and flag updates are native; wrapper stages stop before OS lookup/IRQ work, missing-bit stages before blocking. Timer callback invocation is supplied; its registration/timing is not executed. Preparation/cleanup slices stop before IRQ restore; the cleanup zero register and later event-2 saved parameter are supplied. Two handler slices are independent, without returning an import. No hardware completion, DMA, pixels, cache or ownership proof."
 }
