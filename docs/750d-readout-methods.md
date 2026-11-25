@@ -4,6 +4,8 @@ The [previous experiment](750d-readout-done.md) checked registered-method order 
 
 This narrows the synchronization problem: a post-state-transition hook cannot be assumed to precede the next start request. It does not prove when the peer actually starts DMA or that copying at any earlier point is safe.
 
+The subsequent [RAW-redirection experiment](750d-raw-redirection.md) checks how normal peer address programming can replace an earlier register override, and identifies a native flag-controlled snapshot/override/restore candidate. It does not establish the timing of this request's delivery or a completed-frame lease.
+
 ## Native selector and method installation
 
 The method table begins at `0xFEA559F4`, identified through literal `0xFE248B50`. Each row is 72 bytes. The experiment executes the selector core at `0xFE248A12` with two supplied contexts:

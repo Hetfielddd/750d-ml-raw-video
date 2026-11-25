@@ -14,6 +14,8 @@ Reference: Magic Lantern `142472e95054d73640f50789ac0fd66325499d82`. These are u
 
 The 750D port still lacks the verified RAW channel and copy primitive; its `shamem_read` returns zero and it does not enable EVF state synchronization. The existing EVF pointer is upstream evidence, not project hardware validation. Nothing here enables those placeholders or writes a donor address to the 750D.
 
+Later target research identifies a [copy candidate with native semaphore checks](750d-copy-sync.md) and a [RAW snapshot/override/restore candidate](750d-raw-redirection.md). These narrow the integration gaps but leave the camera provider disabled: destination control does not establish completion, exclusive ownership or a safe borrowing interval.
+
 ## Source contract
 
 The caller initializes a fresh queue session, copy engine, fixed full-source geometry, and even vertical crop offset. Output is full-width RAW14 with even output height. Source height may be odd: only the copied Bayer-aligned rows need even parity. Initialization checks geometry arithmetic before any source calls.

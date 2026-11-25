@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced RAW destination overwrite and a native snapshot/override/restore mechanism. Eight PC scenarios verify pending-address precedence, the correct 44-byte flag-row stride, native flag-controlled suppression, ten-word restore and auxiliary state that remains changed. This is a destination-control candidate; channel start, physical completion, source lifetime and safe use remain unverified. See [RAW redirection](750d-raw-redirection.md).
+
 - Executed actual primary semaphore fast paths and connected wrapper admission, native cache-dispatch/descriptor preparation, separately invoked IRQ signaling and actual take/result/unlock paths across an explicit omitted hardware-start store. Twenty-nine scenarios include zero-size, absent/stale signals, uninterrupted native IRQ unlock-to-callback preparation, channel initialization and Canon property-save channel-0 use. Corrected reversed source/destination labels in the earlier direct-builder probe. Scheduling, live context/channel ownership, cache coherence, pixels and hardware completion remain unverified. See [copy synchronization and channel use](750d-copy-sync.md).
 
 - Executed copy-engine IRQ cleanup through signal/unlock boundaries, separately checked callback forwarding and all 16 post-wait status nibbles, and verified shared-status dependency across two supplied channel IRQs. All 53 cases pass. Zero and eight both decode to zero; OS synchronization and concurrency constraints are still required before treating any return as verified completion. No DMA or OS calls executed. See [copy completion](750d-copy-completion.md).

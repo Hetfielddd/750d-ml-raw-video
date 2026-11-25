@@ -64,7 +64,7 @@ def probe(data):
         put(driver + 216, 0)
         put(0x1ac40a4, shadow)
         # Actual channel-classifier input, supplied as synthetic RAM.
-        uc.mem_write(0x1ad8b84 + 108 + 40, b'\0')
+        uc.mem_write(0x1ad8b84 + 44 + 40, b'\0')
         done, errors, writes = [], [], []
         boundary = [stop]
         ranges = ((0xfe28d9d6, 0xfe28da36), (0xfe83942c, 0xfe83944c),
