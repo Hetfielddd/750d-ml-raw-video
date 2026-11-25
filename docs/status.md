@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Identified the asynchronous pool request's actual callback, 48-byte service object and minimum-size contract. Five native boundary checks verify request/object preparation and callback publication versus undersized assertion. The 90 MiB threshold does not establish actual allocation capacity; OS allocation/delivery and per-frame timing remain unexecuted. See [the pool request](750d-pool-request.md).
+
 - Identified the original manager address writer: resource-22 lookup, expected count one, actual class-2 provider for reviewed configuration modes 1/2. Seven native cases now include pool-base setup/alignment to 16 KiB, the pool-relative address, reported 30,791,680-byte resource size, skip and diagnostic behavior. Static mode-selection callers are identified; live configuration and sensor frames remain unobserved. See [the RAW resource route](750d-raw-resource.md).
 
 - Followed manager resource fields `+0x710 -> +0x748` into ADST slot-2 descriptor population and EVF RAW preparation. The actual population code fixes the slot count at one. Four native scenarios pass, including zero/one assertion inputs; original allocation and per-frame timing are still unverified. See [descriptor population](750d-raw-population.md).

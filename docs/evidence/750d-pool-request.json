@@ -1,0 +1,41 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "request_prefix",
+      "stopped_before": "0xfe3ce0e4",
+      "passed": true
+    },
+    {
+      "case": "packet_submission",
+      "stopped_before": "0xfe3ce01c",
+      "passed": true
+    },
+    {
+      "case": "callback_minimum",
+      "stopped_before": "0xfe3ce0fc",
+      "passed": true,
+      "supplied_size_bytes": 94371840
+    },
+    {
+      "case": "callback_larger",
+      "stopped_before": "0xfe3ce0fc",
+      "passed": true,
+      "supplied_size_bytes": 100663296
+    },
+    {
+      "case": "callback_too_small",
+      "stopped_before": "0xfe52fa48",
+      "passed": true,
+      "supplied_size_bytes": 94371839
+    }
+  ],
+  "minimum_callback_size_bytes": 94371840,
+  "message_storage_bytes": 48,
+  "native_calls_stubbed": false,
+  "allocation_or_task_delivery_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Separate request-prefix, post-clear message-preparation and callback stages. Message storage is supplied zeroed; allocation, availability query, clearing helper, OS send/receive and actual callback delivery are not executed. Callback sizes/bases are supplied. No physical pool, pixels, DMA, cache or frame timing."
+}

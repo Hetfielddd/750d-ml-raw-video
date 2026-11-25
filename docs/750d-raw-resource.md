@@ -54,6 +54,8 @@ These stages have bounded native evidence; the complete allocation/startup/trans
 
 ## PC experiment
 
+The [next investigation](750d-pool-request.md) follows the earlier asynchronous request and registered callback that supplies manager field `0x70C`. It distinguishes the minimum-size contract from actual returned pool capacity.
+
 ```sh
 python scripts/probe_750d_raw_resource.py /private/750d-analysis/record-06.bin
 ```
