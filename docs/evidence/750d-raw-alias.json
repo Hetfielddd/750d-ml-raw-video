@@ -1,0 +1,94 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "regions": [
+    {
+      "index": 0,
+      "base": 0,
+      "size_enable": 63,
+      "access": 289,
+      "bytes": 4294967296,
+      "last_address": 4294967295
+    },
+    {
+      "index": 1,
+      "base": 1073741824,
+      "size_enable": 59,
+      "access": 300,
+      "bytes": 1073741824,
+      "last_address": 2147483647
+    },
+    {
+      "index": 2,
+      "base": 3219128320,
+      "size_enable": 41,
+      "access": 292,
+      "bytes": 2097152,
+      "last_address": 3221225471
+    },
+    {
+      "index": 3,
+      "base": 3221225472,
+      "size_enable": 59,
+      "access": 4357,
+      "bytes": 1073741824,
+      "last_address": 4294967295
+    },
+    {
+      "index": 4,
+      "base": 3755999232,
+      "size_enable": 41,
+      "access": 292,
+      "bytes": 2097152,
+      "last_address": 3758096383
+    },
+    {
+      "index": 5,
+      "base": 3959422976,
+      "size_enable": 51,
+      "access": 289,
+      "bytes": 67108864,
+      "last_address": 4026531839
+    },
+    {
+      "index": 6,
+      "base": 4227858432,
+      "size_enable": 49,
+      "access": 289,
+      "bytes": 33554432,
+      "last_address": 4261412863
+    }
+  ],
+  "address_checks": [
+    {
+      "address": "0x1c62c000",
+      "highest_matching_region": 0,
+      "prepared_access": "0x121",
+      "tex": 4,
+      "shareable": false,
+      "c": false,
+      "b": true
+    },
+    {
+      "address": "0x5c62c000",
+      "highest_matching_region": 1,
+      "prepared_access": "0x12c",
+      "tex": 5,
+      "shareable": true,
+      "c": false,
+      "b": false
+    }
+  ],
+  "observed_cp15_write_boundaries": 30,
+  "primary_entry_operands": {
+    "region_index": 1,
+    "access": 289
+  },
+  "native_calls_stubbed": false,
+  "cp15_writes_executed": false,
+  "primary_core_attributes_validated": false,
+  "cache_behavior_emulated": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Peer startup scalar setup and two primary entry operand slices; each MCR is observed before execution and the next scalar slice entered separately. No CP15 write/MPU enable, cache, physical address alias, live primary-core mapping, DMA completion or pixel read is validated."
+}

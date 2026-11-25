@@ -19,6 +19,8 @@ The experiment copies only narrow function/table windows into these runtime alia
 
 ## Configuration to address store
 
+The later [address-alias investigation](750d-raw-alias.md) relates this bit-clearing route to peer MPU preparation and ML's pointer macros, while keeping primary-core mapping and coherence unverified.
+
 1. The mode-3 method previously identified as `Rec_FHD_60fps` copies input offset 80 into driver-parameter offset 200. Its slice `0xFE28D9D6..0xFE28DA36` also writes **1** to driver offset 144 when input offset 140 is nonzero, followed by related fields. The method's source label does not establish that the owner's camera exposes a 60 fps recording mode.
 2. Driver initialization at source `0xFE750DA6` passes the structure beginning at driver offset 144 through veneer `0xFE74F110`. The corresponding application initializer is source `0xFE839410`. Its reviewed slice copies the first word into state `0x01AC2220 + 28`, the channel index. In this branch that word is 1.
 3. Driver configuration at source `0xFE750F2C` passes driver offset 200 through veneer `0xFE74F130`, stored target `0x01BB7349`, to application body source `0xFE8396B0`. That body records the pending address at state offset 36 and the following parameter at state offset 44.

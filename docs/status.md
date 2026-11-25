@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Observed seven peer MPU-region preparations and two primary entry operands without executing CP15 writes. The peer assigns access `0x121` / `0x12C` to the cacheable/uncached candidate ranges respectively; the primary's inherited region boundaries remain unknown. This narrows the address/cache question without validating coherence or pixel reads. See [RAW aliases](750d-raw-alias.md).
+
 - Thirteen selection sequences include VD counter updates and ten propagation/start checks: the native selected word passes through publisher, mode-3 configuration and separately invoked peer configuration into pending state. Zero skips destination submission but can notify the supplied callback. Transport/live ordering, full lifecycle, transfer completion and frame ownership remain unverified. See [counter-restricted selection](750d-raw-selection.md).
 
 - Resolved the low IRQ-import mismatch with a distinct scoped peer-kernel page from source `0xFE744D60`. Sixteen native cases verify registration into slot `0x01ACB264`, IRQ-mask restoration, separate dispatch using that natively written slot and enable bounds. The dispatcher selects the RAW handler with channel argument 1. Boot relocation and physical controller delivery remain unverified. See [IRQ registration and dispatch](750d-irq-registration.md).

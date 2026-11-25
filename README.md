@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- Peer startup operand tracing now distinguishes the candidate RAW CPU alias `0x5C62C000` from DMA address `0x1C62C000`, consistent with ML's pointer convention. Thirty CP15-write boundaries are observed without executing them. Primary-core mapping and safe pixel reads remain unverified. See [address aliases and cache scope](docs/750d-raw-alias.md).
 - Thirteen native PC sequences now verify counter-restricted RAW selection and propagate its result through actual publisher/configuration code into peer pending-address state. Zero takes the empty start path, which can still invoke a callback. Transport delivery, hardware completion and buffer ownership remain unverified. See [selection and buffer reuse](docs/750d-raw-selection.md).
 - Sixteen native PC cases now connect RAW IRQ registration through a scoped peer-kernel page to its actual table, and separately verify dispatch from that natively written table and IRQ-enable bounds. Boot relocation and hardware completion remain unverified. See [IRQ registration and dispatch](docs/750d-irq-registration.md).
 - Twelve native PC cases now execute the RAW channel IRQ body, register-write helpers and callback forwarding against artificial register RAM. Four first run native configuration/start, deriving the software flags used by the IRQ branch. Hardware IRQ qualification and completed-frame ownership remain unverified. See [the IRQ body and limits](docs/750d-raw-irq.md).
