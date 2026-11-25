@@ -1,0 +1,142 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "supplied_status": "0x0",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "artificial_register_writes": [
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 0,
+      "secondary_flag": 1,
+      "artificial_register_writes": [
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0xdeadbeea"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 0,
+      "secondary_flag": 1,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    }
+  ],
+  "channel_index": 1,
+  "table_irq_number": "0x41",
+  "native_calls_stubbed": false,
+  "physical_hardware_accessed": false,
+  "artificial_mmio_ram_mapped": true,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Artificial register RAM and matching software shadow; native stores have ordinary RAM semantics, not device acknowledgement semantics. Supplied callback records, flags, status and direct handler invocation. Scoped code/table copies are not validated boot relocations. Stops before driver callback. No interrupt-controller delivery, hardware status definition, DMA, pixels, cache or frame ownership established."
+}
