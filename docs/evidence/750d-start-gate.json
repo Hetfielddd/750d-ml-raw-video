@@ -1,0 +1,98 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x0",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x10",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x7f",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x80000000",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x8000006f",
+      "options": 4,
+      "immediate_success": false,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x8000007f",
+      "options": 4,
+      "immediate_success": true,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0xffffffff",
+      "options": 4,
+      "immediate_success": true,
+      "passed": true
+    },
+    {
+      "case": "event_decision",
+      "supplied_flags": "0x10",
+      "options": 0,
+      "immediate_success": true,
+      "passed": true
+    },
+    {
+      "case": "wait_request",
+      "stopped_before": "0xfe749dba",
+      "passed": true
+    },
+    {
+      "case": "clear_request",
+      "stopped_before": "0xfe749d84",
+      "passed": true
+    },
+    {
+      "case": "timer_disabled",
+      "stopped_before": "0x10f000",
+      "passed": true
+    },
+    {
+      "case": "timer_enabled",
+      "stopped_before": "0xfe749d84",
+      "passed": true
+    },
+    {
+      "case": "set_bits_no_waiters",
+      "resulting_flags": "0x8000007f",
+      "passed": true
+    },
+    {
+      "case": "clear_bits_no_waiters",
+      "resulting_flags": "0x7fffff80",
+      "passed": true
+    }
+  ],
+  "driver_gate_mask": "0x8000007f",
+  "native_calls_stubbed": false,
+  "scheduler_or_irq_helpers_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied event object, flags, encoded handle, zero OS guard globals and no waiters. Pure ready/missing decisions and flag updates are native; wrapper stages stop before OS lookup/IRQ work, missing-bit stages before blocking. Timer callback invocation is supplied; its registration/timing is not executed. No hardware completion, DMA, pixels, cache or ownership proof."
+}

@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Verified the driver's ALL-bit start gate and a separate registered timer callback that can set its entire `0x8000007F` mask. Fourteen bounded native cases pass. Gate success alone cannot establish RAW-DMA completion; scheduling, live timer conditions and frame ownership remain unverified. See [the start gate](750d-start-gate.md).
+
 - Executed real readout method selection/publication and rows 3/9 in four native fixtures. Enabled-driver completion processing prepares `StartDriver` operation 2 before returning; disabled fixtures skip it. Transport and actual restart remain unexecuted. This identifies a concrete pre-submission interception boundary, not a frame lease. See [real readout methods](750d-readout-methods.md).
 
 - Followed readout-done processing into four registered-method calls and a separate internal-phase slice. Three callback-dispatch cases and ten phase fixtures pass. The real methods remain unexecuted; internal phase is distinct from the VSYNC state-object state. Post-transition copy safety remains unverified. See [readout-done processing](750d-readout-done.md).
