@@ -1,0 +1,88 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "channel_1_registration",
+      "supplied_callback_argument": "0x0",
+      "low_import_arguments": [
+        "0x8000d1ed",
+        "0x1",
+        "0x41"
+      ],
+      "stopped_before": "0x6fc",
+      "passed": true
+    },
+    {
+      "case": "channel_1_registration",
+      "supplied_callback_argument": "0x12345678",
+      "low_import_arguments": [
+        "0x8000d1ed",
+        "0x1",
+        "0x41"
+      ],
+      "stopped_before": "0x6fc",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0x41",
+      "supplied_irq_limit": 432,
+      "accepted": true,
+      "prepared_register": "0xd5011010",
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0x1af",
+      "supplied_irq_limit": 432,
+      "accepted": true,
+      "prepared_register": "0xd5011010",
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0x0",
+      "supplied_irq_limit": 432,
+      "accepted": false,
+      "prepared_register": null,
+      "stopped_before": "0x10f000",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0xffffffff",
+      "supplied_irq_limit": 432,
+      "accepted": false,
+      "prepared_register": null,
+      "stopped_before": "0x10f000",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0x1b0",
+      "supplied_irq_limit": 432,
+      "accepted": false,
+      "prepared_register": null,
+      "stopped_before": "0x10f000",
+      "passed": true
+    },
+    {
+      "case": "irq_enable",
+      "supplied_irq": "0x41",
+      "supplied_irq_limit": 65,
+      "accepted": false,
+      "prepared_register": null,
+      "stopped_before": "0x10f000",
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "low_import_executed": false,
+  "controller_registers_mapped": false,
+  "camera_binding_enabled": false,
+  "hardware_completion_validated": false,
+  "limits": "Supplied channel callback/argument and IRQ limit. Native installer and wrapper reach the actual ARM import target, stopping before its first instruction at 0x6FC. A separate enable call stops before controller store or returns rejection. No import return is fabricated. No controller delivery, DMA, pixels, timing, cache or frame ownership is established."
+}

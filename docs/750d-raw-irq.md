@@ -25,7 +25,7 @@ This does not identify status bit 2 as a completion bit. The tested body has no 
 
 ## Registration boundary from static review
 
-The channel callback installer `0xFE75432A` publishes the callback record and loads the actual channel-table IRQ and handler. It tail-calls `0xFE74B008` with arguments `[0, 0x41, 0x8000D1ED, 1]` for channel 1. That wrapper checks the IRQ range, calls import veneer `0xFE74F96C` with handler, channel argument and IRQ, then calls `0xFE747C20`. Registration/controller operations are not executed by this probe. Their downstream routing is the next boundary to investigate.
+The channel callback installer `0xFE75432A` publishes the callback record and loads the actual channel-table IRQ and handler. It tail-calls `0xFE74B008` with arguments `[0, 0x41, 0x8000D1ED, 1]` for channel 1. That wrapper checks the IRQ range, calls import veneer `0xFE74F96C` with handler, channel argument and IRQ, then calls `0xFE747C20`. Registration/controller operations are not executed by this probe. The [subsequent experiment](750d-irq-registration.md) executes registration preparation to low entry `0x6FC` and separately checks the enable boundary; low-memory routing remains unresolved.
 
 ## Reproduction and scope
 
