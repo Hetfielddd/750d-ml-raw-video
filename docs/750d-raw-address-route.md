@@ -6,6 +6,8 @@ The important result is a traced preparation address, not a completed-frame sour
 
 A [subsequent investigation](750d-raw-reservation.md) identifies this candidate address's producer: ADST slot 2, reserved during EVF activation. Its reservation lifecycle is distinct from ownership of each completed frame.
 
+The later [counter-selection experiment](750d-raw-selection.md) executes the actual restriction setter and repeated selections, including the reviewed handler's zero fallback and the consumed-tag/counter-zero limitation. It uses checked logger continuations without the original experiment's logger return stub.
+
 ## Target-specific path
 
 All runtime addresses below refer to the `0xFE000000` alias. The input is record 6 at `0xFE0A0000`, SHA-256 `3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2`. File offsets in candidate reports are relative to that record.
