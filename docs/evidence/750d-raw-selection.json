@@ -11,19 +11,25 @@
           "supplied_counter": 16,
           "selected_address": "0x12345000",
           "remaining_tag": 17,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 18,
           "selected_address": "0x12345000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -37,13 +43,17 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 17,
           "selected_address": "0x12345000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -57,13 +67,17 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": false
+          "restriction_enabled": false,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 18,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": false
+          "restriction_enabled": false,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -77,13 +91,17 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 0,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -97,7 +115,9 @@
           "supplied_counter": 18,
           "selected_address": "0x5c62c000",
           "remaining_tag": 17,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -111,13 +131,17 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 18,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -131,13 +155,17 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 18,
           "selected_address": "0x0",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         }
       ],
       "passed": true
@@ -151,13 +179,113 @@
           "supplied_counter": 17,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
         },
         {
           "supplied_counter": 0,
           "selected_address": "0x5c62c000",
           "remaining_tag": 0,
-          "restriction_enabled": true
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "native_vd_first_then_increment",
+      "supplied_fallback": "0x0",
+      "native_zero_fallback_initialization": true,
+      "steps": [
+        {
+          "supplied_counter": 1,
+          "selected_address": "0x5c62c000",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        },
+        {
+          "supplied_counter": 2,
+          "selected_address": "0x0",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "native_vd_increment",
+      "supplied_fallback": "0x0",
+      "native_zero_fallback_initialization": true,
+      "steps": [
+        {
+          "supplied_counter": 17,
+          "selected_address": "0x5c62c000",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        },
+        {
+          "supplied_counter": 18,
+          "selected_address": "0x0",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "native_vd_wrap",
+      "supplied_fallback": "0x0",
+      "native_zero_fallback_initialization": true,
+      "steps": [
+        {
+          "supplied_counter": 4294967295,
+          "selected_address": "0x5c62c000",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        },
+        {
+          "supplied_counter": 0,
+          "selected_address": "0x5c62c000",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "native_vd_wrap_raw_disabled",
+      "supplied_fallback": "0x0",
+      "native_zero_fallback_initialization": true,
+      "steps": [
+        {
+          "supplied_counter": 4294967295,
+          "selected_address": "0x5c62c000",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": true,
+          "counter_updated_natively": true
+        },
+        {
+          "supplied_counter": 0,
+          "selected_address": "0x0",
+          "remaining_tag": 0,
+          "restriction_enabled": true,
+          "raw_enabled": false,
+          "counter_updated_natively": true
         }
       ],
       "passed": true
@@ -166,5 +294,5 @@
   "native_calls_stubbed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Supplied route-active caller, EVF counters, fallback and unmapped candidate marker. Native setters/getters and selection slices; reviewed post-log continuations entered separately. No logger return modeled, native event delivery, counter producer, DMA, pixel memory, cache coherence or buffer ownership validated."
+  "limits": "Supplied route-active caller, EVF counters, fallback and unmapped candidate marker. Native setters/getters and selection slices; reviewed post-log continuations entered separately. No logger return modeled. Four cases execute reviewed VD counter-update slices; first-frame setup/store are separated around unexecuted helpers. No complete native event delivery, DMA, pixel memory, cache coherence or buffer ownership validated."
 }

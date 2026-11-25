@@ -7,7 +7,7 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
-- Identified and executed the actual RAW counter-restriction setter, tag consumption and native zero-fallback prefix in eight sequence cases. This provides a candidate route for single-selection capture, but a later zero counter can match the consumed zero tag. Counter lifetime, transfer completion and frame ownership remain unverified. See [counter-restricted selection](750d-raw-selection.md).
+- Identified the VD event-3 counter producer: a reviewed first-frame branch stores 1, and the ordinary path increments a 32-bit word. Twelve selection cases now include native first/increment/overflow slices and disabling RAW after a match. Overflow can match the consumed zero tag; disabling RAW blocks that later selection in the tested slice. Live ordering, full lifecycle, transfer completion and frame ownership remain unverified. See [counter-restricted selection](750d-raw-selection.md).
 
 - Resolved the low IRQ-import mismatch with a distinct scoped peer-kernel page from source `0xFE744D60`. Sixteen native cases verify registration into slot `0x01ACB264`, IRQ-mask restoration, separate dispatch using that natively written slot and enable bounds. The dispatcher selects the RAW handler with channel argument 1. Boot relocation and physical controller delivery remain unverified. See [IRQ registration and dispatch](750d-irq-registration.md).
 
