@@ -1,6 +1,6 @@
 # Native RAW parameter routing and parameter-block lifetime
 
-An alternative to the [snapshot/override helper](750d-raw-override-contract.md) is the normal RAW pending-address path. Eleven PC checks trace native service registration, parameter-command routing, actual queue insertion/removal, envelope extraction and separately entered consumer code. They establish a **parameter-block lifetime requirement**, not a completed-image lease or working cross-core transport. The [queue execution contract](750d-task-queue-order.md) details the supplied kernel objects and remaining cuts.
+An alternative to the [snapshot/override helper](750d-raw-override-contract.md) is the normal RAW pending-address path. Twelve PC checks trace native service registration, parameter-command routing, actual queue insertion/removal, envelope extraction and separately entered consumer/epilogue code. They establish a **parameter-block lifetime requirement**, not a completed-image lease or working cross-core transport. The [queue execution contract](750d-task-queue-order.md) details the supplied kernel objects, single pending-address slot and remaining cuts.
 
 ## A registered configuration route, rather than an unreferenced override entry
 
@@ -55,7 +55,9 @@ Three scenarios retain the same emulator RAM across the reviewed stages:
 
 The second case is a supplied scheduling sequence, **not a demonstrated camera race**. Cross-core visibility and real task timing are untested. It shows why a future adapter must retain stable parameter storage until actual consumption, or establish a stronger verified ordering contract; returning from the sender is not independent evidence that the peer has finished reading it. A parameter-block lifetime and the lifetime of sensor-image pixels are different contracts.
 
-Envelope release is also too early to reuse parameter storage: the native receive wrapper extracts pointers and reaches envelope free before the task loop calls the consumer. Static review places the next receive after the consumer callback returns. Full RAW callback execution and its eventual parameter use remain outside this bounded experiment, so this is not a validated reclamation acknowledgment.
+Envelope release is also too early to reuse parameter storage: the native receive wrapper extracts pointers and reaches envelope free before the task loop calls the consumer. A separately entered actual driver epilogue, using CPU/stack state saved at the earlier component boundary, now executes the worker return and reaches the next native receive. Both parameter pages are inaccessible in these three epilogue fixtures. This checks the return-chain read behavior and lack of return transport, not execution of the omitted component bodies or a validated reclamation acknowledgment.
+
+A two-command scenario accepts separate A/B parameter blocks into the native FIFO, consumes their RAW setters in order, and then enters one RAW start preparation. The single pending-address slot is replaced A then B, so only B's destination is prepared. Pending B remains stored at the channel-start boundary; clearing happens later in unexecuted code. Queue acceptance is not evidence of one capture per command. See [the ordering analysis](750d-task-queue-order.md).
 
 Three control cases check native service removal (no queue request) and operation 2/5 routing through their actual task handlers. Operation 2 stops before its preparation import; operation 5 stops before its driver import. Neither control case starts hardware.
 
@@ -67,7 +69,7 @@ Two additional native primary-return dispatcher checks show that operations 4 an
 python scripts/probe_750d_raw_param_lifetime.py /private/750d-analysis/record-06.bin
 ```
 
-[Evidence](evidence/750d-raw-param-lifetime.json) records eleven passing cases: three memory-lifetime scenarios, three routing/removal controls, two primary-return leaves, FIFO/full/empty/wraparound checks, rejected-request cleanup preparation and the empty blocking-receive boundary. The identified main-record size/SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible scalar subset, not a full Cortex-R4 camera model.
+[Evidence](evidence/750d-raw-param-lifetime.json) records twelve passing cases: three memory-lifetime/epilogue scenarios, three routing/removal controls, two primary-return leaves, FIFO/full/empty/wraparound checks, rejected-request cleanup preparation, two configurations before one start preparation and the empty blocking-receive boundary. The identified main-record size/SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible scalar subset, not a full Cortex-R4 camera model.
 
 Firmware and scoped application/driver/table pages are read/execute. Supplied objects, parameter blocks, envelope, stacks, shadow and register RAM are read/write without execute permission. Code/write guards and a 256-instruction / 0.5-second limit apply to each stage. Successful native helper returns must restore their stacks. The fixture's parameter-block extent is not asserted to be the full camera protocol's structure size.
 

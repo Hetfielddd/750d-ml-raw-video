@@ -11,6 +11,10 @@
       "parameter_contents_read_by_envelope_stages": false,
       "native_queue_enqueue_receive_and_extraction": true,
       "worker_reached_with_envelope_inaccessible": true,
+      "separate_driver_epilogue_reaches_next_empty_receive": true,
+      "parameters_inaccessible_during_epilogue": true,
+      "return_transport_executed_in_epilogue": false,
+      "full_driver_configuration_executed": false,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5c62c000",
       "prepared_dma_address": "0x1c62c000",
@@ -27,6 +31,10 @@
       "parameter_contents_read_by_envelope_stages": false,
       "native_queue_enqueue_receive_and_extraction": true,
       "worker_reached_with_envelope_inaccessible": true,
+      "separate_driver_epilogue_reaches_next_empty_receive": true,
+      "parameters_inaccessible_during_epilogue": true,
+      "return_transport_executed_in_epilogue": false,
+      "full_driver_configuration_executed": false,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5e000000",
       "prepared_dma_address": "0x1e000000",
@@ -43,6 +51,10 @@
       "parameter_contents_read_by_envelope_stages": false,
       "native_queue_enqueue_receive_and_extraction": true,
       "worker_reached_with_envelope_inaccessible": true,
+      "separate_driver_epilogue_reaches_next_empty_receive": true,
+      "parameters_inaccessible_during_epilogue": true,
+      "return_transport_executed_in_epilogue": false,
+      "full_driver_configuration_executed": false,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5c62c000",
       "prepared_dma_address": "0x1c62c000",
@@ -156,6 +168,23 @@
       "passed": true
     },
     {
+      "case": "two_queued_configurations_before_one_start_preparation",
+      "accepted_commands": 2,
+      "consumed_parameter_pointers": [
+        "0x102000",
+        "0x103000"
+      ],
+      "pending_address_sequence": [
+        "0x5c62c000",
+        "0x5e000000"
+      ],
+      "prepared_dma_address": "0x1e000000",
+      "pending_retained_at_channel_start_boundary": "0x5e000000",
+      "full_driver_configuration_executed": false,
+      "channel_start_executed": false,
+      "passed": true
+    },
+    {
       "case": "native_empty_task_receive_wait_boundary",
       "timeout_argument": 0,
       "stopped_before": "0xfe74c23e",
@@ -174,5 +203,5 @@
   "channel_start_or_dma_executed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Supplied task/context/state objects, queue handle, receive-channel map and separately entered stage order. Native sender values are passed across explicit unexecuted mailbox loads/stores. Queue wrapper checks its supplied object and reaches the allocator boundary; a separate post-allocation envelope slice uses supplied scratch storage, not a fabricated allocator return. Native enqueue/receive use a supplied two-slot no-waiter kernel queue and real IRQ masking. Heap free and receive epilogue are unexecuted; a separate task-loop continuation consumes native-extracted stack words after the envelope page is made inaccessible. Allocation, free, task scheduling and blocked wakeup do not execute. Driver RAW tail is separately entered past unexecuted other component configuration calls. Actual parameter RAM is retained, not deep-copied or replaced between stages except the named native republication fixtures. Artificial register RAM and supplied channel state/classifier/geometry. No hardware timing, cross-core visibility, allocation, completed pixels or ownership demonstrated."
+  "limits": "Supplied task/context/state objects, queue handle, receive-channel map and separately entered stage order. Native sender values are passed across explicit unexecuted mailbox loads/stores. Queue wrapper checks its supplied object and reaches the allocator boundary; a separate post-allocation envelope slice uses supplied scratch storage, not a fabricated allocator return. Native enqueue/receive use a supplied two-slot no-waiter kernel queue and real IRQ masking. Heap free and receive epilogue are unexecuted; a separate task-loop continuation consumes native-extracted stack words after the envelope page is made inaccessible. Allocation, free, task scheduling and blocked wakeup do not execute. Driver RAW tail is separately entered past unexecuted other component configuration calls. A separate native driver epilogue uses CPU/stack state saved at the prefix boundary; the omitted driver body is not treated as executed or successfully returned. That continuation checks worker return and next receive, not full configuration completion. Actual parameter RAM is retained, not deep-copied or replaced between stages except the named native republication fixtures. Artificial register RAM and supplied channel state/classifier/geometry. No hardware timing, cross-core visibility, allocation, completed pixels or ownership demonstrated."
 }

@@ -46,13 +46,15 @@ def probe(data):
               (0xfe86fb30 - app_delta, 0xfe86fb4a - app_delta),
               (0xfe86faba, 0xfe86fac8), (0xfe86faba - app_delta, 0xfe86fac8 - app_delta),
               (0xfe8063a0 - app_delta, 0xfe8063b6 - app_delta),
+              (0xfe8063b6 - app_delta, 0xfe8063d6 - app_delta),
               (0xfe86f728 - app_delta, 0xfe86f72c - app_delta),
               (0x800057fc, 0x80005886),
               (0xfe80fdf4 - app_delta, 0xfe80fe02 - app_delta),
               (0xfe80fdae - app_delta, 0xfe80fdc2 - app_delta),
               (0xfe80fe02 - app_delta, 0xfe80fe10 - app_delta),
               (0xfe86f298 - app_delta, 0xfe86f29c - app_delta),
-              (0x80009b20, 0x80009b28), (0xfe750f2c, 0xfe750f3a),
+              (0x80009b20, 0x80009b28), (0x80009b94, 0x80009b98),
+              (0xfe750f2c, 0xfe750f3a),
               (0xfe74f130, 0xfe74f134), (0x1bb7348, 0x1bb7366),
               (0xfe8395c4, 0xfe839642), (0xfe86f858, 0xfe86f85c),
               (0x8000c654, 0x8000c67e), (0x8000c5fe, 0x8000c654),
@@ -61,7 +63,7 @@ def probe(data):
               (0xfe749ed0, 0xfe749f6e), (0xfe74bed6, 0xfe74bf0e),
               (0xfe74c04e, 0xfe74c100), (0xfe74c100, 0xfe74c11a),
               (0xfe74c156, 0xfe74c23e), (0xfe74f9b4, 0xfe74f9b8),
-              (0x230, 0x23a), (0xfe74cd2c, 0xfe74cd7a), (0xfe74cd9c, 0xfe74cdae))
+              (0x230, 0x23a), (0xfe74cd2c, 0xfe74cd7a), (0xfe74cd86, 0xfe74cdb8))
 
     for scenario in ('unchanged_block', 'same_block_republished', 'separate_block_prepared',
                      'native_service_unregistered', 'start_operation', 'operation_five'):
@@ -114,7 +116,7 @@ def probe(data):
                             (postman_row, postman_row + 8), (subtask + 12, subtask + 16),
                             (counter, counter + 1), (stateobj + 28, stateobj + 32),
                             (peer + 36, peer + 40), (peer + 44, peer + 48),
-                            (envelope, envelope + 16),
+                            (envelope, envelope + 32),
                             (kernel_queue, kernel_queue + 44), (ring, ring + 8),
                             (receive_output, receive_output + 4),
                             (shadow + 0x4108, shadow + 0x410c), (register, register + 4))
@@ -277,6 +279,7 @@ def probe(data):
             continue
         if uc.reg_read(UC_ARM_REG_R4) != queued[3] or uc.reg_read(UC_ARM_REG_R0) != queued[3]:
             raise RuntimeError('Native driver prefix did not receive original queued pointer')
+        driver_prefix_cpu = uc.context_save()
         # Separate RAW-tail entry: earlier/later component updates are unexecuted.
         run(0xfe750f2c, (0xfe750f3a,), ((UC_ARM_REG_R4, uc.reg_read(UC_ARM_REG_R4) + 208),))
         expected = b if scenario == 'same_block_republished' else a
@@ -291,11 +294,24 @@ def probe(data):
                 or word(0xd0004110) != geometry or word(shadow + 0x4110) != geometry
                 or bytes(uc.mem_read(first + 144, 36)) != initial_geometry):
             raise RuntimeError('Wrong native destination or changed supplied geometry')
+        # Independently enter the real driver epilogue with the CPU/stack from
+        # its earlier prefix boundary. The component body remains UNEXECUTED;
+        # this is not a fabricated component return or a completed config call.
+        # Both parameter blocks and the old envelope are inaccessible here.
+        uc.mem_protect(first, 8192, 0)
+        uc.context_restore(driver_prefix_cpu)
+        run(0x80009b94, (0xfe74c23e,), entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if word(context + 4) != stateobj or word(stateobj + 28) != 0:
+            raise RuntimeError('Configuration epilogue changed the native context association')
         cases.append({'case': scenario, 'native_operation_and_event': operation,
                       'original_payload_pointer': hex(first), 'queued_payload_pointer': hex(queued[3]),
                       'native_envelope_bytes': 16, 'parameter_contents_read_by_envelope_stages': False,
                       'native_queue_enqueue_receive_and_extraction': True,
                       'worker_reached_with_envelope_inaccessible': True,
+                      'separate_driver_epilogue_reaches_next_empty_receive': True,
+                      'parameters_inaccessible_during_epilogue': True,
+                      'return_transport_executed_in_epilogue': False,
+                      'full_driver_configuration_executed': False,
                       'first_prepared_address': hex(a), 'consumed_pending_address': hex(expected),
                       'prepared_dma_address': hex(word(register)),
                       'supplied_geometry_unchanged_in_reviewed_address_path': True,
@@ -375,6 +391,63 @@ def probe(data):
                   'heap_free_executed': False, 'passed': True})
     if queue_call('get') != (0, 0x44444444, 1) or queue_call('get') != (0, 0x55555555, 0):
         raise RuntimeError('Failed to drain rejection fixture')
+    # Two accepted configuration commands do not create two capture buffers.
+    # Run both queue entries through the actual consumer prefix, separately
+    # entered RAW setter tail and declared driver-epilogue cut before allowing
+    # even the first RAW start preparation. The RAW pending slot is singular.
+    prepare(first, a)
+    prepare(second, b)
+    for index, block in enumerate((first, second)):
+        put(stack, 0)
+        run(0xfe74ce9e, (0xfe74f95c,),
+            ((UC_ARM_REG_R0, queueobj), (UC_ARM_REG_R1, subtask),
+             (UC_ARM_REG_R2, 4), (UC_ARM_REG_R3, block)), forbid_parameter_reads=True)
+        run(0xfe74cec4, (stop,), ((UC_ARM_REG_R0, envelope + index * 16),),
+            forbid_parameter_reads=True, entry_sp=uc.reg_read(UC_ARM_REG_SP), return_sp=stack)
+        if uc.reg_read(UC_ARM_REG_R0) != 0:
+            raise RuntimeError('Native two-command queue preparation failed')
+    if struct.unpack('<H', uc.mem_read(kernel_queue + 18, 2))[0] != 2:
+        raise RuntimeError('Two native request envelopes were not accepted')
+    put(loop_sp, loop_sp + 12)
+    put(loop_sp + 4, 0)
+    run(0xfe74cd2c, (0xfe74f964,),
+        ((UC_ARM_REG_R0, queueobj), (UC_ARM_REG_R1, loop_sp + 24),
+         (UC_ARM_REG_R2, loop_sp + 20), (UC_ARM_REG_R3, loop_sp + 16)),
+        forbid_parameter_reads=True, entry_sp=loop_sp)
+    pending_sequence = []
+    for index, block in enumerate((first, second)):
+        if [word(loop_sp + offset) for offset in (24, 20, 16, 12)] != [subtask, 4, block, 0]:
+            raise RuntimeError('Two-command receive extraction changed FIFO pointer order')
+        run(0xfe74cd9c, (0x8000a8bc,), ((UC_ARM_REG_R4, queueobj),), entry_sp=loop_sp)
+        if uc.reg_read(UC_ARM_REG_R4) != block:
+            raise RuntimeError('Two-command consumer selected the wrong parameter block')
+        prefix_cpu = uc.context_save()
+        run(0xfe750f2c, (0xfe750f3a,), ((UC_ARM_REG_R4, block + 208),))
+        pending_sequence.append(word(peer + 36))
+        if index == 0:
+            # The real return/loop chain removes command B and reaches its
+            # envelope-free boundary, before dispatching B's consumer.
+            uc.context_restore(prefix_cpu)
+            run(0x80009b94, (0xfe74f964,), entry_sp=uc.reg_read(UC_ARM_REG_SP))
+            if uc.reg_read(UC_ARM_REG_R0) != envelope + 16:
+                raise RuntimeError('Native next receive did not select command B')
+            if (word(peer + 36) != a
+                    or struct.unpack('<H', uc.mem_read(kernel_queue + 18, 2))[0] != 0):
+                raise RuntimeError('Next receive unexpectedly consumed RAW data or left B queued')
+            uc.mem_protect(envelope, 4096, 0)
+    if pending_sequence != [a, b]:
+        raise RuntimeError('RAW pending slot did not retain the latest consumed configuration')
+    put(0x1ac40a4, shadow)
+    run(0xfe8395c4, (0xfe86f878,))
+    if word(register) != b & 0x3fffffff or word(peer + 36) != b:
+        raise RuntimeError('RAW start preparation did not consume only the final pending address')
+    cases.append({'case': 'two_queued_configurations_before_one_start_preparation',
+                  'accepted_commands': 2, 'consumed_parameter_pointers': [hex(first), hex(second)],
+                  'pending_address_sequence': [hex(value) for value in pending_sequence],
+                  'prepared_dma_address': hex(word(register)),
+                  'pending_retained_at_channel_start_boundary': hex(word(peer + 36)),
+                  'full_driver_configuration_executed': False,
+                  'channel_start_executed': False, 'passed': True})
     empty_before = bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))
     # The task receive wrapper uses timeout argument zero, unlike receive-now's
     # pointer to a zero-valued timeout pair. Follow the empty blocking branch
@@ -408,7 +481,11 @@ def probe(data):
                       'words after the envelope page is made inaccessible. Allocation, '
                       'free, task scheduling and blocked wakeup do not execute. Driver RAW '
                       'tail is separately entered past unexecuted other '
-                      'component configuration calls. Actual parameter RAM is retained, not '
+                      'component configuration calls. A separate native driver epilogue '
+                      'uses CPU/stack state saved at the prefix boundary; the omitted '
+                      'driver body is not treated as executed or successfully returned. '
+                      'That continuation checks worker return and next receive, not full '
+                      'configuration completion. Actual parameter RAM is retained, not '
                       'deep-copied or replaced between stages except the named native '
                       'republication fixtures. Artificial register RAM and supplied channel '
                       'state/classifier/geometry. No hardware timing, cross-core visibility, '

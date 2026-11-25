@@ -25,7 +25,25 @@ Actual task receive `0xFE74CD2C` uses queue-receive `0xFE74FDBC` and lower wrapp
 
 The experiment makes the old envelope page inaccessible and separately enters task-loop continuation `0xFE74CD9C`. The loop loads its callback and the four native-extracted stack words, then reaches the actual RAW configuration consumer prefix. Rewriting the parameter block during this supplied inter-stage interval changes the later pending address; preparing another block preserves the original address. The envelope lifetime therefore does not define the parameter-storage lifetime.
 
-Heap free and the receive epilogue remain unexecuted. The full consumer callback does not return in this probe: it stops before the first unexecuted component update, with a separately entered RAW tail checked afterwards. Static loop review shows the next receive follows callback return; it does not establish that all downstream use ends there.
+Heap free and the receive epilogue remain unexecuted. Full driver configuration stops before its first component update, with a separately entered RAW tail checked afterwards. A separate epilogue experiment now checks the return chain described below. It does not establish that all downstream use ends there.
+
+## Separate return-chain experiment
+
+At the first component boundary, the probe saves the emulator CPU state and retains the original stack. After the separate RAW-tail/address checks, it restores that CPU state and enters the actual driver epilogue at runtime `0x80009B94` (source `0xFE750F74`). This epilogue executes its own zero-result instruction and saved-register return. The omitted component body remains unexecuted; there is no component-call return stub or claim that configuration completed.
+
+The native event-4 handler continuation at source `0xFE80FDFE` loads the state-object association from context offset 4, replacing the driver's result. The native dispatcher returns this nonzero association. Worker source `0xFE8063A0` takes its nonzero branch, stores the association back at context offset 4 and returns. The actual task loop then makes its next receive request. With an empty queue it reaches the pre-scheduler wait boundary; with a second command it removes that command and extracts its envelope.
+
+In the three original lifetime scenarios, both parameter pages and the old envelope are inaccessible during this return-chain experiment. No parameter access or return transport occurs in the reviewed continuation. This narrows the relevant local read interval, but does not validate the omitted component bodies or an acknowledgment to the primary core. The worker's zero-result fallback is associated with an error-format string; it must not be assumed to acknowledge configuration either.
+
+## Two queued configurations still share one pending RAW address
+
+A new scenario prepares A and B in separate, stable parameter blocks, constructs two native envelopes, and accepts both into the supplied FIFO. The first native receive/consumer prefix and separate RAW setter tail establish pending A. The separate return-chain experiment then removes the second command through the actual loop/receive code. Its consumer prefix and separate RAW tail replace pending A with B.
+
+Only then does the probe enter RAW start preparation. It programs B's normalized DMA address `0x1E000000` and stops before channel-start veneer `0xFE86F878`. The pending word still contains B at this boundary: its later clear is after the unexecuted start and other calls, at source `0xFE83963C`.
+
+This supplied ordering checks the single pending-address slot, not a live dropped-frame event. FIFO acceptance preserves command order; it does not allocate a sensor capture for every configuration. There is no address queue inside the reviewed RAW pending setter. A future frame-buffer rotation protocol must synchronize configuration with actual capture boundaries and copying, rather than enqueue arbitrary configurations and count them as frames.
+
+The [7D2 reference](similar-camera-raw.md) redirects the upcoming capture and processes the opposite buffer at its verified VSYNC hook. At the pinned revision, `mlv_lite.c` lines 2953–2960 implement this alternation. The 750D normal asynchronous configuration route has not been shown to provide the same timing contract; these queue tests do not make it a replacement for that hook.
 
 ## Full, empty and wraparound cases
 
@@ -39,4 +57,4 @@ Task receive's zero timeout argument differs from receive-now's pointer to a zer
 
 Queue acceptance, parameter consumption and completed sensor pixels are separate events. These tests establish pointer forwarding and native FIFO behavior in supplied RAM, and show why envelope release alone cannot authorize parameter reuse. They do not establish live cross-core visibility, a consumption acknowledgment, safe RAW-buffer reuse, cache coherence, image packing or DMA completion.
 
-Reproduce with `scripts/probe_750d_raw_param_lifetime.py` and a privately supplied identified main record. The [evidence](evidence/750d-raw-param-lifetime.json) contains eleven passing cases. Native code/write/read guards and per-stage execution limits apply; no native calls are stubbed. Firmware bytes are not distributed. Camera bindings remain disabled; the camera and SD card are untouched.
+Reproduce with `scripts/probe_750d_raw_param_lifetime.py` and a privately supplied identified main record. The [evidence](evidence/750d-raw-param-lifetime.json) contains twelve passing cases. Native code/write/read guards and per-stage execution limits apply; no native calls are stubbed. Firmware bytes are not distributed. Camera bindings remain disabled; the camera and SD card are untouched.
