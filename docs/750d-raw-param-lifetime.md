@@ -1,6 +1,6 @@
 # Native RAW parameter routing and parameter-block lifetime
 
-An alternative to the [snapshot/override helper](750d-raw-override-contract.md) is the normal RAW pending-address path. Eight new PC checks trace native service registration, parameter-command routing, queue-envelope construction and separately entered consumer code. They establish a **parameter-block lifetime requirement**, not a completed-image lease or working cross-core transport.
+An alternative to the [snapshot/override helper](750d-raw-override-contract.md) is the normal RAW pending-address path. Eleven PC checks trace native service registration, parameter-command routing, actual queue insertion/removal, envelope extraction and separately entered consumer code. They establish a **parameter-block lifetime requirement**, not a completed-image lease or working cross-core transport. The [queue execution contract](750d-task-queue-order.md) details the supplied kernel objects and remaining cuts.
 
 ## A registered configuration route, rather than an unreferenced override entry
 
@@ -31,13 +31,13 @@ word 2: original parameter-block pointer
 word 3: additional argument (zero in these fixtures)
 ```
 
-Execution stops before underlying enqueue helper `0xFE74FF10`. A read guard verifies that neither the queue-wrapper prefix nor envelope-construction slice reads the parameter-block contents. This checks pointer-envelope construction, not successful heap allocation or queue enqueueing. No allocator return is fabricated.
+The post-allocation slice now continues through underlying enqueue helper `0xFE74FF10` and the wrapper's successful return, restoring its original entry stack. The queue is a supplied two-slot kernel object with no waiting tasks. Native queue lookup, FIFO insertion and IRQ save/restore execute. A read guard verifies that the queue stages do not read the parameter-block contents. No allocator return is fabricated; allocation remains an explicit cut.
 
-Static review of the matching receive wrapper `0xFE74CEE0` finds the inverse four-word extraction after queue receive, followed by freeing the envelope. That receive/free path is not executed here. No deep copy of the parameter block is established by the reviewed queue-wrapper code.
+The task loop uses receive wrapper `0xFE74CD2C`, which now executes through real queue removal and extraction into the loop's four stack outputs. It stops before heap-free veneer `0xFE74F964`. The envelope page is then made inaccessible as a lifetime fixture. The allocator, heap free and receive epilogue are not executed. No deep copy of the parameter block is established by these queue stages.
 
 ## Actual worker and state dispatch
 
-Across a separate **unexecuted queue-delivery cut**, native trampoline `0xFE86FABA` loads the worker and the context association written by the real request helper. It invokes actual worker source `0xFE8063A0`, which enters state-transition import `0xFE86F728`, runtime dispatcher `0x800057FC`, and the actual capture-path transition table at `0x01CF2190`.
+A separately entered task-loop continuation at `0xFE74CD9C`, after the unexecuted heap free and receive epilogue, reads the native-extracted stack outputs and invokes its registered callback. Native trampoline source `0xFE86FABA` loads the worker and the context association written by the real request helper. It invokes actual worker source `0xFE8063A0`, which enters state-transition import `0xFE86F728`, runtime dispatcher `0x800057FC`, and the actual capture-path transition table at `0x01CF2190`. The worker is reached with its old queue envelope inaccessible.
 
 With supplied state zero, event 4 selects source `0xFE80FDF4`, reaches real driver configuration entry `0xFE750F00` / runtime `0x80009B20`, and stops before its first component update at runtime `0x8000A8BC`. The driver receives the **same original parameter-block pointer**.
 
@@ -49,11 +49,13 @@ The tested producer fields and supplied channel geometry remain unchanged when o
 
 Three scenarios retain the same emulator RAM across the reviewed stages:
 
-- **Unchanged block:** native production of A, routing and envelope construction followed by consumer execution produces pending A and destination `0x1C62C000`.
-- **Same block republished:** after envelope construction, the actual producer rewrites the same block with B. The envelope still contains its original pointer, but later consumer execution produces pending B and destination `0x1E000000`.
+- **Unchanged block:** native production of A, routing, queue insertion/removal and envelope extraction followed by consumer execution produces pending A and destination `0x1C62C000`.
+- **Same block republished:** after native queue removal/extraction and making the envelope inaccessible, the actual producer rewrites the same parameter block with B. The extracted pointer still addresses the original block, but later consumer execution produces pending B and destination `0x1E000000`.
 - **Separate block prepared:** preparing B in another block leaves the original A block intact, and the consumer of the original envelope still produces A.
 
 The second case is a supplied scheduling sequence, **not a demonstrated camera race**. Cross-core visibility and real task timing are untested. It shows why a future adapter must retain stable parameter storage until actual consumption, or establish a stronger verified ordering contract; returning from the sender is not independent evidence that the peer has finished reading it. A parameter-block lifetime and the lifetime of sensor-image pixels are different contracts.
+
+Envelope release is also too early to reuse parameter storage: the native receive wrapper extracts pointers and reaches envelope free before the task loop calls the consumer. Static review places the next receive after the consumer callback returns. Full RAW callback execution and its eventual parameter use remain outside this bounded experiment, so this is not a validated reclamation acknowledgment.
 
 Three control cases check native service removal (no queue request) and operation 2/5 routing through their actual task handlers. Operation 2 stops before its preparation import; operation 5 stops before its driver import. Neither control case starts hardware.
 
@@ -65,8 +67,8 @@ Two additional native primary-return dispatcher checks show that operations 4 an
 python scripts/probe_750d_raw_param_lifetime.py /private/750d-analysis/record-06.bin
 ```
 
-[Evidence](evidence/750d-raw-param-lifetime.json) records eight passing cases: three memory-lifetime scenarios, three routing/removal controls and two primary-return leaves. The identified main-record size/SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible scalar subset, not a full Cortex-R4 camera model.
+[Evidence](evidence/750d-raw-param-lifetime.json) records eleven passing cases: three memory-lifetime scenarios, three routing/removal controls, two primary-return leaves, FIFO/full/empty/wraparound checks, rejected-request cleanup preparation and the empty blocking-receive boundary. The identified main-record size/SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible scalar subset, not a full Cortex-R4 camera model.
 
 Firmware and scoped application/driver/table pages are read/execute. Supplied objects, parameter blocks, envelope, stacks, shadow and register RAM are read/write without execute permission. Code/write guards and a 256-instruction / 0.5-second limit apply to each stage. Successful native helper returns must restore their stacks. The fixture's parameter-block extent is not asserted to be the full camera protocol's structure size.
 
-No native calls are stubbed. Allocation, actual mailbox/queue delivery, the scheduler, unexecuted component updates, channel start, real DMA, cache coherence, image packing and completed-frame ownership remain unverified. Camera bindings remain disabled. The next integration requirements are a verified consumption/ordering boundary for parameter storage and an independent completion/lifetime boundary for image data.
+No native calls are stubbed. Allocation, heap free, actual mailbox delivery, scheduler-mediated queue wakeup, unexecuted component updates, channel start, real DMA, cache coherence, image packing and completed-frame ownership remain unverified. Queue fast paths execute only on supplied RAM objects. Camera bindings remain disabled. The next integration requirements are a verified consumption/ordering boundary for parameter storage and an independent completion/lifetime boundary for image data.

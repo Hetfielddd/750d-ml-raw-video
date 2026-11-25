@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Trace native RAW parameter pointers across explicit transport/queue cuts.
 
-No mailbox FIFO, queue delivery or DMA is simulated. Native registration,
-dispatch and separately entered consumer slices retain actual memory effects.
+No mailbox FIFO or DMA is simulated. Native queue fast paths operate on supplied
+kernel objects; allocation, freeing and scheduler execution remain outside scope.
 """
 import argparse
 import hashlib
@@ -22,12 +22,15 @@ def probe(data):
     from unicorn.arm_const import (UC_CPU_ARM_CORTEX_A9, UC_ARM_REG_R0, UC_ARM_REG_R1,
                                    UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_R4,
                                    UC_ARM_REG_R5, UC_ARM_REG_R6, UC_ARM_REG_R7,
-                                   UC_ARM_REG_R8, UC_ARM_REG_SP, UC_ARM_REG_LR, UC_ARM_REG_PC)
+                                   UC_ARM_REG_R8, UC_ARM_REG_SP, UC_ARM_REG_LR, UC_ARM_REG_PC,
+                                   UC_ARM_REG_CPSR)
     base, app_delta, driver_delta = 0xfe0a0000, 0xfcc82368, 0x7e7473e0
     task, subtask, first, second = 0x100000, 0x101000, 0x102000, 0x103000
     service, context, config, feature = 0x104000, 0x105000, 0x106000, 0x107000
     counter, stateobj, stack, stop, shadow = 0x108000, 0x109000, 0x10d000, 0x10f000, 0x200000
     queueobj, envelope = 0x10a000, 0x10b000
+    kernel_queue, ring, receive_output = 0x10c000, 0x10c100, 0x10c200
+    queue_handle, loop_sp = 0xe0002, stack - 64
     peer, register = 0x1ac2220, 0xd0004108
     queue_boundary = 0xfe86f740 - app_delta
     postman_row = 0x1acdd8c + 2 * 88 + 2 * 8
@@ -41,7 +44,7 @@ def probe(data):
               (0xfe86fb88 - app_delta, 0xfe86fba8 - app_delta),
               (0xfe806384 - app_delta, 0xfe8063a0 - app_delta),
               (0xfe86fb30 - app_delta, 0xfe86fb4a - app_delta),
-              (0xfe86faba, 0xfe86fac8),
+              (0xfe86faba, 0xfe86fac8), (0xfe86faba - app_delta, 0xfe86fac8 - app_delta),
               (0xfe8063a0 - app_delta, 0xfe8063b6 - app_delta),
               (0xfe86f728 - app_delta, 0xfe86f72c - app_delta),
               (0x800057fc, 0x80005886),
@@ -53,7 +56,12 @@ def probe(data):
               (0xfe74f130, 0xfe74f134), (0x1bb7348, 0x1bb7366),
               (0xfe8395c4, 0xfe839642), (0xfe86f858, 0xfe86f85c),
               (0x8000c654, 0x8000c67e), (0x8000c5fe, 0x8000c654),
-              (0x8000c426, 0x8000c434), (0xfe74ce9e, 0xfe74ced2))
+              (0x8000c426, 0x8000c434), (0xfe74ce9e, 0xfe74cee0),
+              (0xfe74ff10, 0xfe74ff46), (0xfe74fdbc, 0xfe74fe92),
+              (0xfe749ed0, 0xfe749f6e), (0xfe74bed6, 0xfe74bf0e),
+              (0xfe74c04e, 0xfe74c100), (0xfe74c100, 0xfe74c11a),
+              (0xfe74c156, 0xfe74c23e), (0xfe74f9b4, 0xfe74f9b8),
+              (0x230, 0x23a), (0xfe74cd2c, 0xfe74cd7a), (0xfe74cd9c, 0xfe74cdae))
 
     for scenario in ('unchanged_block', 'same_block_republished', 'separate_block_prepared',
                      'native_service_unregistered', 'start_operation', 'operation_five'):
@@ -74,6 +82,9 @@ def probe(data):
                               (0x1ad8000, 4096), (shadow, 0x60000), (0xd0004000, 4096)):
             uc.mem_map(address, size, UC_PROT_READ | UC_PROT_WRITE)
         uc.mem_map(stop, 4096, UC_PROT_READ | UC_PROT_EXEC)
+        uc.mem_map(0, 4096, UC_PROT_READ | UC_PROT_EXEC)
+        uc.mem_write(0, data[0xfe744d60 - base:0xfe744d60 - base + 4096])
+        uc.reg_write(UC_ARM_REG_CPSR, 0x13)  # Supplied supervisor mode, IRQ mask initially clear.
 
         def put(address, value):
             uc.mem_write(address, struct.pack('<I', value))
@@ -84,7 +95,8 @@ def probe(data):
         def args():
             return [uc.reg_read(r) for r in (UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_R3)]
 
-        def run(entry, boundaries, supplied=(), forbid_parameter_reads=False):
+        def run(entry, boundaries, supplied=(), forbid_parameter_reads=False, entry_sp=stack,
+                return_sp=None):
             reached, errors = [], []
 
             def code_guard(emulator, address, size, _):
@@ -103,6 +115,8 @@ def probe(data):
                             (counter, counter + 1), (stateobj + 28, stateobj + 32),
                             (peer + 36, peer + 40), (peer + 44, peer + 48),
                             (envelope, envelope + 16),
+                            (kernel_queue, kernel_queue + 44), (ring, ring + 8),
+                            (receive_output, receive_output + 4),
                             (shadow + 0x4108, shadow + 0x410c), (register, register + 4))
                 if not any(lo <= address and address + size <= hi for lo, hi in writable):
                     errors.append(f'Unexpected parameter-path write: {address:#x}/{size}')
@@ -117,7 +131,7 @@ def probe(data):
 
             hooks = [uc.hook_add(UC_HOOK_CODE, code_guard), uc.hook_add(UC_HOOK_MEM_WRITE, write_guard),
                      uc.hook_add(UC_HOOK_MEM_READ, read_guard)]
-            uc.reg_write(UC_ARM_REG_SP, stack)
+            uc.reg_write(UC_ARM_REG_SP, entry_sp)
             uc.reg_write(UC_ARM_REG_LR, stop | 1)
             for r, value in supplied:
                 uc.reg_write(r, value)
@@ -130,7 +144,8 @@ def probe(data):
                     uc.hook_del(hook)
             if errors or len(reached) != 1:
                 raise RuntimeError(f'{scenario}: invalid parameter stage: {errors}/{reached}')
-            if reached == [stop] and uc.reg_read(UC_ARM_REG_SP) != stack:
+            expected_sp = entry_sp if return_sp is None else return_sp
+            if reached == [stop] and uc.reg_read(UC_ARM_REG_SP) != expected_sp:
                 raise RuntimeError('Native parameter helper did not restore stack')
             return reached[0]
 
@@ -152,10 +167,17 @@ def probe(data):
         put(peer + 28, 1)
         put(subtask, task)
         put(subtask + 8, (0xfe8063a0 - app_delta) | 1)
-        put(task, queueobj)  # Supplied task-queue object; underlying OS queue is not executed.
+        put(task, queueobj)  # Supplied task-queue object and underlying kernel queue.
         signature_pointer = struct.unpack_from('<I', data, 0xfe74cf9c - base)[0]
         put(queueobj, word(signature_pointer))
-        put(queueobj + 16, 0x2468ace0)
+        put(queueobj + 8, 1)  # Supplied active task-loop flag.
+        put(queueobj + 16, queue_handle)
+        put(queueobj + 20, struct.unpack_from('<I', data, 0xfe86fb74 - base)[0])
+        put(0x1ac05c4, kernel_queue)
+        put(0x1ac0120, 1)  # Supplied kernel queue-table capacity.
+        uc.mem_write(kernel_queue + 16, struct.pack('<HH', 2, 0))
+        put(kernel_queue + 20, ring)
+        uc.mem_write(kernel_queue + 38, struct.pack('<h', 7))
         signature = struct.unpack_from('<I', data, 0xfe756b40 - base)[0]
         uc.mem_write(stateobj, struct.pack('<8I', signature, 0, 0, 0x8000581b, 0x1cf2190, 8, 1, 0))
         put(0x1accbb8 + 2 * 4, service)
@@ -212,21 +234,41 @@ def probe(data):
             raise RuntimeError('Queue request did not request a sixteen-byte envelope')
         # Separate post-allocation slice with supplied scratch storage. The
         # allocator is not run, returned from, or replaced by a success stub.
-        run(0xfe74cec4, (0xfe74ff10,), ((UC_ARM_REG_R0, envelope),), forbid_parameter_reads=True)
+        irq_before = uc.reg_read(UC_ARM_REG_CPSR) & 0x80
+        run(0xfe74cec4, (stop,), ((UC_ARM_REG_R0, envelope),), forbid_parameter_reads=True,
+            entry_sp=uc.reg_read(UC_ARM_REG_SP), return_sp=stack)
         enqueued = [word(envelope + i * 4) for i in range(4)]
-        if enqueued != [subtask, operation, first, queued_extra] or args()[:2] != [0x2468ace0, envelope]:
+        if (enqueued != [subtask, operation, first, queued_extra]
+                or uc.reg_read(UC_ARM_REG_R0) != 0 or word(ring) != envelope
+                or struct.unpack('<H', uc.mem_read(kernel_queue + 18, 2))[0] != 1
+                or uc.reg_read(UC_ARM_REG_CPSR) & 0x80 != irq_before):
             raise RuntimeError('Wrong native queue envelope or copied payload pointer')
+        # Execute the actual task receive wrapper through real queue removal and
+        # four-word extraction. Heap freeing stops at its real veneer boundary.
+        put(loop_sp, loop_sp + 12)
+        put(loop_sp + 4, 0)
+        run(0xfe74cd2c, (0xfe74f964,),
+            ((UC_ARM_REG_R0, queueobj), (UC_ARM_REG_R1, loop_sp + 24),
+             (UC_ARM_REG_R2, loop_sp + 20), (UC_ARM_REG_R3, loop_sp + 16)),
+            forbid_parameter_reads=True, entry_sp=loop_sp)
+        extracted = [word(loop_sp + offset) for offset in (24, 20, 16, 12)]
+        if (extracted != enqueued or uc.reg_read(UC_ARM_REG_R0) != envelope
+                or struct.unpack('<H', uc.mem_read(kernel_queue + 18, 2))[0] != 0
+                or uc.reg_read(UC_ARM_REG_CPSR) & 0x80 != irq_before):
+            raise RuntimeError('Wrong native task receive/extraction/IRQ restoration')
+        # Invalidate the consumed envelope as a lifetime fixture. This is not
+        # execution or a fabricated success return from the heap-free function.
+        uc.mem_protect(envelope, 4096, 0)
         if scenario == 'same_block_republished':
             prepare(first, b)
         elif scenario == 'separate_block_prepared':
             prepare(second, b)
-        # Explicit queue-delivery cut: native worker consumes the association
-        # written by the request helper. No queue is run or returns fabricated.
+        # Separate post-receive loop continuation after unexecuted heap free and
+        # receive epilogue. Native extracted stack words remain untouched.
         expected_boundary = (0xfe751c9c - driver_delta if operation == 4 else
                              0xfe86f290 - app_delta if operation == 2 else 0xfe86f2a0 - app_delta)
-        reached = run(0xfe86faba, (expected_boundary,),
-                      ((UC_ARM_REG_R0, enqueued[0]), (UC_ARM_REG_R1, enqueued[1]),
-                       (UC_ARM_REG_R2, enqueued[2]), (UC_ARM_REG_R3, enqueued[3])))
+        reached = run(0xfe74cd9c, (expected_boundary,),
+                      ((UC_ARM_REG_R4, queueobj),), entry_sp=loop_sp)
         if reached != expected_boundary or word(stateobj + 28) != 0:
             raise RuntimeError('Wrong actual task worker/state-table dispatch')
         if operation != 4:
@@ -252,6 +294,8 @@ def probe(data):
         cases.append({'case': scenario, 'native_operation_and_event': operation,
                       'original_payload_pointer': hex(first), 'queued_payload_pointer': hex(queued[3]),
                       'native_envelope_bytes': 16, 'parameter_contents_read_by_envelope_stages': False,
+                      'native_queue_enqueue_receive_and_extraction': True,
+                      'worker_reached_with_envelope_inaccessible': True,
                       'first_prepared_address': hex(a), 'consumed_pending_address': hex(expected),
                       'prepared_dma_address': hex(word(register)),
                       'supplied_geometry_unchanged_in_reviewed_address_path': True,
@@ -265,17 +309,104 @@ def probe(data):
             raise RuntimeError('Unexpected primary configuration-return dispatch')
         cases.append({'case': 'primary_return_dispatch_leaf', 'operation': operation,
                       'semaphore_signal_executed': False, 'passed': True})
+    # Exercise the same native no-waiter queue independently of the lifetime
+    # scenarios. Marker values are queue payloads, never dereferenced pointers.
+    transcript = []
+
+    def queue_call(action, marker=None):
+        irq_before = uc.reg_read(UC_ARM_REG_CPSR) & 0x80
+        if action == 'put':
+            supplied = ((UC_ARM_REG_R0, queue_handle), (UC_ARM_REG_R1, marker))
+            entry = 0xfe74ff10
+        else:
+            supplied = ((UC_ARM_REG_R0, queue_handle), (UC_ARM_REG_R1, receive_output))
+            entry = 0xfe74fe48
+        run(entry, (stop,), supplied, forbid_parameter_reads=True)
+        if uc.reg_read(UC_ARM_REG_CPSR) & 0x80 != irq_before:
+            raise RuntimeError('Native queue call failed to restore the IRQ mask')
+        result = uc.reg_read(UC_ARM_REG_R0)
+        received = word(receive_output) if action == 'get' else None
+        count = struct.unpack('<H', uc.mem_read(kernel_queue + 18, 2))[0]
+        transcript.append({'action': action, 'marker': marker, 'result': result,
+                           'received': received, 'occupied': count})
+        return result, received, count
+
+    put(receive_output, 0xfeedface)
+    if queue_call('put', 0x11111111) != (0, None, 1):
+        raise RuntimeError('First native queue insertion failed')
+    if queue_call('put', 0x22222222) != (0, None, 2):
+        raise RuntimeError('Second native queue insertion failed')
+    full_before = bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))
+    if queue_call('put', 0x33333333) != (13, None, 2):
+        raise RuntimeError('Full native queue did not reject the third item')
+    if full_before != bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8)):
+        raise RuntimeError('Rejected native insertion changed the queue')
+    if queue_call('get') != (0, 0x11111111, 1):
+        raise RuntimeError('Native queue did not preserve FIFO order')
+    if queue_call('put', 0x33333333) != (0, None, 2):
+        raise RuntimeError('Native queue wraparound insertion failed')
+    if queue_call('get') != (0, 0x22222222, 1) or queue_call('get') != (0, 0x33333333, 0):
+        raise RuntimeError('Native queue wraparound changed FIFO order')
+    empty_before = bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))
+    if queue_call('get') != (13, 0x33333333, 0):
+        raise RuntimeError('Empty native queue changed the output or returned success')
+    if empty_before != bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8)):
+        raise RuntimeError('Rejected native removal changed the queue')
+    cases.append({'case': 'native_queue_fifo_full_empty_wraparound',
+                  'capacity': 2, 'transcript': transcript.copy(), 'irq_mask_restored': True,
+                  'scheduler_executed': False, 'passed': True})
+    if queue_call('put', 0x44444444) != (0, None, 1) or queue_call('put', 0x55555555) != (0, None, 2):
+        raise RuntimeError('Failed to prepare full queue for request-wrapper rejection')
+    full_before = bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))
+    uc.mem_protect(envelope, 4096, UC_PROT_READ | UC_PROT_WRITE)
+    put(stack, 0)
+    run(0xfe74ce9e, (0xfe74f95c,),
+        ((UC_ARM_REG_R0, queueobj), (UC_ARM_REG_R1, subtask),
+         (UC_ARM_REG_R2, 4), (UC_ARM_REG_R3, first)), forbid_parameter_reads=True)
+    run(0xfe74cec4, (0xfe74f964,), ((UC_ARM_REG_R0, envelope),),
+        forbid_parameter_reads=True, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+    if (uc.reg_read(UC_ARM_REG_R0) != envelope or uc.reg_read(UC_ARM_REG_R5) != 13
+            or [word(envelope + i * 4) for i in range(4)] != [subtask, 4, first, 0]
+            or full_before != bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))):
+        raise RuntimeError('Rejected request did not reach envelope cleanup with its queue error')
+    cases.append({'case': 'native_full_request_envelope_cleanup_boundary',
+                  'enqueue_result': 13, 'stopped_before': '0xfe74f964',
+                  'cleanup_argument': hex(envelope), 'queue_unchanged': True,
+                  'heap_free_executed': False, 'passed': True})
+    if queue_call('get') != (0, 0x44444444, 1) or queue_call('get') != (0, 0x55555555, 0):
+        raise RuntimeError('Failed to drain rejection fixture')
+    empty_before = bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))
+    # The task receive wrapper uses timeout argument zero, unlike receive-now's
+    # pointer to a zero-valued timeout pair. Follow the empty blocking branch
+    # only as far as the boundary BEFORE waiter bookkeeping and the scheduler.
+    run(0xfe74fdbc, (0xfe74c23e,),
+        ((UC_ARM_REG_R0, queue_handle), (UC_ARM_REG_R1, receive_output), (UC_ARM_REG_R2, 0)),
+        forbid_parameter_reads=True)
+    if (not uc.reg_read(UC_ARM_REG_CPSR) & 0x80
+            or word(receive_output) != 0x55555555 or empty_before !=
+            bytes(uc.mem_read(kernel_queue, 44)) + bytes(uc.mem_read(ring, 8))):
+        raise RuntimeError('Empty blocking receive changed data before its wait boundary')
+    cases.append({'case': 'native_empty_task_receive_wait_boundary',
+                  'timeout_argument': 0, 'stopped_before': '0xfe74c23e',
+                  'queue_and_output_unchanged': True, 'native_call_returned': False,
+                  'irq_mask_still_set_at_boundary': bool(uc.reg_read(UC_ARM_REG_CPSR) & 0x80),
+                  'scheduler_executed': False, 'passed': True})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
             'native_calls_stubbed': False, 'native_registration_and_dispatch_executed': True,
-            'mailbox_or_queue_delivery_executed': False, 'channel_start_or_dma_executed': False,
+            'mailbox_delivery_executed': False, 'native_queue_fast_paths_executed': True,
+            'scheduler_executed': False, 'channel_start_or_dma_executed': False,
             'camera_binding_enabled': False, 'frame_lease_validated': False,
             'limits': 'Supplied task/context/state objects, queue handle, receive-channel map '
                       'and separately entered stage order. Native sender values are passed '
-                      'across explicit unexecuted mailbox loads/stores and queue-delivery '
-                      'cuts. Queue wrapper checks its supplied object and reaches the '
+                      'across explicit unexecuted mailbox loads/stores. Queue wrapper '
+                      'checks its supplied object and reaches the '
                       'allocator boundary; a separate post-allocation envelope slice uses '
-                      'supplied scratch storage, not a fabricated allocator return. Actual '
-                      'allocation, enqueue/dequeue and scheduler do not execute. Driver RAW '
+                      'supplied scratch storage, not a fabricated allocator return. Native '
+                      'enqueue/receive use a supplied two-slot no-waiter kernel queue and '
+                      'real IRQ masking. Heap free and receive epilogue are unexecuted; a '
+                      'separate task-loop continuation consumes native-extracted stack '
+                      'words after the envelope page is made inaccessible. Allocation, '
+                      'free, task scheduling and blocked wakeup do not execute. Driver RAW '
                       'tail is separately entered past unexecuted other '
                       'component configuration calls. Actual parameter RAM is retained, not '
                       'deep-copied or replaced between stages except the named native '

@@ -9,6 +9,8 @@
       "queued_payload_pointer": "0x102000",
       "native_envelope_bytes": 16,
       "parameter_contents_read_by_envelope_stages": false,
+      "native_queue_enqueue_receive_and_extraction": true,
+      "worker_reached_with_envelope_inaccessible": true,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5c62c000",
       "prepared_dma_address": "0x1c62c000",
@@ -23,6 +25,8 @@
       "queued_payload_pointer": "0x102000",
       "native_envelope_bytes": 16,
       "parameter_contents_read_by_envelope_stages": false,
+      "native_queue_enqueue_receive_and_extraction": true,
+      "worker_reached_with_envelope_inaccessible": true,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5e000000",
       "prepared_dma_address": "0x1e000000",
@@ -37,6 +41,8 @@
       "queued_payload_pointer": "0x102000",
       "native_envelope_bytes": 16,
       "parameter_contents_read_by_envelope_stages": false,
+      "native_queue_enqueue_receive_and_extraction": true,
+      "worker_reached_with_envelope_inaccessible": true,
       "first_prepared_address": "0x5c62c000",
       "consumed_pending_address": "0x5c62c000",
       "prepared_dma_address": "0x1c62c000",
@@ -74,13 +80,99 @@
       "operation": 5,
       "semaphore_signal_executed": false,
       "passed": true
+    },
+    {
+      "case": "native_queue_fifo_full_empty_wraparound",
+      "capacity": 2,
+      "transcript": [
+        {
+          "action": "put",
+          "marker": 286331153,
+          "result": 0,
+          "received": null,
+          "occupied": 1
+        },
+        {
+          "action": "put",
+          "marker": 572662306,
+          "result": 0,
+          "received": null,
+          "occupied": 2
+        },
+        {
+          "action": "put",
+          "marker": 858993459,
+          "result": 13,
+          "received": null,
+          "occupied": 2
+        },
+        {
+          "action": "get",
+          "marker": null,
+          "result": 0,
+          "received": 286331153,
+          "occupied": 1
+        },
+        {
+          "action": "put",
+          "marker": 858993459,
+          "result": 0,
+          "received": null,
+          "occupied": 2
+        },
+        {
+          "action": "get",
+          "marker": null,
+          "result": 0,
+          "received": 572662306,
+          "occupied": 1
+        },
+        {
+          "action": "get",
+          "marker": null,
+          "result": 0,
+          "received": 858993459,
+          "occupied": 0
+        },
+        {
+          "action": "get",
+          "marker": null,
+          "result": 13,
+          "received": 858993459,
+          "occupied": 0
+        }
+      ],
+      "irq_mask_restored": true,
+      "scheduler_executed": false,
+      "passed": true
+    },
+    {
+      "case": "native_full_request_envelope_cleanup_boundary",
+      "enqueue_result": 13,
+      "stopped_before": "0xfe74f964",
+      "cleanup_argument": "0x10b000",
+      "queue_unchanged": true,
+      "heap_free_executed": false,
+      "passed": true
+    },
+    {
+      "case": "native_empty_task_receive_wait_boundary",
+      "timeout_argument": 0,
+      "stopped_before": "0xfe74c23e",
+      "queue_and_output_unchanged": true,
+      "native_call_returned": false,
+      "irq_mask_still_set_at_boundary": true,
+      "scheduler_executed": false,
+      "passed": true
     }
   ],
   "native_calls_stubbed": false,
   "native_registration_and_dispatch_executed": true,
-  "mailbox_or_queue_delivery_executed": false,
+  "mailbox_delivery_executed": false,
+  "native_queue_fast_paths_executed": true,
+  "scheduler_executed": false,
   "channel_start_or_dma_executed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Supplied task/context/state objects, queue handle, receive-channel map and separately entered stage order. Native sender values are passed across explicit unexecuted mailbox loads/stores and queue-delivery cuts. Queue wrapper checks its supplied object and reaches the allocator boundary; a separate post-allocation envelope slice uses supplied scratch storage, not a fabricated allocator return. Actual allocation, enqueue/dequeue and scheduler do not execute. Driver RAW tail is separately entered past unexecuted other component configuration calls. Actual parameter RAM is retained, not deep-copied or replaced between stages except the named native republication fixtures. Artificial register RAM and supplied channel state/classifier/geometry. No hardware timing, cross-core visibility, allocation, completed pixels or ownership demonstrated."
+  "limits": "Supplied task/context/state objects, queue handle, receive-channel map and separately entered stage order. Native sender values are passed across explicit unexecuted mailbox loads/stores. Queue wrapper checks its supplied object and reaches the allocator boundary; a separate post-allocation envelope slice uses supplied scratch storage, not a fabricated allocator return. Native enqueue/receive use a supplied two-slot no-waiter kernel queue and real IRQ masking. Heap free and receive epilogue are unexecuted; a separate task-loop continuation consumes native-extracted stack words after the envelope page is made inaccessible. Allocation, free, task scheduling and blocked wakeup do not execute. Driver RAW tail is separately entered past unexecuted other component configuration calls. Actual parameter RAM is retained, not deep-copied or replaced between stages except the named native republication fixtures. Artificial register RAM and supplied channel state/classifier/geometry. No hardware timing, cross-core visibility, allocation, completed pixels or ownership demonstrated."
 }
