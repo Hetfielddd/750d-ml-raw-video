@@ -7,7 +7,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 ## Current progress
 
 - Sixteen native PC cases now connect RAW IRQ registration through a scoped peer-kernel page to its actual table, and separately verify dispatch from that natively written table and IRQ-enable bounds. Boot relocation and hardware completion remain unverified. See [IRQ registration and dispatch](docs/750d-irq-registration.md).
-- Eight native PC cases now execute the RAW channel IRQ body, register-write helpers and callback forwarding against artificial register RAM. All reach the driver callback; hardware IRQ qualification and completed-frame ownership remain unverified. See [the IRQ body and limits](docs/750d-raw-irq.md).
+- Twelve native PC cases now execute the RAW channel IRQ body, register-write helpers and callback forwarding against artificial register RAM. Four first run native configuration/start, deriving the software flags used by the IRQ branch. Hardware IRQ qualification and completed-frame ownership remain unverified. See [the IRQ body and limits](docs/750d-raw-irq.md).
 - Twenty-one native PC checks now verify the driver's ALL-bit start gate, preceding preparation wait and timer enable/cleanup slices. The enabled timer callback can satisfy either wait's bit condition, so neither wait alone proves RAW-DMA completion. See [the gate and limits](docs/750d-start-gate.md).
 - Magic Lantern is pinned as a Git submodule at commit `142472e95054d73640f50789ac0fd66325499d82`.
 - The upstream core and loader have been compiled and linked on Windows using Arm GNU Toolchain 13.3.Rel1, with `CONFIG_QEMU=y` and module/TCC support.

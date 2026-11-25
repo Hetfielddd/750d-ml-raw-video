@@ -6,6 +6,9 @@
       "supplied_status": "0x0",
       "software_flag": 0,
       "secondary_flag": 0,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004100",
@@ -19,6 +22,9 @@
       "supplied_status": "0x0",
       "software_flag": 0,
       "secondary_flag": 1,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004100",
@@ -32,6 +38,9 @@
       "supplied_status": "0x0",
       "software_flag": 1,
       "secondary_flag": 0,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -49,6 +58,9 @@
       "supplied_status": "0x0",
       "software_flag": 1,
       "secondary_flag": 1,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -66,6 +78,9 @@
       "supplied_status": "0x4",
       "software_flag": 0,
       "secondary_flag": 0,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -83,6 +98,9 @@
       "supplied_status": "0x4",
       "software_flag": 0,
       "secondary_flag": 1,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -100,6 +118,9 @@
       "supplied_status": "0x4",
       "software_flag": 1,
       "secondary_flag": 0,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -117,6 +138,9 @@
       "supplied_status": "0x4",
       "software_flag": 1,
       "secondary_flag": 1,
+      "native_configure_start_executed": false,
+      "supplied_initial_control": null,
+      "preceding_native_register_writes": null,
       "artificial_register_writes": [
         [
           "0xd0004104",
@@ -125,6 +149,146 @@
         [
           "0xd0004100",
           "0x6"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x0"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000000"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee8"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee8"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x0"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000000"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 0,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee8"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee8"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
         ]
       ],
       "driver_callback_reached": "0x80009d8e",
@@ -138,5 +302,5 @@
   "artificial_mmio_ram_mapped": true,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Artificial register RAM and matching software shadow; native stores have ordinary RAM semantics, not device acknowledgement semantics. Supplied callback records, flags, status and direct handler invocation. Scoped code/table copies are not validated boot relocations. Stops before driver callback. No interrupt-controller delivery, hardware status definition, DMA, pixels, cache or frame ownership established."
+  "limits": "Artificial register RAM and matching software shadow; native stores have ordinary RAM semantics, not device acknowledgement semantics. Supplied callback records, flags, status and direct handler invocation. Four cases first execute real configuration/start functions against the same artificial RAM and shadow; no DMA completion is simulated between the native start and the directly invoked handler. Scoped code/table copies are not validated boot relocations. Stops before driver callback. No interrupt-controller delivery, hardware status definition, DMA, pixels, cache or frame ownership established."
 }
