@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- The primary copy candidate now builds and links actual descriptors in ten native PC scenarios; nine propagate those same structures into submission preparation, stopping before the controller start store. Register RAM and channel settings are artificial; no DMA transfer or completion is validated. See [copy descriptors and submission](docs/750d-copy-descriptor.md).
 - A primary-core copy candidate at `0xFE133EB2` now passes 14 bounded native admission/classification/cache-dispatch checks. Its downstream path prepares source clean and destination clean/invalidate separately from the sensor RAW writer. No DMA copy, live channel availability or camera binding is validated. See [the copy candidate](docs/750d-copy-entry.md).
 - Peer startup operand tracing now distinguishes the candidate RAW CPU alias `0x5C62C000` from DMA address `0x1C62C000`, consistent with ML's pointer convention. Thirty CP15-write boundaries are observed without executing them. Primary-core mapping and safe pixel reads remain unverified. See [address aliases and cache scope](docs/750d-raw-alias.md).
 - Thirteen native PC sequences now verify counter-restricted RAW selection and propagate its result through actual publisher/configuration code into peer pending-address state. Zero takes the empty start path, which can still invoke a callback. Transport delivery, hardware completion and buffer ownership remain unverified. See [selection and buffer reuse](docs/750d-raw-selection.md).

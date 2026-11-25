@@ -2,6 +2,8 @@
 
 A target-specific copy candidate is now identified at **`0xFE133EB2`**. It accepts channel, destination, source and byte count, constructs a one-element copy list, validates channel/controller conditions and prepares an OS wait. Its downstream descriptor path contains explicit cache preparation. This is a candidate backend for a future port, not a validated DMA copy or an enabled Magic Lantern stub.
 
+Follow-up: [native descriptor construction and submission preparation](750d-copy-descriptor.md) now checks the downstream builder and separately entered submitter using native-written descriptors. That separate probe stops before the controller start store and does not execute the OS waits or cache operations discussed here.
+
 ## Native wrapper admission
 
 The entry stores the native triplet `[destination, source, count]` on its stack and calls validator `0xFE133E7E` with list count 1. The reviewed condition requires a channel below 4, its bit present in global mask `0x257A0`, and bit 28 set in controller word `0xD6030000`. The full validator also rejects list counts above 8.

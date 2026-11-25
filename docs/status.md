@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Executed the actual primary copy descriptor builder, ARM zero helper, address conversion and linked-list publication in ten two-descriptor scenarios. Nine separately entered submission preparations consume those native-written structures and stop before the start store after six checked payload writes to artificial register RAM. No DMA transfer, OS synchronization or completion validated. See [copy descriptors and submission](750d-copy-descriptor.md).
+
 - Identified primary copy candidate `0xFE133EB2`, its list core, address classifier and cache preparation route. Fourteen native cases verify admission, attribute decoding, two address conversions and cache-helper dispatch with explicit fixtures. OS wait, maintenance, DMA submission and completion remain unexecuted; no platform stub enabled. See [primary copy preparation](750d-copy-entry.md).
 
 - Observed seven peer MPU-region preparations and two primary entry operands without executing CP15 writes. The peer assigns access `0x121` / `0x12C` to the cacheable/uncached candidate ranges respectively; the primary's inherited region boundaries remain unknown. This narrows the address/cache question without validating coherence or pixel reads. See [RAW aliases](750d-raw-alias.md).
