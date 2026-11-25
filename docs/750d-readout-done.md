@@ -40,6 +40,8 @@ The next work is the actual registered operation-table selection and methods, th
 
 ## Reproduce and scope
 
+The [next experiment](750d-readout-methods.md) executes the actual selected methods and finds conditional `StartDriver` command preparation inside this completion path, before it returns. Transport and real buffer timing remain unverified.
+
 ```sh
 python scripts/probe_750d_readout_done.py /private/750d-analysis/record-06.bin
 ```

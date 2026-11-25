@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Executed real readout method selection/publication and rows 3/9 in four native fixtures. Enabled-driver completion processing prepares `StartDriver` operation 2 before returning; disabled fixtures skip it. Transport and actual restart remain unexecuted. This identifies a concrete pre-submission interception boundary, not a frame lease. See [real readout methods](750d-readout-methods.md).
+
 - Followed readout-done processing into four registered-method calls and a separate internal-phase slice. Three callback-dispatch cases and ten phase fixtures pass. The real methods remain unexecuted; internal phase is distinct from the VSYNC state-object state. Post-transition copy safety remains unverified. See [readout-done processing](750d-readout-done.md).
 
 - Traced RAW start preparation to the control RMW at `0xD0004104` and start value 1 at `0xD0004100`, with four native cases stopping before physical stores. Separate native calls verify software pending-address consumption. Decoded the target EVF state-5/input-5 readout-done entry corresponding to the 7D2 synchronization pattern; a frame lease remains unverified. See [RAW start](750d-raw-start.md).

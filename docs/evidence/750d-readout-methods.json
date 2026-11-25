@@ -1,0 +1,61 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "selector": 3,
+      "supplied_driver_active": 0,
+      "native_methods_reached": [
+        "0xfe28d626",
+        "0xfe28d3d8",
+        "0xfe28d5f4",
+        "0xfe28d3b0"
+      ],
+      "stopped_before": "0xfe2d1346",
+      "start_driver_operation_prepared": false,
+      "passed": true
+    },
+    {
+      "selector": 3,
+      "supplied_driver_active": 1,
+      "native_methods_reached": [
+        "0xfe28d626",
+        "0xfe28d3d8",
+        "0xfe28d5f4"
+      ],
+      "stopped_before": "0xfe48d25c",
+      "start_driver_operation_prepared": true,
+      "passed": true
+    },
+    {
+      "selector": 9,
+      "supplied_driver_active": 0,
+      "native_methods_reached": [
+        "0xfe28fe38",
+        "0xfe28f8e6",
+        "0xfe28fe02",
+        "0xfe28f8be"
+      ],
+      "stopped_before": "0xfe2d1346",
+      "start_driver_operation_prepared": false,
+      "passed": true
+    },
+    {
+      "selector": 9,
+      "supplied_driver_active": 1,
+      "native_methods_reached": [
+        "0xfe28fe38",
+        "0xfe28f8e6",
+        "0xfe28fe02"
+      ],
+      "stopped_before": "0xfe48d25c",
+      "start_driver_operation_prepared": true,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "transport_or_mmio_executed": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied selector context, initialized flags, driver-active flag, descriptor storage and parameter marker. Native table selection and real methods; reviewed logging continuations are entered separately. No OS transport, peer receive, hardware restart, pixels, cache, frame identity or live reuse timing is validated."
+}
