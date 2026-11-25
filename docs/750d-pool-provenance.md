@@ -38,6 +38,8 @@ Fresh supplied stack frames separate the stages. Logging is stopped before execu
 
 ## Reproduce and limits
 
+The [next investigation](750d-raw-start.md) follows channel-start preparation and identifies the target EVF readout-done entry corresponding to the donor synchronization pattern. Physical transfers and frame ownership remain unverified.
+
 ```sh
 python scripts/probe_750d_pool_provenance.py /private/750d-analysis/record-06.bin
 ```

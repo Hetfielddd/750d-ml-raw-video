@@ -1,0 +1,55 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "control_zero",
+      "initial_control_shadow": "0x0",
+      "stopped_before_runtime": "0x8000c472",
+      "physical_address_argument": "0xd0004104",
+      "pending_store_value": "0x20000000",
+      "passed": true
+    },
+    {
+      "case": "control_low_flags",
+      "initial_control_shadow": "0x8",
+      "stopped_before_runtime": "0x8000c472",
+      "physical_address_argument": "0xd0004104",
+      "pending_store_value": "0x20000008",
+      "passed": true
+    },
+    {
+      "case": "control_all_bits",
+      "initial_control_shadow": "0xffffffff",
+      "stopped_before_runtime": "0x8000c472",
+      "physical_address_argument": "0xd0004104",
+      "pending_store_value": "0xffffffff",
+      "passed": true
+    },
+    {
+      "case": "start_command_tail",
+      "initial_control_shadow": "0x0",
+      "stopped_before_runtime": "0x8000c430",
+      "physical_address_argument": "0xd0004100",
+      "pending_store_value": "0x1",
+      "passed": true
+    }
+  ],
+  "separate_pending_address_sequence": [
+    "0x5c62c000",
+    "0x0",
+    "0x12345000",
+    "0x0"
+  ],
+  "decoded_only_vsync_candidate": {
+    "old_state": 5,
+    "input": 5,
+    "next_state": 5,
+    "handler_source": "0xfe2b9536"
+  },
+  "native_calls_stubbed": false,
+  "mmio_mapped_or_stored": false,
+  "camera_binding_enabled": false,
+  "dma_start_or_frame_lease_validated": false,
+  "limits": "Channel 1 and register shadows are supplied. Scoped runtime code/table copies are not validated boot relocations. Control RMW and post-call start tail are separate native stages. Separate configuration/post-command/empty-pending native calls check software consumption only. Neither physical store is executed. No peripheral, successful DMA start, completion, cache behavior, pixels or timing is modeled."
+}

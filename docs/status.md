@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Traced RAW start preparation to the control RMW at `0xD0004104` and start value 1 at `0xD0004100`, with four native cases stopping before physical stores. Separate native calls verify software pending-address consumption. Decoded the target EVF state-5/input-5 readout-done entry corresponding to the 7D2 synchronization pattern; a frame lease remains unverified. See [RAW start](750d-raw-start.md).
+
 - Identified a message-37 receiver branch that supplies pool constants `0x58830000` / `0x06B48000`. Two bounded native cases propagate these through six setup stages to candidate RAW preparation address `0x5C62C000`. Service dispatch and resource configuration are supplied; live activation, pixels and per-frame ownership remain unverified. No platform binding enabled. See [constant-pool provenance](750d-pool-provenance.md).
 
 - Identified the asynchronous pool request's actual callback, 48-byte service object and minimum-size contract. Five native boundary checks verify request/object preparation and callback publication versus undersized assertion. The 90 MiB threshold does not establish actual allocation capacity; OS allocation/delivery and per-frame timing remain unexecuted. See [the pool request](750d-pool-request.md).
