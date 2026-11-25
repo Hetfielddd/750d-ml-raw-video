@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Execute a RAW channel IRQ body against explicitly artificial register RAM.
 
-Stores update ordinary RAM and the native software shadow. No peripheral,
+Stores update ordinary RAM and the native software shadow. Additional native
+start/stop-request/status-reader sequences derive IRQ-entry state. No peripheral,
 interrupt controller, acknowledgement semantics or pixel transfer is modeled.
 """
 import argparse
@@ -30,11 +31,13 @@ def probe(data):
     if table != (0x41, channel_base, 0x8000d1ed):
         raise RuntimeError('Unexpected native channel-1 IRQ table')
     cases = []
-    definitions = [(status, flag, secondary, None) for status in (0, 4)
+    definitions = [(status, flag, secondary, None, False) for status in (0, 4)
                    for flag in (0, 1) for secondary in (0, 1)]
-    definitions += [(status, 1, 1, control) for status in (0, 4)
+    definitions += [(status, 1, 1, control, False) for status in (0, 4)
                     for control in (0, 0xdeadbeef)]
-    for status, software_flag, secondary_flag, configured_control in definitions:
+    definitions += [(status, 1, secondary, control, True) for status in (0, 4)
+                    for secondary in (0, 1) for control in (0, 0xdeadbeef)]
+    for status, software_flag, secondary_flag, configured_control, stop_requested in definitions:
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A9)
         uc.mem_map(base, (len(data) + 4095) & ~4095, UC_PROT_READ | UC_PROT_EXEC)
@@ -74,7 +77,9 @@ def probe(data):
         errors, reached, register_writes, register_reads = [], [], [], []
         ranges = ((0xfe7545cc, 0xfe754630), (0xfe753806, 0xfe753814),
                   (0xfe753840, 0xfe753856), (0x1bb709a, 0x1bb70aa),
-                  (0xfe7539be, 0xfe7539de), (0xfe75395e, 0xfe75399e))
+                  (0xfe7539be, 0xfe7539de), (0xfe75395e, 0xfe7539be),
+                  (0xfe7554da, 0xfe7554f4), (0xfe8b46d0, 0xfe8b46dc),
+                  (0xfe930ca8, 0xfe930cb0))
         boundary = [callback]
 
         def code_guard(emulator, address, size, _):
@@ -87,7 +92,7 @@ def probe(data):
 
         def write_guard(emulator, access, address, size, value, _):
             allowed = {channel_base, channel_base + 4, shadow + 0x4100,
-                       shadow + 0x4104, 0x1ad81c8, 0x1ad8288}
+                       shadow + 0x4104, 0x1ad81c8, 0x1ad8288, 0x1ac3704}
             if not (size == 4 and address in allowed
                     or stack - 128 <= address and address + size <= stack):
                 errors.append(f'Unexpected IRQ-body write: {address:#x}/{size}')
@@ -115,13 +120,18 @@ def probe(data):
             uc.emu_start(entry | 1, base + len(data), count=128, timeout=500_000)
             if errors or reached != [target]:
                 raise RuntimeError(f'Invalid native IRQ sequence stage: {errors}/{reached}')
+            if target == stop and uc.reg_read(UC_ARM_REG_SP) != stack:
+                raise RuntimeError('Native channel helper failed to restore its stack')
 
         sequence_writes = None
+        status_read_result = None
+        status_reader_reads = None
         if configured_control is not None:
-            uc.reg_write(UC_ARM_REG_R1, 0)
+            configured_secondary = secondary_flag if stop_requested else 0
+            uc.reg_write(UC_ARM_REG_R1, configured_secondary)
             execute(0xfe7539be, stop)
-            prepared = control_marker & ~7
-            if (word(0x1ad8288) != 0 or word(channel_base + 4) != prepared
+            prepared = (control_marker & ~7) | configured_secondary
+            if (word(0x1ad8288) != configured_secondary or word(channel_base + 4) != prepared
                     or register_writes != [[hex(channel_base + 4), hex(prepared)]]):
                 raise RuntimeError('Wrong native configuration zero/control update')
             register_writes.clear()
@@ -129,7 +139,7 @@ def probe(data):
             started_control = prepared | 0x20000000
             expected_start = [[hex(channel_base + 4), hex(started_control)],
                               [hex(channel_base), '0x1']]
-            if (word(0x1ad81c8) != 0 or word(0x1ad8288) != 0
+            if (word(0x1ad81c8) != 0 or word(0x1ad8288) != configured_secondary
                     or register_writes != expected_start
                     or word(shadow + 0x4104) != started_control
                     or word(shadow + 0x4100) != 1):
@@ -137,8 +147,29 @@ def probe(data):
             sequence_writes = {'configure': [[hex(channel_base + 4), hex(prepared)]],
                                'start': list(register_writes)}
             register_writes.clear()
-            software_flag = secondary_flag = 0
+            software_flag, secondary_flag = 0, configured_secondary
             control_marker, start_marker = started_control, 1
+            if stop_requested:
+                execute(0xfe75399e, stop)
+                control_marker = (started_control & ~7) | 6
+                expected_stop = [[hex(channel_base + 4), hex(control_marker)]]
+                if (word(0x1ad81c8) != 1 or word(0x1ad8288) != configured_secondary
+                        or register_writes != expected_stop
+                        or word(channel_base + 4) != control_marker
+                        or word(shadow + 0x4104) != control_marker):
+                    raise RuntimeError('Native stop request did not set its software flag/control bits')
+                sequence_writes['stop_request'] = list(register_writes)
+                software_flag = 1
+                register_writes.clear()
+                # This real status reader extracts bit2. Its physical meaning
+                # is not inferred from the read or the later shared IRQ path.
+                execute(0xfe7554da, stop)
+                status_read_result = uc.reg_read(UC_ARM_REG_R0)
+                status_reader_reads = list(register_reads)
+                if (status_read_result != bool(status & 4) or register_writes
+                        or status_reader_reads != [[hex(channel_base + 0x30), 4]]):
+                    raise RuntimeError('Native channel-status reader did not extract bit2')
+                register_reads.clear()
         execute(0xfe7545cc, callback)
         expected_control = control_marker
         if status & 4 or software_flag == 1:
@@ -165,12 +196,32 @@ def probe(data):
         cases.append({'supplied_status': hex(status), 'software_flag': software_flag,
                       'secondary_flag': secondary_flag,
                       'native_configure_start_executed': configured_control is not None,
+                      'native_stop_request_executed': stop_requested,
+                      'separate_native_status_bit2_result': status_read_result,
+                      'separate_status_reader_reads': status_reader_reads,
                       'supplied_initial_control': hex(configured_control)
                       if configured_control is not None else None,
                       'preceding_native_register_writes': sequence_writes,
                       'artificial_register_writes': register_writes,
                       'driver_callback_reached': hex(callback), 'passed': True})
+    # Independently enter two real callback bodies installed by callers of the
+    # request import FE86F69C. Stop at their signal veneer: do not fabricate a
+    # semaphore give, waiting caller return or controller-delivered IRQ.
+    for page in (0x1ac3000, 0x1ac6000):
+        uc.mem_map(page, 4096, UC_PROT_READ | UC_PROT_WRITE)
+    callback_cases = []
+    for entry, owner, offset, supplied_handle in ((0xfe8b46d0, 0x1ac3704, 24, 0x2468ace0),
+                                                 (0xfe930ca8, 0x1ac615c, 68, 0x2468ace2)):
+        put(owner + offset, supplied_handle)
+        execute(entry, 0xfe86f3d4)
+        if (uc.reg_read(UC_ARM_REG_R0) != supplied_handle
+                or entry == 0xfe8b46d0 and word(owner) != 1):
+            raise RuntimeError('Native stop-request callback did not prepare its signal handle')
+        callback_cases.append({'callback_source': hex(entry), 'signal_handle': hex(supplied_handle),
+                               'stopped_before': '0xfe86f3d4',
+                               'semaphore_signal_executed': False, 'passed': True})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
+            'separate_stop_callback_cases': callback_cases,
             'channel_index': 1, 'table_irq_number': '0x41',
             'native_calls_stubbed': False, 'physical_hardware_accessed': False,
             'artificial_mmio_ram_mapped': True, 'camera_binding_enabled': False,
@@ -178,11 +229,16 @@ def probe(data):
             'limits': 'Artificial register RAM and matching software shadow; native stores '
                       'have ordinary RAM semantics, not device acknowledgement semantics. '
                       'Supplied callback records, flags, status and direct handler invocation. '
-                      'Four cases first execute real configuration/start functions against '
+                      'Four cases first execute real configuration/start functions; eight '
+                      'additional cases execute configuration/start/stop-request and a '
+                      'separate native bit2 status reader against '
                       'the same artificial RAM and shadow; no DMA completion is simulated '
                       'between the native start and the directly invoked handler. '
                       'Scoped code/table copies are not validated boot relocations. Stops '
-                      'before driver callback. No interrupt-controller delivery, hardware '
+                      'before driver callback. Two separate real stop-request callbacks '
+                      'use supplied owner handles and stop before the signal trampoline; '
+                      'no semaphore give or caller wakeup executes. Status read-to-clear '
+                      'behavior is not modeled. No interrupt-controller delivery, hardware '
                       'status definition, DMA, pixels, cache or frame ownership established.'}
 
 

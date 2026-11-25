@@ -7,6 +7,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -23,6 +26,9 @@
       "software_flag": 0,
       "secondary_flag": 1,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -39,6 +45,9 @@
       "software_flag": 1,
       "secondary_flag": 0,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -59,6 +68,9 @@
       "software_flag": 1,
       "secondary_flag": 1,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -79,6 +91,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -99,6 +114,9 @@
       "software_flag": 0,
       "secondary_flag": 1,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -119,6 +137,9 @@
       "software_flag": 1,
       "secondary_flag": 0,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -139,6 +160,9 @@
       "software_flag": 1,
       "secondary_flag": 1,
       "native_configure_start_executed": false,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": null,
       "preceding_native_register_writes": null,
       "artificial_register_writes": [
@@ -159,6 +183,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": true,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": "0x0",
       "preceding_native_register_writes": {
         "configure": [
@@ -192,6 +219,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": true,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": "0xdeadbeef",
       "preceding_native_register_writes": {
         "configure": [
@@ -225,6 +255,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": true,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": "0x0",
       "preceding_native_register_writes": {
         "configure": [
@@ -262,6 +295,9 @@
       "software_flag": 0,
       "secondary_flag": 0,
       "native_configure_start_executed": true,
+      "native_stop_request_executed": false,
+      "separate_native_status_bit2_result": null,
+      "separate_status_reader_reads": null,
       "supplied_initial_control": "0xdeadbeef",
       "preceding_native_register_writes": {
         "configure": [
@@ -278,6 +314,414 @@
           [
             "0xd0004100",
             "0x1"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 0,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x0"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000000"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0x20000006"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 0,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee8"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee8"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0xfeadbeee"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 0,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x1"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000001"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0x20000006"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x20000002"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x0",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 0,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee9"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee9"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0xfeadbeee"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0xfeadbeea"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 1,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x0"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000000"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0x20000006"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 0,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 1,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee8"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee8"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0xfeadbeee"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 1,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0x0",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0x1"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0x20000001"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0x20000006"
+          ]
+        ]
+      },
+      "artificial_register_writes": [
+        [
+          "0xd0004104",
+          "0x0"
+        ],
+        [
+          "0xd0004100",
+          "0x4"
+        ]
+      ],
+      "driver_callback_reached": "0x80009d8e",
+      "passed": true
+    },
+    {
+      "supplied_status": "0x4",
+      "software_flag": 1,
+      "secondary_flag": 1,
+      "native_configure_start_executed": true,
+      "native_stop_request_executed": true,
+      "separate_native_status_bit2_result": 1,
+      "separate_status_reader_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "supplied_initial_control": "0xdeadbeef",
+      "preceding_native_register_writes": {
+        "configure": [
+          [
+            "0xd0004104",
+            "0xdeadbee9"
+          ]
+        ],
+        "start": [
+          [
+            "0xd0004104",
+            "0xfeadbee9"
+          ],
+          [
+            "0xd0004100",
+            "0x1"
+          ]
+        ],
+        "stop_request": [
+          [
+            "0xd0004104",
+            "0xfeadbeee"
           ]
         ]
       },
@@ -295,6 +739,22 @@
       "passed": true
     }
   ],
+  "separate_stop_callback_cases": [
+    {
+      "callback_source": "0xfe8b46d0",
+      "signal_handle": "0x2468ace0",
+      "stopped_before": "0xfe86f3d4",
+      "semaphore_signal_executed": false,
+      "passed": true
+    },
+    {
+      "callback_source": "0xfe930ca8",
+      "signal_handle": "0x2468ace2",
+      "stopped_before": "0xfe86f3d4",
+      "semaphore_signal_executed": false,
+      "passed": true
+    }
+  ],
   "channel_index": 1,
   "table_irq_number": "0x41",
   "native_calls_stubbed": false,
@@ -302,5 +762,5 @@
   "artificial_mmio_ram_mapped": true,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Artificial register RAM and matching software shadow; native stores have ordinary RAM semantics, not device acknowledgement semantics. Supplied callback records, flags, status and direct handler invocation. Four cases first execute real configuration/start functions against the same artificial RAM and shadow; no DMA completion is simulated between the native start and the directly invoked handler. Scoped code/table copies are not validated boot relocations. Stops before driver callback. No interrupt-controller delivery, hardware status definition, DMA, pixels, cache or frame ownership established."
+  "limits": "Artificial register RAM and matching software shadow; native stores have ordinary RAM semantics, not device acknowledgement semantics. Supplied callback records, flags, status and direct handler invocation. Four cases first execute real configuration/start functions; eight additional cases execute configuration/start/stop-request and a separate native bit2 status reader against the same artificial RAM and shadow; no DMA completion is simulated between the native start and the directly invoked handler. Scoped code/table copies are not validated boot relocations. Stops before driver callback. Two separate real stop-request callbacks use supplied owner handles and stop before the signal trampoline; no semaphore give or caller wakeup executes. Status read-to-clear behavior is not modeled. No interrupt-controller delivery, hardware status definition, DMA, pixels, cache or frame ownership established."
 }

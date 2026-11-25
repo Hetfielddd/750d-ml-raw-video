@@ -4,6 +4,8 @@ The [start-gate investigation](750d-start-gate.md) established that event bits a
 
 The [later no-work notification experiment](750d-raw-notification.md) now executes this driver's callback through actual kernel event lookup/update and return, with optional application task callbacks null. Empty RAW entries reach the same event bit without mapped capture registers; separate IRQ cases use the real forwarding wrapper. This qualifies software synchronization, not physical completion.
 
+The [channel stop-request investigation](750d-channel-stop.md) further expands this probe to **20 IRQ cases and two separate real callback preparations**. A native stop-like request derives the software-one branch and shares the channel IRQ route. Status bit 2, request state and callback delivery still do not establish a completed image. The original 12 cases are described below.
+
 ## Actual table and callback route
 
 Channel table source `0xFE756CB4`, stride 12, has channel-1 row `[0x41, 0xD0004100, 0x8000D1ED]`. The IRQ number is **hexadecimal `0x41` (65 decimal)**. Stored handler `0x8000D1ED` corresponds to source body `0xFE7545CC` under the reviewed driver mapping.
@@ -51,7 +53,7 @@ The channel callback installer `0xFE75432A` publishes the callback record and lo
 python scripts/probe_750d_raw_irq.py /private/750d-analysis/record-06.bin
 ```
 
-[Machine-readable evidence](evidence/750d-raw-irq.json) records 12 passing cases and the exact artificial register writes, including four native configuration/start sequences. Input size `0xCFB688` and the identified main-record SHA-256 are checked before importing Unicorn. Requires Unicorn 2.1.4. Cortex-A9 executes compatible instructions; it is not a Cortex-R4 camera-system model.
+[Machine-readable evidence](evidence/750d-raw-irq.json) records 20 passing IRQ cases and two separate callback preparations, including the original four native configuration/start sequences and eight configuration/start/request/status-reader sequences. Input size `0xCFB688` and the identified main-record SHA-256 are checked before importing Unicorn. Requires Unicorn 2.1.4. Cortex-A9 executes compatible instructions; it is not a Cortex-R4 camera-system model.
 
 The status/register page is explicitly mapped as ordinary read/write RAM. Native stores have ordinary RAM behavior; hardware write-one-to-clear, device acknowledgement, interrupt deassertion and DMA effects are **not** modeled. This differs from earlier probes that stopped before MMIO stores. No physical hardware is accessed.
 
