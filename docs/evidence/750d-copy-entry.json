@@ -1,0 +1,125 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "copy_entry",
+      "supplied_channel": 0,
+      "supplied_channel_mask": "0x1",
+      "supplied_status": "0x10000000",
+      "supplied_bytes": 4096,
+      "result": "os_wait_boundary",
+      "passed": true
+    },
+    {
+      "case": "copy_entry",
+      "supplied_channel": 0,
+      "supplied_channel_mask": "0x1",
+      "supplied_status": "0x0",
+      "supplied_bytes": 4096,
+      "result": "0xfffffffe",
+      "passed": true
+    },
+    {
+      "case": "copy_entry",
+      "supplied_channel": 0,
+      "supplied_channel_mask": "0x0",
+      "supplied_status": "0x10000000",
+      "supplied_bytes": 4096,
+      "result": "0xffffffff",
+      "passed": true
+    },
+    {
+      "case": "copy_entry",
+      "supplied_channel": 4,
+      "supplied_channel_mask": "0x10",
+      "supplied_status": "0x10000000",
+      "supplied_bytes": 4096,
+      "result": "0xffffffff",
+      "passed": true
+    },
+    {
+      "case": "copy_entry",
+      "supplied_channel": 1,
+      "supplied_channel_mask": "0x3",
+      "supplied_status": "0x10000000",
+      "supplied_bytes": 4096,
+      "result": "os_wait_boundary",
+      "passed": true
+    },
+    {
+      "case": "copy_entry",
+      "supplied_channel": 0,
+      "supplied_channel_mask": "0x1",
+      "supplied_status": "0x10000000",
+      "supplied_bytes": 0,
+      "result": "os_wait_boundary",
+      "passed": true
+    },
+    {
+      "case": "attribute_decoder",
+      "supplied_access": "0x121",
+      "native_flags": 8,
+      "passed": true
+    },
+    {
+      "case": "attribute_decoder",
+      "supplied_access": "0x12c",
+      "native_flags": 4,
+      "passed": true
+    },
+    {
+      "case": "address_conversion",
+      "supplied_range_access": "0x121",
+      "input_and_output": "0x5c62c000",
+      "range_is_artificial": true,
+      "passed": true
+    },
+    {
+      "case": "cache_dispatch",
+      "supplied_range_access": "0x121",
+      "supplied_operation": 0,
+      "stopped_before": "0xfe555b36",
+      "range_is_artificial": true,
+      "passed": true
+    },
+    {
+      "case": "cache_dispatch",
+      "supplied_range_access": "0x121",
+      "supplied_operation": 1,
+      "stopped_before": "0xfe555b84",
+      "range_is_artificial": true,
+      "passed": true
+    },
+    {
+      "case": "address_conversion",
+      "supplied_range_access": "0x12c",
+      "input_and_output": "0x5c62c000",
+      "range_is_artificial": true,
+      "passed": true
+    },
+    {
+      "case": "cache_dispatch",
+      "supplied_range_access": "0x12c",
+      "supplied_operation": 0,
+      "stopped_before": "0xfe22ccde",
+      "range_is_artificial": true,
+      "passed": true
+    },
+    {
+      "case": "cache_dispatch",
+      "supplied_range_access": "0x12c",
+      "supplied_operation": 1,
+      "stopped_before": "0xfe22ccde",
+      "range_is_artificial": true,
+      "passed": true
+    }
+  ],
+  "copy_entry_candidate": "0xfe133eb2",
+  "native_calls_stubbed": false,
+  "os_wait_or_dma_executed": false,
+  "cache_maintenance_executed": false,
+  "primary_live_mapping_validated": false,
+  "camera_binding_enabled": false,
+  "limits": "Supplied channel mask, semaphore handles, artificial controller status and artificial one-record memory classification list. Attribute decoder enters after CP15 reads with a supplied saved frame. Copy entry stops before OS wait; cache dispatch before maintenance/barrier helper. No pixel memory, DMA execution, live cache mapping, completion timing or frame ownership established."
+}
