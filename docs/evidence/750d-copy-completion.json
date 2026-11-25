@@ -1,0 +1,456 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300000",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300000",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300001",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300001",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300008",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa5300008",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa530000f",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 0,
+      "irq": "0x13e",
+      "supplied_status": "0xa530000f",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300000",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300000",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300001",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300001",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300008",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa5300008",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa530000f",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 1,
+      "irq": "0x14e",
+      "supplied_status": "0xa530000f",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300000",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300000",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300001",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300001",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300008",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa5300008",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa530000f",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 2,
+      "irq": "0x15e",
+      "supplied_status": "0xa530000f",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300000",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300000",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300001",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300001",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300008",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa5300008",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa530000f",
+      "callback": false,
+      "os_boundary": "signal",
+      "separate_callback_continuation_checked": false,
+      "passed": true
+    },
+    {
+      "case": "irq_cleanup",
+      "channel": 3,
+      "irq": "0x16e",
+      "supplied_status": "0xa530000f",
+      "callback": true,
+      "os_boundary": "unlock",
+      "separate_callback_continuation_checked": true,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 0,
+      "native_result": 0,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 1,
+      "native_result": 1,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 2,
+      "native_result": 2,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 3,
+      "native_result": 3,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 4,
+      "native_result": 4,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 5,
+      "native_result": 5,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 6,
+      "native_result": 6,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 7,
+      "native_result": 7,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 8,
+      "native_result": 0,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 9,
+      "native_result": 9,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 10,
+      "native_result": 10,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 11,
+      "native_result": 11,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 12,
+      "native_result": 12,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 13,
+      "native_result": 13,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 14,
+      "native_result": 14,
+      "passed": true
+    },
+    {
+      "case": "separate_post_wait_decode",
+      "supplied_low_nibble": 15,
+      "native_result": 15,
+      "passed": true
+    },
+    {
+      "case": "invalid_irq",
+      "supplied_irq": "0x0",
+      "passed": true
+    },
+    {
+      "case": "invalid_irq",
+      "supplied_irq": "0x13d",
+      "passed": true
+    },
+    {
+      "case": "invalid_irq",
+      "supplied_irq": "0x13f",
+      "passed": true
+    },
+    {
+      "case": "invalid_irq",
+      "supplied_irq": "0xffffffff",
+      "passed": true
+    },
+    {
+      "case": "separately_invoked_two_channel_status_sequence",
+      "first_channel_result_before_second_irq": 0,
+      "first_channel_decoder_after_second_irq": 1,
+      "actual_concurrency_or_os_scheduling_tested": false,
+      "passed": true
+    }
+  ],
+  "irq_handler": "0xfe1339b4",
+  "shared_status_word": "0x257a4",
+  "native_calls_stubbed": false,
+  "os_operations_executed": false,
+  "hardware_irq_delivery_or_dma_executed": false,
+  "camera_binding_enabled": false,
+  "limits": "Supplied IRQ numbers, status, channel state, callback and OS handles; ordinary RAM at controller addresses, no device/W1C semantics. Stops before signal/unlock. Callback continuation and post-wait decoder are separately entered reviewed slices, not successful OS returns. Zero and eight both map to zero in the return slice; this alone cannot qualify hardware completion. Shared status sequence does not establish a live race: OS serialization is untested. No copied pixels, throughput, cache coherence or source lease proven."
+}

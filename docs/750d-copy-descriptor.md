@@ -2,6 +2,8 @@
 
 The actual 750D 1.1.0 descriptor builder at `0xFE133BF4` now executes on the PC, including its real zeroing helper, address converter, field packers and channel-list helpers. Ten supplied scenarios each build two descriptors. Nine then enter submission helper `0xFE133B22` using the **same native-written descriptors and channel state**, stopping before its controller start store. This advances the [copy candidate investigation](750d-copy-entry.md), without executing a DMA transfer.
 
+Follow-up: [copy IRQ cleanup and status decoding](750d-copy-completion.md) now tests the notification branches and separately entered return slice. OS synchronization and physical completion remain unverified.
+
 ## Descriptor construction
 
 The builder takes descriptor pointer, channel, source and destination in R0–R3, with byte count and flags on the caller's stack. It clears 24 bytes and fills six words:
