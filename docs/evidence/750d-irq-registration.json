@@ -25,6 +25,82 @@
       "passed": true
     },
     {
+      "case": "peer_low_registration_to_enable",
+      "supplied_callback_argument": "0x0",
+      "supplied_initial_irq_masked": false,
+      "irq_table_slot": "0x1acb264",
+      "irq_handler": "0x8000d1ed",
+      "irq_handler_argument": 1,
+      "irq_mask_restored": true,
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "peer_dispatch_from_native_registration",
+      "supplied_irq": "0x41",
+      "registered_handler_argument": 1,
+      "optional_dispatch_hooks_supplied_null": true,
+      "stopped_before": "0x8000d1ec",
+      "passed": true
+    },
+    {
+      "case": "peer_low_registration_to_enable",
+      "supplied_callback_argument": "0x0",
+      "supplied_initial_irq_masked": true,
+      "irq_table_slot": "0x1acb264",
+      "irq_handler": "0x8000d1ed",
+      "irq_handler_argument": 1,
+      "irq_mask_restored": true,
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "peer_dispatch_from_native_registration",
+      "supplied_irq": "0x41",
+      "registered_handler_argument": 1,
+      "optional_dispatch_hooks_supplied_null": true,
+      "stopped_before": "0x8000d1ec",
+      "passed": true
+    },
+    {
+      "case": "peer_low_registration_to_enable",
+      "supplied_callback_argument": "0x12345678",
+      "supplied_initial_irq_masked": false,
+      "irq_table_slot": "0x1acb264",
+      "irq_handler": "0x8000d1ed",
+      "irq_handler_argument": 1,
+      "irq_mask_restored": true,
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "peer_dispatch_from_native_registration",
+      "supplied_irq": "0x41",
+      "registered_handler_argument": 1,
+      "optional_dispatch_hooks_supplied_null": true,
+      "stopped_before": "0x8000d1ec",
+      "passed": true
+    },
+    {
+      "case": "peer_low_registration_to_enable",
+      "supplied_callback_argument": "0x12345678",
+      "supplied_initial_irq_masked": true,
+      "irq_table_slot": "0x1acb264",
+      "irq_handler": "0x8000d1ed",
+      "irq_handler_argument": 1,
+      "irq_mask_restored": true,
+      "stopped_before": "0xfe747c36",
+      "passed": true
+    },
+    {
+      "case": "peer_dispatch_from_native_registration",
+      "supplied_irq": "0x41",
+      "registered_handler_argument": 1,
+      "optional_dispatch_hooks_supplied_null": true,
+      "stopped_before": "0x8000d1ec",
+      "passed": true
+    },
+    {
       "case": "irq_enable",
       "supplied_irq": "0x41",
       "supplied_irq_limit": 432,
@@ -80,9 +156,11 @@
     }
   ],
   "native_calls_stubbed": false,
-  "low_import_executed": false,
+  "low_import_executed_in_scoped_peer_copy": true,
+  "peer_low_code_source": "0xfe744d60",
+  "boot_relocation_validated": false,
   "controller_registers_mapped": false,
   "camera_binding_enabled": false,
   "hardware_completion_validated": false,
-  "limits": "Supplied channel callback/argument and IRQ limit. Native installer and wrapper reach the actual ARM import target, stopping before its first instruction at 0x6FC. A separate enable call stops before controller store or returns rejection. No import return is fabricated. No controller delivery, DMA, pixels, timing, cache or frame ownership is established."
+  "limits": "Supplied channel callback/argument and IRQ limit. Native installer and wrapper first stop at 0x6FC. Separate scoped peer-code cases execute the actual low function and CPU IRQ-mask helper through to the enable-store boundary. The source mapping is supported by a peer-block reference and compatible native code, not execution of its boot relocation. Independent enable calls stop before controller store or return rejection. No import return is fabricated. Separate direct dispatcher calls consume the natively written table, with optional hooks supplied null. They do not finish enabling or deliver an IRQ. No controller delivery, DMA, pixels, timing, cache or frame ownership is established."
 }

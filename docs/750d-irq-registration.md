@@ -1,6 +1,6 @@
-# RAW IRQ registration reaches a low-memory import
+# Peer-kernel mapping connects RAW IRQ registration to dispatch
 
-The [IRQ-body experiment](750d-raw-irq.md) traced callback forwarding after direct invocation. This step executes the actual channel callback installer through the IRQ wrapper and ARM import veneer. Channel 1 requests IRQ **`0x41` (65 decimal)** with handler `0x8000D1ED` and handler argument **1**. The low-memory registration function and controller delivery remain unresolved, so this does not establish hardware RAW completion.
+The [IRQ-body experiment](750d-raw-irq.md) traced callback forwarding after direct invocation. This step executes the actual channel callback installer through the IRQ wrapper, ARM import veneer and a scoped copy of the peer kernel's low-memory registration function. A separately invoked dispatcher then consumes the table written by native registration and selects RAW handler `0x8000D1ED` with channel argument **1** for IRQ **`0x41` (65 decimal)**. Boot relocation and physical controller delivery are not executed, so hardware RAW completion remains unverified.
 
 ## Native registration boundary
 
@@ -14,7 +14,21 @@ R1 = 1           channel index passed as IRQ-handler argument
 R2 = 0x41        IRQ number
 ```
 
-The experiment stops before the first low-memory instruction. No registration table write, import return or successful IRQ installation is invented. On return from this import, static wrapper code would call `0xFE747C20`; the probe does not pretend the import returned in order to execute that continuation.
+Two original boundary fixtures stop before the first low-memory instruction. Four additional fixtures explicitly load the reviewed peer-kernel page, execute that actual function and its CPU interrupt-mask helper, and continue through its real return into `0xFE747C20`. They stop before the controller enable store. No import return or successful hardware IRQ installation is invented.
+
+## The distinct peer-kernel page
+
+Source **`0xFE744D60`** begins another exception-vector block. A separate data reference at `0xFE6E83E8` points to that source; adjacent references include `0xFE747BE0`, the source corresponding to the reviewed driver code at runtime `0x80000800`. These references support a separate peer image, but their loading consumer and live boot sequence are not executed here.
+
+Under the scoped low-page correspondence, `0x6FC` maps to source **`0xFE74545C`**, an actual three-argument IRQ registration routine. It preserves the handler, argument and IRQ in registers, calls native CPU-mask helper `0x21A` (source `0xFE744F7A`), writes handler/argument into an eight-byte slot, then restores the prior IRQ mask through the same helper and returns zero. The helper executes native CPSR reads/writes; no mask operation is replaced by a stub.
+
+Its actual table-base literal is `0x01ACB05C`. IRQ `0x41` selects slot **`0x01ACB264`**, populated with `[0x8000D1ED, 1]`. Four fixtures cover two application callback arguments and two supplied initial CPU IRQ-mask states. All preserve that initial mask and reach the real enable-store boundary. The distinct application callback record still receives `[0x01BB709B, supplied_argument, 1]`.
+
+## Native table consumption by the dispatcher
+
+The peer's IRQ-vector path references dispatcher `0x67D`, whose Thumb body `0x67C` corresponds to source `0xFE7453DC`. Static vector review reads the controller's current IRQ at `0xD5011000` before calling that dispatcher; the vector's mode switching, controller access and IRQ return are not executed.
+
+After each of the four native registrations, a **separate direct invocation** of the actual dispatcher supplies IRQ `0x41` and uses the table just written by registration. Optional before/after dispatch hooks at `0x01AC001C/+4` are supplied null. The dispatcher selects `0x8000D1ED` and loads argument 1 from its table slot. Execution stops before the selected handler's first instruction. These calls do not finish the pending enable operation or simulate hardware delivery. Together with the earlier IRQ-body experiment, this identifies the native software route; it does not join separate experiments into a timed hardware transfer.
 
 ## Separate IRQ-enable boundary
 
@@ -22,11 +36,11 @@ Six independent calls execute `0xFE747C20` with supplied IRQ limits at global `0
 
 IRQ zero, signed -1, IRQ 432 with limit 432, and IRQ `0x41` with limit `0x41` return `0xFFFFFFFF`. This verifies the boundary check and write target, not the live limit, register semantics, actual enablement or interrupt delivery. Static code after the store has a barrier and reads `0xD5011200`; those instructions are outside the executed path.
 
-## Why the low import is not replaced with a guessed function
+## Why the primary-core copy was the wrong candidate
 
 The low address belongs to a distinct mapping problem. An initial main-image copy loop at `0xFE0A00B2` references source `0xFED58B7C`, destination zero and end `0x3D4A`. Applying only that initial-copy correspondence would place address `0x6FC` at source `0xFED59278`, inside a diagnostic/assertion sequence rather than an established three-argument IRQ-registration entry. This candidate is not sufficient to map the import. It does not prove that the low-memory code is absent from all update records, nor identify the active image/core or later copy sequence.
 
-The experiment therefore maps a fetchable stop page at zero and executes **no** code from it. Boot-stage selection, later relocation/overlay and the actual low-memory function must be reconciled before following registration or IRQ dispatch through that address. Existing private FIR records can still be investigated on the PC; no new camera read is required for this bounded next step.
+The new peer page resolves the function-level mismatch without substituting unrelated code. It remains a scoped experimental copy: the peer loader, active core, memory protection and complete boot relocation still require independent validation. No complete low-memory image for the running camera is asserted.
 
 ## Reproduction and limits
 
@@ -34,6 +48,6 @@ The experiment therefore maps a fetchable stop page at zero and executes **no** 
 python scripts/probe_750d_irq_registration.py /private/750d-analysis/record-06.bin
 ```
 
-[Evidence](evidence/750d-irq-registration.json) records eight passing cases: two registration preparations and six independent enable checks. Exact identified main-record size `0xCFB688` and SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible instruction subset, not a Cortex-R4 camera system.
+[Evidence](evidence/750d-irq-registration.json) records 16 passing cases: two import-boundary preparations, four registrations through the peer low page, four separate table-consuming dispatches, and six independent enable checks. Exact identified main-record size `0xCFB688` and SHA-256 are checked before importing Unicorn 2.1.4. Cortex-A9 executes a compatible instruction subset, not a Cortex-R4 camera system. CPU mask fixtures use a supplied privileged SVC state; this is not a full interrupt-context model.
 
-Firmware, the scoped channel-table copy and stop pages are read/execute; supplied globals, callback record and stack are read/write without execute permission. Code/write guards restrict each stage, bounded to 128 instructions / 0.5 seconds. Scoped table copying is not validated boot relocation. No native calls are stubbed, no low import returns, and no controller registers are mapped. Hardware completion, DMA, sensor pixels, cache coherence and a frame lease remain unverified. Camera bindings stay disabled.
+Firmware, the scoped channel-table/low-kernel copies and stop pages are read/execute; supplied globals, IRQ/application records and stack are read/write without execute permission. Code/write guards restrict each stage, bounded to 128 instructions / 0.5 seconds. Scoped copying is not validated boot relocation. No native calls are stubbed and no controller registers are mapped. Hardware completion, DMA, sensor pixels, cache coherence and a frame lease remain unverified. Camera bindings stay disabled.

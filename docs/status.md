@@ -7,7 +7,7 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
-- Traced actual channel callback registration through its wrapper/ARM veneer to low Thumb entry `0x6FC`, preserving IRQ `0x41`, channel argument 1 and handler `0x8000D1ED`. Eight native cases include independent enable checks stopping before controller register `0xD5011010`. The initial-copy mapping does not establish this low import; boot mapping and hardware delivery remain unresolved. See [IRQ registration](750d-irq-registration.md).
+- Resolved the low IRQ-import mismatch with a distinct scoped peer-kernel page from source `0xFE744D60`. Sixteen native cases verify registration into slot `0x01ACB264`, IRQ-mask restoration, separate dispatch using that natively written slot and enable bounds. The dispatcher selects the RAW handler with channel argument 1. Boot relocation and physical controller delivery remain unverified. See [IRQ registration and dispatch](750d-irq-registration.md).
 
 - Executed the RAW channel IRQ body and actual write helpers through application callback forwarding in eight supplied status/flag cases. Identified the separate secondary software array entry and verified control/start writes in artificial register RAM. All cases reach the driver callback, including zero status; controller delivery and the hardware meaning of this IRQ remain unverified. See [the RAW IRQ experiment](750d-raw-irq.md).
 
