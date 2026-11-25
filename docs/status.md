@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Followed readout-done processing into four registered-method calls and a separate internal-phase slice. Three callback-dispatch cases and ten phase fixtures pass. The real methods remain unexecuted; internal phase is distinct from the VSYNC state-object state. Post-transition copy safety remains unverified. See [readout-done processing](750d-readout-done.md).
+
 - Traced RAW start preparation to the control RMW at `0xD0004104` and start value 1 at `0xD0004100`, with four native cases stopping before physical stores. Separate native calls verify software pending-address consumption. Decoded the target EVF state-5/input-5 readout-done entry corresponding to the 7D2 synchronization pattern; a frame lease remains unverified. See [RAW start](750d-raw-start.md).
 
 - Identified a message-37 receiver branch that supplies pool constants `0x58830000` / `0x06B48000`. Two bounded native cases propagate these through six setup stages to candidate RAW preparation address `0x5C62C000`. Service dispatch and resource configuration are supplied; live activation, pixels and per-frame ownership remain unverified. No platform binding enabled. See [constant-pool provenance](750d-pool-provenance.md).

@@ -47,6 +47,8 @@ The earlier RAW return event **19**, labeled `evfAfPathCompleteInterrupt`, remai
 
 ## Reproduce and limits
 
+The [next investigation](750d-readout-done.md) follows readout-done method dispatch and internal-phase updates, identifying further work that occurs before return. It does not establish a safe copy interval.
+
 ```sh
 python scripts/probe_750d_raw_start.py /private/750d-analysis/record-06.bin
 ```

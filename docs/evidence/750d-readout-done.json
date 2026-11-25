@@ -1,0 +1,118 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "callback_cases": [
+    {
+      "case": "methods_present",
+      "calls": [
+        {
+          "native_leaf": "0xfe205378",
+          "r0": "0xfe205379"
+        },
+        {
+          "native_leaf": "0xfe20537a",
+          "r0": "0xfe20537b"
+        },
+        {
+          "native_leaf": "0xfe3807b8",
+          "r0": "0x6b380"
+        },
+        {
+          "native_leaf": "0xfe751130",
+          "r0": "0x6b370"
+        }
+      ],
+      "stopped_before": "0xfe2d1346",
+      "passed": true
+    },
+    {
+      "case": "methods_absent",
+      "calls": [],
+      "stopped_before": "0xfe2d1346",
+      "passed": true
+    },
+    {
+      "case": "invalid_object_signature",
+      "calls": [],
+      "stopped_before": "0xfe3ce0fc",
+      "passed": true
+    }
+  ],
+  "internal_phase_cases": [
+    {
+      "supplied_flag": 0,
+      "old_internal_phase": 4,
+      "new_internal_phase": 5,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 0,
+      "old_internal_phase": 5,
+      "new_internal_phase": 5,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 0,
+      "old_internal_phase": 3,
+      "new_internal_phase": 3,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 0,
+      "new_internal_phase": 1,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 1,
+      "new_internal_phase": 3,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 3,
+      "new_internal_phase": 4,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 4,
+      "new_internal_phase": 5,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 5,
+      "new_internal_phase": 5,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 6,
+      "new_internal_phase": 0,
+      "assertion_boundary": false,
+      "passed": true
+    },
+    {
+      "supplied_flag": 1,
+      "old_internal_phase": 2,
+      "new_internal_phase": 2,
+      "assertion_boundary": true,
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "mmio_or_pixels_mapped": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied operation-table registration and native BX LR leaves test dispatch order, not the real methods. Separate mid-handler phase slices supply registers and skip the logger without fabricating its return. Internal phase at 0x26ba4 is distinct from the state-object old state used by the donor VSYNC hook. Downstream routines stop before execution; no DMA, cache, buffer ownership, frame identity or live timing is validated."
+}
