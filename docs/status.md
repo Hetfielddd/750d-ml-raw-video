@@ -7,7 +7,7 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
-- Identified the original manager address writer: resource-22 lookup, expected count one, actual class-2 provider for reviewed configuration modes 1/2. Five native cases verify the pool-relative address, reported 30,791,680-byte resource size, skip and diagnostic behavior. The pool itself and sensor frames remain unobserved. See [the RAW resource route](750d-raw-resource.md).
+- Identified the original manager address writer: resource-22 lookup, expected count one, actual class-2 provider for reviewed configuration modes 1/2. Seven native cases now include pool-base setup/alignment to 16 KiB, the pool-relative address, reported 30,791,680-byte resource size, skip and diagnostic behavior. Static mode-selection callers are identified; live configuration and sensor frames remain unobserved. See [the RAW resource route](750d-raw-resource.md).
 
 - Followed manager resource fields `+0x710 -> +0x748` into ADST slot-2 descriptor population and EVF RAW preparation. The actual population code fixes the slot count at one. Four native scenarios pass, including zero/one assertion inputs; original allocation and per-frame timing are still unverified. See [descriptor population](750d-raw-population.md).
 
