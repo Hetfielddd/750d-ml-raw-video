@@ -2,6 +2,8 @@
 
 Eight native PC scenarios now check what happens when an earlier destination override meets the 750D RAW module's next address-programming path. With a supplied zero override flag, the normal path replaces an earlier register-level destination with its software pending address. A newly traced native snapshot/override pair can suppress that address replacement, and a restore function reinstates ten saved register words. This is a concrete control-path candidate, **not a completed-frame lease or a usable recording backend**.
 
+The [follow-up lifecycle and geometry investigation](750d-raw-override-contract.md) expands the same probe to **19 cases**. Repeated override does not directly switch A to B, duplicate restore can replace a later address, and some supplied geometry configurations reduce the described byte count. The original eight cases below remain a subset of that probe.
+
 ## Comparison with the working donor
 
 At pinned Magic Lantern revision `142472e95054d73640f50789ac0fd66325499d82`, `raw_lv_redirect_edmac()` in `src/raw.c` directly writes `CACHEABLE(ptr)` to `raw_lv_edmac->ram_addr` for the non-SLURP path. The 7D2 configuration selects base `0xD0004200`; the reviewed 750D auxiliary path selects channel 1 / `0xD0004100`. Those model-specific choices must not be equated.
@@ -57,6 +59,6 @@ For a future double-buffered recorder, destination control and permission to cop
 python scripts/probe_750d_raw_redirection.py /private/750d-analysis/record-06.bin
 ```
 
-[Evidence](evidence/750d-raw-redirection.json) records eight passing scenarios. Exact main-record size and SHA-256 are enforced before importing Unicorn 2.1.4. Cortex-A15 executes the compatible scalar ARM/Thumb subset, including native integer division used by geometry preparation; it does not model the camera's Cortex-R4 peripherals or memory system.
+[Evidence](evidence/750d-raw-redirection.json) records 19 passing scenarios, including the original eight described here. Exact main-record size and SHA-256 are enforced before importing Unicorn 2.1.4. Cortex-A15 executes the compatible scalar ARM/Thumb subset, including native integer division used by geometry preparation; it does not model the camera's Cortex-R4 peripherals or memory system.
 
 Firmware, scoped driver/table imports, the single peer-kernel page and boundary page are read/execute. Explicit state, scratch stacks, shadow and artificial register RAM are read/write without execute permission. Code/write guards bound all stages, including the byte flag, selected snapshot row and permitted auxiliary stores. Each stage is limited to 1,024 instructions / 0.5 seconds. Function entries and event order are supplied independently; OS transport, hardware start, physical IRQs, sensor capture, actual pixels, throughput and frame ownership remain unverified. Camera bindings remain disabled.

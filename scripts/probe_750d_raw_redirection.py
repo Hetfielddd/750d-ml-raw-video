@@ -19,7 +19,7 @@ def probe(data):
     from unicorn import (Uc, UcError, UC_ARCH_ARM, UC_MODE_THUMB, UC_HOOK_CODE,
                          UC_HOOK_MEM_WRITE, UC_PROT_READ, UC_PROT_WRITE, UC_PROT_EXEC)
     from unicorn.arm_const import (UC_CPU_ARM_CORTEX_A15, UC_ARM_REG_R0,
-                                   UC_ARM_REG_R1, UC_ARM_REG_SP, UC_ARM_REG_LR,
+                                   UC_ARM_REG_R1, UC_ARM_REG_R3, UC_ARM_REG_SP, UC_ARM_REG_LR,
                                    UC_ARM_REG_PC)
     base, delta = 0xfe0a0000, 0x7e7473e0
     stack, stop, callback, shadow = 0x10d000, 0x10f000, 0x10f100, 0x200000
@@ -32,7 +32,7 @@ def probe(data):
               (0xfe7556e4, 0xfe75576c), (0xfe7557f6, 0xfe755878),
               (0xfe7558f8, 0xfe755900),
               (0xfe755902, 0xfe755918), (0xfe755950, 0xfe75598e),
-              (0xfe755994, 0xfe755a0c), (0xfe755a40, 0xfe755a62),
+              (0xfe75598e, 0xfe755a0c), (0xfe755a40, 0xfe755a62),
               (0xfe755262, 0xfe755264), (0xfe753806, 0xfe753888),
               (0xfe7539be, 0xfe753b1a),
               (0xfe74f924, 0xfe74f928), (0x14f0, 0x1544))
@@ -40,7 +40,14 @@ def probe(data):
     for scenario in ('baseline', 'direct_register_before', 'native_address_before',
                      'native_pending_replacement', 'native_pending_zero',
                      'native_address_after_then_reenter', 'classifier_one_skips_address',
-                     'native_snapshot_override_restore'):
+                     'native_snapshot_override_restore', 'override_repeat_without_restore',
+                     'override_restore_then_switch', 'override_config_overwritten_before_use',
+                     'override_duplicate_restore_clobbers_later_address',
+                     'override_geometry_equal', 'override_geometry_larger_limit',
+                     'override_geometry_exact_divisor', 'override_geometry_inexact_divisor',
+                     'override_geometry_odd_limit', 'override_geometry_zero_limit',
+                     'override_geometry_row_count_overflow'):
+        override_experiment = scenario == 'native_snapshot_override_restore' or scenario.startswith('override_')
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A15)
         uc.mem_map(base, (len(data) + 4095) & ~4095, UC_PROT_READ | UC_PROT_EXEC)
@@ -87,13 +94,14 @@ def probe(data):
             allowed = ((stack - 256, stack), (state + 36, state + 40),
                        (state + 44, state + 48), (register, register + 4),
                        (shadow + 0x4108, shadow + 0x410c))
-            if scenario == 'native_snapshot_override_restore':
+            if override_experiment:
                 allowed += ((0x1ad8bb0, 0x1ad8bdc), (0x1ad8288, 0x1ad828c),
                             (0xd0004104, 0xd000412c),
                             (shadow + 0x4104, shadow + 0x412c),
                             (0xd0004140, 0xd0004144), (0xd0004154, 0xd0004158),
                             (shadow + 0x4140, shadow + 0x4144),
-                            (shadow + 0x4154, shadow + 0x4158))
+                            (shadow + 0x4154, shadow + 0x4158),
+                            (0x1ac40f4, 0x1ac40fc))
             if not any(lo <= address and address + size <= hi for lo, hi in allowed):
                 errors.append(f'Unexpected redirection write: {address:#x}/{size}')
                 emulator.emu_stop()
@@ -116,6 +124,115 @@ def probe(data):
                 raise RuntimeError(f'{scenario}: native fault at {uc.reg_read(UC_ARM_REG_PC):#x}') from error
             if errors or reached != [target]:
                 raise RuntimeError(f'{scenario}: invalid redirection stage: {errors}/{reached}')
+            if target == stop and uc.reg_read(UC_ARM_REG_SP) != stack:
+                raise RuntimeError(f'{scenario}: native function did not restore stack')
+
+        if scenario.startswith('override_'):
+            second_replacement = 0x5f000000
+            width, height = 3584, 32768 if scenario == 'override_geometry_row_count_overflow' else 1080
+            snapshot = [0x4000, original & 0x3fffffff, 0, ((height - 1) << 16) | width] + [0] * 6
+            for i, value in enumerate(snapshot):
+                put(0xd0004104 + i * 4, value)
+                put(shadow + 0x4104 + i * 4, value)
+
+            def configure(pointer, limit):
+                run(0xfe75598e, r0=pointer, r1=limit)
+                if word(0x1ac40f4) != pointer or word(0x1ac40f8) != limit:
+                    raise RuntimeError('Wrong native override configuration publication')
+
+            def restored_words():
+                return [word(0xd0004104 + i * 4) for i in range(10)]
+
+            if scenario.startswith('override_geometry_'):
+                limit = {'override_geometry_equal': 3584,
+                         'override_geometry_larger_limit': 4096,
+                         'override_geometry_exact_divisor': 1792,
+                         'override_geometry_inexact_divisor': 2048,
+                         'override_geometry_odd_limit': 1793,
+                         'override_geometry_zero_limit': 0,
+                         'override_geometry_row_count_overflow': 1792}[scenario]
+                configure(replacement, limit)
+                if limit == 0:
+                    # Do not assume target divide-by-zero trap configuration.
+                    run(0xfe755994, target=0xfe75595e, r0=1)
+                    if (uc.reg_read(UC_ARM_REG_R3) != 0 or word(register) != original & 0x3fffffff
+                            or bytes(uc.mem_read(0x1ad8bd8, 1)) != b'\0'):
+                        raise RuntimeError('Unexpected zero-limit division boundary')
+                    cases.append({'case': scenario, 'native_divisor': 0,
+                                  'stopped_before_division': '0xfe75595e',
+                                  'target_divide_by_zero_behavior_assumed': False, 'passed': True})
+                    continue
+                run(0xfe755994, r0=1)
+                raw_line = min(width, limit)
+                raw_rows = (width // limit) * height if width >= limit else height
+                packed = (raw_line | (((raw_rows - 1) & 0xffffffff) << 16)) & 0x7ffffffe
+                actual = word(0xd0004110)
+                encoded_line, encoded_rows = actual & 0xffff, (actual >> 16) + 1
+                if (actual != packed or word(register) != replacement & 0x3fffffff
+                        or bytes(uc.mem_read(0x1ad8bd8, 1)) != b'\x01'):
+                    raise RuntimeError('Wrong native override geometry or destination')
+                run(0xfe755a40, r0=1)
+                if restored_words() != snapshot or bytes(uc.mem_read(0x1ad8bd8, 1)) != b'\0':
+                    raise RuntimeError('Geometry scenario did not restore its ten-word snapshot')
+                cases.append({'case': scenario, 'supplied_source_line_bytes': width,
+                              'supplied_source_rows': height, 'native_configured_row_limit': limit,
+                              'native_encoded_line_bytes': encoded_line, 'native_encoded_rows': encoded_rows,
+                              'source_geometry_bytes': width * height,
+                              'encoded_geometry_bytes': encoded_line * encoded_rows,
+                              'encoded_byte_count_preserved': width * height == encoded_line * encoded_rows,
+                              'ten_word_snapshot_restored': True, 'passed': True})
+                continue
+
+            configure(replacement, width)
+            if scenario == 'override_config_overwritten_before_use':
+                configure(second_replacement, width)
+            run(0xfe755994, r0=1)
+            expected_first = second_replacement if scenario == 'override_config_overwritten_before_use' else replacement
+            if word(register) != expected_first & 0x3fffffff:
+                raise RuntimeError('Override did not consume the latest native configuration')
+            if scenario == 'override_duplicate_restore_clobbers_later_address':
+                run(0xfe755a40, r0=1)
+                run(0x8000c654, r0=1, r1=second_replacement)
+                if (word(register) != second_replacement & 0x3fffffff
+                        or bytes(uc.mem_read(0x1ad8bd8, 1)) != b'\0'):
+                    raise RuntimeError('Intervening native address setter did not take effect')
+                run(0xfe755a40, r0=1)
+                if restored_words() != snapshot:
+                    raise RuntimeError('Unexpected duplicate-restore behavior')
+                cases.append({'case': scenario,
+                              'intervening_native_destination': hex(second_replacement & 0x3fffffff),
+                              'after_duplicate_restore_destination': hex(word(register)),
+                              'restore_ignored_zero_override_flag': True,
+                              'frame_capture_or_restart_executed': False, 'passed': True})
+                continue
+            if scenario != 'override_config_overwritten_before_use':
+                if scenario == 'override_restore_then_switch':
+                    run(0xfe755a40, r0=1)
+                    if restored_words() != snapshot:
+                        raise RuntimeError('Intermediate restore lost original configuration')
+                before_second_snapshot = restored_words()
+                configure(second_replacement, width)
+                stores.clear()
+                run(0xfe755994, r0=1)
+                expected_second = replacement if scenario == 'override_repeat_without_restore' else second_replacement
+                if (word(register) != expected_second & 0x3fffffff
+                        or bytes(uc.mem_read(0x1ad8bb0, 40)) != struct.pack('<10I', *before_second_snapshot)
+                        or stores != ([] if scenario == 'override_repeat_without_restore'
+                                      else [second_replacement & 0x3fffffff])):
+                    raise RuntimeError('Wrong repeated-override snapshot or address-write suppression')
+            run(0xfe755a40, r0=1)
+            expected_after_restore = replacement if scenario == 'override_repeat_without_restore' else original
+            expected_snapshot = before_second_snapshot if scenario != 'override_config_overwritten_before_use' else snapshot
+            if (word(register) != expected_after_restore & 0x3fffffff
+                    or restored_words() != expected_snapshot
+                    or bytes(uc.mem_read(0x1ad8bd8, 1)) != b'\0'):
+                raise RuntimeError('Wrong repeated-override restore destination')
+            cases.append({'case': scenario, 'first_override_destination': hex(expected_first & 0x3fffffff),
+                          'second_configured_destination': hex(second_replacement & 0x3fffffff),
+                          'after_restore_destination': hex(word(register)),
+                          'original_destination_restored': word(register) == original & 0x3fffffff,
+                          'frame_capture_or_restart_executed': False, 'passed': True})
+            continue
 
         if scenario == 'native_snapshot_override_restore':
             # A separate takeover/restore experiment. All register effects are
@@ -222,7 +339,10 @@ def probe(data):
                       'IRQ timing, pixel packing, cache coherence or ownership established. '
                       'Native snapshot override is not a verified allocation/locking or '
                       'completed-frame lease API; tested auxiliary registers and secondary '
-                      'software flag remain changed after the ten-word restore.'}
+                      'software flag remain changed after the ten-word restore. Repeated '
+                      'override/restore and malformed geometry cases characterize supplied '
+                      'states, not camera faults or supported capture modes. The zero-limit '
+                      'case stops before division and assumes no divide-by-zero behavior.'}
 
 
 def main():
