@@ -2,6 +2,8 @@
 
 The [start/synchronization investigation](750d-raw-start.md) identified actual handler `0xFE2B9536`, labeled `evfReadOutDoneInterrupt`, for the donor's EVF old-state-5/input-5 condition. Following the handler shows that registered methods and additional notifications execute before it returns. A post-transition hook therefore still requires a target-specific buffer-lifetime check.
 
+A later [CCD writer completion trace](750d-ccd-completion.md) identifies a separate conditional channel-2 callback, ShtCapture task event/return operation 13 and native service route `0x00010000`. Its relationship to this EVF event has not been established; the callback name or transport argument 5 must not be treated as proof of the same event.
+
 ## Completion calls before phase updates
 
 After logging and setting caller offset 56 to one, the handler obtains a global structure and invokes source `0xFE30A6FC` using the object in EVF global offset 60. That helper checks the object's signature against the value referenced at `0xFEA517EC`.
