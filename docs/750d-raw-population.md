@@ -21,6 +21,8 @@ The count of one is established by this descriptor-population code, rather than 
 
 ## Native checks
 
+The [next investigation](750d-raw-resource.md) identifies the original address writer as a resource-22 lookup and executes its reviewed native provider route. Live allocation and frame ownership remain unverified.
+
 ```sh
 python scripts/probe_750d_raw_population.py /private/750d-analysis/record-06.bin
 ```

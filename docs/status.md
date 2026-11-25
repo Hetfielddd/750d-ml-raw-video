@@ -7,6 +7,8 @@ Scope: PC-only research. The owner's camera and SD card have not been used.
 
 ## Completed
 
+- Identified the original manager address writer: resource-22 lookup, expected count one, actual class-2 provider for reviewed configuration modes 1/2. Five native cases verify the pool-relative address, reported 30,791,680-byte resource size, skip and diagnostic behavior. The pool itself and sensor frames remain unobserved. See [the RAW resource route](750d-raw-resource.md).
+
 - Followed manager resource fields `+0x710 -> +0x748` into ADST slot-2 descriptor population and EVF RAW preparation. The actual population code fixes the slot count at one. Four native scenarios pass, including zero/one assertion inputs; original allocation and per-frame timing are still unverified. See [descriptor population](750d-raw-population.md).
 
 - Identified the producer of candidate RAW preparation word `0x26BEC`: EVF activation reserves ADST slot 2 and stores descriptor word zero there. Four bounded native supplied-registry scenarios verify acquisition, repeat diagnostics, end-handler release and reacquisition. This establishes reservation behavior, not per-frame ownership. See [RAW memory reservation](750d-raw-reservation.md).

@@ -1,0 +1,43 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "case": "mode_1",
+      "supplied_pool_base": "0x20000000",
+      "address": "0x23dfc000",
+      "reported_size_bytes": 30791680,
+      "passed": true
+    },
+    {
+      "case": "mode_2_counter_wrap",
+      "supplied_pool_base": "0x30000000",
+      "address": "0x33dfc000",
+      "reported_size_bytes": 30791680,
+      "passed": true
+    },
+    {
+      "case": "existing_address",
+      "stopped_before": "0xfe11f518",
+      "passed": true
+    },
+    {
+      "case": "missing_configuration",
+      "stopped_before": "0xfe52fa48",
+      "passed": true
+    },
+    {
+      "case": "wrong_requested_count",
+      "stopped_before": "0xfe3ce0fc",
+      "passed": true
+    }
+  ],
+  "resource_id": 22,
+  "expected_count": 1,
+  "provider_class": 2,
+  "native_calls_stubbed": false,
+  "pool_or_pixels_mapped": false,
+  "camera_binding_enabled": false,
+  "frame_lease_validated": false,
+  "limits": "Supplied configuration mode, pool base and manager state. Native resource lookup executes for modes 1/2 only; other provider modes are untested. This computes a resource subregion, not an allocation of physical RAM. No live address, image size/format, DMA completion, cache, timing or frame ownership is validated."
+}
