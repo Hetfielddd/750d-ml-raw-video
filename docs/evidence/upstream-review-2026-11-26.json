@@ -1,0 +1,173 @@
+{
+  "review_date": "2026-11-26",
+  "scope": "Read-only upstream/donor refresh; no branch checkout or camera access.",
+  "baseline": "142472e95054d73640f50789ac0fd66325499d82",
+  "upstream_heads": [
+    {
+      "sha": "142472e95054d73640f50789ac0fd66325499d82",
+      "ref": "refs/heads/dev"
+    },
+    {
+      "sha": "562c699589a98989e66ff2d0634748cf0f14bc44",
+      "ref": "refs/heads/edmac_cleanup"
+    }
+  ],
+  "tragic_heads": [
+    {
+      "sha": "aa224f0bc8e177a456c119eba00263488ee51f5a",
+      "ref": "refs/heads/lua-750d-on-ptp"
+    },
+    {
+      "sha": "aa224f0bc8e177a456c119eba00263488ee51f5a",
+      "ref": "refs/heads/main"
+    },
+    {
+      "sha": "874c7d49c0ad58404af740d0b2912b3f3e67e3e9",
+      "ref": "refs/heads/upstream/750d-include-lua-module"
+    },
+    {
+      "sha": "2dd751b74bec6214d7b8cb0ecc265331b58dd9f5",
+      "ref": "refs/heads/upstream/750d-show-lua-module"
+    }
+  ],
+  "chase_heads": [
+    {
+      "sha": "a41f406a6c50b998089fa65dc1d70164d2da40b8",
+      "ref": "refs/heads/master"
+    }
+  ],
+  "kitor_relevant_heads": [
+    {
+      "sha": "fcc52129d9a65250d477af45e2ea4f974531fa8f",
+      "ref": "refs/heads/d6_rom_patching"
+    },
+    {
+      "sha": "623fe9ce969510b5fa71a839448ebb7b372f5ff9",
+      "ref": "refs/heads/raw_draft"
+    },
+    {
+      "sha": "26822466884ba43bc21cefc49346706638cb7fa3",
+      "ref": "refs/heads/raw_draft_v2"
+    }
+  ],
+  "files": [
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "path": "platform/750D.110/internals.h",
+      "blob_sha": "6995f2f0facf60caf15c360861d7c47473a348e2",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false,
+      "revision": "aa224f0bc8e177a456c119eba00263488ee51f5a"
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "path": "platform/750D.110/function_overrides.c",
+      "blob_sha": "69cb4587d30c2cce90b39bd5d04db58113624e43",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": true,
+      "revision": "aa224f0bc8e177a456c119eba00263488ee51f5a"
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "path": "platform/750D.110/consts.h",
+      "blob_sha": "f37d946959c14d2fbb405edb7a91d22e39e744d1",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false,
+      "revision": "aa224f0bc8e177a456c119eba00263488ee51f5a"
+    },
+    {
+      "repository": "ChaseChanCN/magiclantern",
+      "path": "platform/750D.110/internals.h",
+      "blob_sha": "6995f2f0facf60caf15c360861d7c47473a348e2",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false,
+      "revision": "a41f406a6c50b998089fa65dc1d70164d2da40b8"
+    },
+    {
+      "repository": "ChaseChanCN/magiclantern",
+      "path": "platform/750D.110/function_overrides.c",
+      "blob_sha": "69cb4587d30c2cce90b39bd5d04db58113624e43",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": true,
+      "revision": "a41f406a6c50b998089fa65dc1d70164d2da40b8"
+    },
+    {
+      "repository": "ChaseChanCN/magiclantern",
+      "path": "platform/750D.110/consts.h",
+      "blob_sha": "f37d946959c14d2fbb405edb7a91d22e39e744d1",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false,
+      "revision": "a41f406a6c50b998089fa65dc1d70164d2da40b8"
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "874c7d49c0ad58404af740d0b2912b3f3e67e3e9",
+      "path": "platform/750D.110/internals.h",
+      "blob_sha": "6995f2f0facf60caf15c360861d7c47473a348e2",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "874c7d49c0ad58404af740d0b2912b3f3e67e3e9",
+      "path": "platform/750D.110/function_overrides.c",
+      "blob_sha": "69cb4587d30c2cce90b39bd5d04db58113624e43",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": true
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "874c7d49c0ad58404af740d0b2912b3f3e67e3e9",
+      "path": "platform/750D.110/consts.h",
+      "blob_sha": "f37d946959c14d2fbb405edb7a91d22e39e744d1",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "2dd751b74bec6214d7b8cb0ecc265331b58dd9f5",
+      "path": "platform/750D.110/internals.h",
+      "blob_sha": "6995f2f0facf60caf15c360861d7c47473a348e2",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "2dd751b74bec6214d7b8cb0ecc265331b58dd9f5",
+      "path": "platform/750D.110/function_overrides.c",
+      "blob_sha": "69cb4587d30c2cce90b39bd5d04db58113624e43",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": true
+    },
+    {
+      "repository": "paweltokarz/tragiclantern",
+      "revision": "2dd751b74bec6214d7b8cb0ecc265331b58dd9f5",
+      "path": "platform/750D.110/consts.h",
+      "blob_sha": "f37d946959c14d2fbb405edb7a91d22e39e744d1",
+      "raw_liveview_enabled": false,
+      "raw_channel_defined": false,
+      "shamem_returns_zero": false
+    }
+  ],
+  "cleanup_750d_diff": [
+    "Empty platform/750D.110/edmac_per_cam.h only"
+  ],
+  "donor_copy_variants": {
+    "7D2": "V3: synchronous linear full-width copy; no horizontal crop",
+    "200D": "V1: DIGIC7 region/copy backend with cache/semaphore requirements",
+    "6D2": "V2: DIGIC7 resource/semaphore backend"
+  },
+  "forum_fetch": "750D Midsummer topic 27318 returned HTTP403 in web reader; no new forum posts verified.",
+  "limits": "Bounded named repositories/branches and files, not all public forks. Build listings are not evidence of RAW support."
+}

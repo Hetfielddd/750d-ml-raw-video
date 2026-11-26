@@ -2,6 +2,8 @@
 
 Source baseline: Magic Lantern `142472e95054d73640f50789ac0fd66325499d82`. Reviewed November 24, 2026. These are source-code findings and developer reports, not tests performed on these cameras by this project.
 
+The [November 26 fresh source review](upstream-review-2026-11-26.md) rechecks exact branch heads, 750D platform-file identities and 7D2 V3 versus DIGIC7 V1/V2 copy APIs. It finds no new RAW binding in the checked 750D sources; the earlier findings below remain historical context.
+
 ## Forum and upstream refresh: November 25, 2026
 
 The user supplied a [CineD overview](https://www.cined.com/magic-lantern-canon-2026-raw-video-film-roll-soup-engine-m-film/) and [750D Midsummer discussion](https://www.magiclantern.fm/forum/index.php?topic=27318.0). Both were read directly, along with the current camera-development board, latest 7D2 porting page, 7D2 Midsummer discussion, upstream update thread and 750D PTP/Lua thread. This is a bounded review of these sources and the repositories below, not an exhaustive forum or GitHub search.
