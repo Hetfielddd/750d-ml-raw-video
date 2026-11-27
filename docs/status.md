@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Verified ten command-to-IRQ scenarios on passive register RAM with native start, address publication, stop request, shadow read and interrupt forwarding. The destination chosen at start and the next pending address can diverge. The checked IRQ path preserves both and forwards the registered context without identifying a transfer. Physical completion and buffer reuse remain unverified. [RAW interrupt address checks](750d-raw-command-order.md#destination-state-at-the-raw-interrupt).
+
 - Confirmed the 750D EVF event-5 producer and traced it through `HEAD2` line timing, native message preparation and task dispatch. Three registration paths and all ten state entries were checked on the PC. Head timing, readout notification and RAW destination ownership are distinct parts of the recording path. The event supplies no destination or frame number. Canon signatures and handler diagnostics associate the preceding SCS work with still capture. [EVF readout source](750d-evf-readout-source.md).
 
 - Added six native SCS flag/readiness/reset scenarios. Exact flag1 causes completion reentry, while 0/2 skip it without clearing the flag. Another handler natively publishes owner +56 readiness before rechecking the retained condition; reentry then reaches the nonzero completion branch's mode-query boundary. A separate actual reset slice clears the completion flag and another software field. Middle helpers, full handlers and live timing remain unexecuted; this is capture-job ordering, not a RAW lease. See [SCS flag lifecycle](750d-scs-event.md).

@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Execute native RAW command ordering against artificial register RAM.
 
-No peripheral behavior, DMA, pixels, task scheduling or frame completion is
-modeled. The reviewed non-alternate software handler executes without call stubs.
+The reviewed non-alternate software handler executes without call stubs. Separate
+direct-IRQ cases preserve native address state from the preceding command path.
+No peripheral behavior, DMA, pixels, task scheduling or frame completion is modeled.
 """
 import argparse
 import hashlib
@@ -17,7 +18,8 @@ def probe(data):
     if len(data) != 0xcfb688 or hashlib.sha256(data).hexdigest() != MAIN_SHA256:
         raise ValueError('Expected the identified 750D 1.1.0 main-code record')
     from unicorn import (Uc, UcError, UC_ARCH_ARM, UC_MODE_THUMB, UC_HOOK_CODE,
-                         UC_HOOK_MEM_WRITE, UC_PROT_READ, UC_PROT_WRITE, UC_PROT_EXEC)
+                         UC_HOOK_MEM_READ, UC_HOOK_MEM_WRITE, UC_PROT_READ,
+                         UC_PROT_WRITE, UC_PROT_EXEC)
     from unicorn.arm_const import (UC_CPU_ARM_CORTEX_A9, UC_ARM_REG_R0,
                                    UC_ARM_REG_R1, UC_ARM_REG_SP, UC_ARM_REG_LR,
                                    UC_ARM_REG_PC, UC_ARM_REG_CPSR)
@@ -25,6 +27,8 @@ def probe(data):
     state, shadow, stack, stop, callback = 0x1ac2220, 0x200000, 0x10d000, 0x10f000, 0x10f100
     config, a, b = 0x100000, 0x5c62c000, 0x5e000000
     destination, control, command = 0xd0004108, 0xd0004104, 0xd0004100
+    status_register, irq_record = 0xd0004130, 0x1ad8350
+    irq_forwarder, app_delta = 0x1bb709a, 0xfcc82368
     packing, trigger = 0xd0037014, 0xd0008090
     initial_control, initial_packing = 8, 0xa5a5b5df
     registers = (destination, control, command, packing, trigger)
@@ -35,14 +39,23 @@ def probe(data):
               (0x8000c57e, 0x8000c5be), (0x8000c426, 0x8000c434),
               (0x8000c460, 0x8000c476), (0x80003d22, 0x80003d2a),
               (0x80007bc4, 0x80007bce), (0x80007b7e, 0x80007b88),
-              (0x44c, 0x470))
+              (0x44c, 0x470), (0xfe75399e, 0xfe7539be),
+              (0xfe753806, 0xfe753814), (0xfe753834, 0xfe753856),
+              (0xfe7545cc, 0xfe754630), (irq_forwarder, 0x1bb70aa))
     definitions = [(f'format_{fmt:x}_irq_{irq:x}', fmt, irq, 'normal')
                    for fmt in (0, 34, 0xffffffff) for irq in (0, 0x80)]
     definitions += [('skip_address_flag', 34, 0, 'override'),
                     ('empty_pending_callback', 34, 0, 'empty'),
                     ('uninitialized_callback', 34, 0, 'uninitialized'),
                     ('repeated_calls_and_republication', 34, 0, 'repeat')]
-    cases = []
+    irq_sequences = {
+        f'irq_{step}_{status}': (step, status)
+        for step in ('start', 'pending_b', 'started_b', 'override', 'stop')
+        for status in (0, 4)
+    }
+    definitions += [(name, 34, 0, 'override' if step == 'override' else 'normal')
+                    for name, (step, _) in irq_sequences.items()]
+    cases, irq_cases = [], []
     for name, fmt, irq, kind in definitions:
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A9)
@@ -54,6 +67,11 @@ def probe(data):
             uc.mem_write(runtime, data[offset:offset + 4096])
         uc.mem_map(0, 4096, UC_PROT_READ | UC_PROT_EXEC)
         uc.mem_write(0, data[peer_low - base:peer_low - base + 4096])
+        if name in irq_sequences:
+            page = irq_forwarder & ~4095
+            uc.mem_map(page, 4096, UC_PROT_READ | UC_PROT_EXEC)
+            offset = page + app_delta - base
+            uc.mem_write(page, data[offset:offset + 4096])
         for address, size in ((config, 0xe000), (0x1ac2000, 4096),
                               (0x1ac4000, 4096), (0x1ad8000, 4096), (shadow, 0x60000),
                               (0xd0004000, 4096), (0xd0008000, 4096), (0xd0037000, 4096)):
@@ -85,6 +103,8 @@ def probe(data):
         put(0xd0004110, 0x04370e00)
         put(shadow + 0x4110, 0x04370e00)
         stores, errors, reached = [], [], []
+        irq_reads = []
+        checking_irq = False
 
         def code_guard(emulator, address, size, _):
             if address in (stop, callback):
@@ -108,7 +128,18 @@ def probe(data):
         uc.hook_add(UC_HOOK_CODE, code_guard)
         uc.hook_add(UC_HOOK_MEM_WRITE, write_guard)
 
-        def run(entry):
+        def irq_read_guard(emulator, access, address, size, value, _):
+            if checking_irq and (0xd0004000 <= address < 0xd0005000
+                                 or address in (shadow + 0x4108, state + 36)):
+                irq_reads.append((address, size))
+                if (address, size) != (status_register, 4):
+                    errors.append(f'Unexpected IRQ destination/register read: {address:#x}/{size}')
+                    emulator.emu_stop()
+
+        if name in irq_sequences:
+            uc.hook_add(UC_HOOK_MEM_READ, irq_read_guard)
+
+        def run(entry, *, expected_return=0):
             reached.clear()
             uc.reg_write(UC_ARM_REG_SP, stack)
             uc.reg_write(UC_ARM_REG_LR, stop | 1)
@@ -119,8 +150,8 @@ def probe(data):
             if errors or len(reached) != 1:
                 raise RuntimeError(f'{name}: invalid command path: {errors}/{reached}')
             if reached == [stop] and (uc.reg_read(UC_ARM_REG_SP) != stack
-                                     or uc.reg_read(UC_ARM_REG_R0) != 0):
-                raise RuntimeError('Native RAW function failed to restore stack or return zero')
+                                     or uc.reg_read(UC_ARM_REG_R0) != expected_return):
+                raise RuntimeError('Native RAW function failed to restore stack or return expected value')
             if uc.reg_read(UC_ARM_REG_CPSR) & 0x80 != irq:
                 raise RuntimeError('Native RAW function failed to restore the incoming IRQ mask')
 
@@ -155,19 +186,71 @@ def probe(data):
             if entry['irq_masked'] != (True if entry['address'] == hex(packing) else bool(irq)):
                 raise RuntimeError('Unexpected IRQ mask at a native command store')
         first_stores = stores.copy()
+
+        def publish_b():
+            put(config, b)
+            put(config + 4, 34)
+            uc.reg_write(UC_ARM_REG_R0, config)
+            uc.reg_write(UC_ARM_REG_R1, 0)
+            run(0xfe8396b0)
+            if reached != [stop] or word(state + 36) != b:
+                raise RuntimeError('Native republication did not restore pending B')
+
+        if name in irq_sequences:
+            step, status = irq_sequences[name]
+            if step in ('pending_b', 'started_b'):
+                publish_b()
+            if step == 'started_b':
+                run(0xfe8395c4)
+                if reached != [stop] or word(state + 36) != 0:
+                    raise RuntimeError('Second native start did not consume pending B')
+            if step == 'stop':
+                uc.reg_write(UC_ARM_REG_R0, 1)
+                run(0xfe75399e, expected_return=control)
+                if reached != [stop] or word(0x1ad81c8) != 1:
+                    raise RuntimeError('Native stop request did not set its flag')
+            selected = (b if step in ('started_b', 'override') else a) & 0x3fffffff
+            pending = b if step == 'pending_b' else 0
+            if (word(destination), word(shadow + 0x4108), word(state + 36)) != (selected, selected, pending):
+                raise RuntimeError('Native sequence did not establish expected address state')
+            # Deliberately diverge physical-address RAM from the programmed
+            # shadow. This marker does not simulate a cursor or DMA progress.
+            physical = selected + 0x4000
+            put(destination, physical)
+            uc.reg_write(UC_ARM_REG_R0, destination)
+            run(0xfe753834, expected_return=selected)
+            if reached != [stop]:
+                raise RuntimeError('Native address-shadow reader did not return')
+            put(status_register, status)
+            put(irq_record, irq_forwarder | 1)
+            put(irq_record + 4, 0)
+            stores.clear()
+            checking_irq = True
+            uc.reg_write(UC_ARM_REG_R0, 1)
+            run(0xfe7545cc)
+            if (reached != [callback] or uc.reg_read(UC_ARM_REG_R0) != 0x12345678
+                    or irq_reads != [(status_register, 4)] or word(destination) != physical
+                    or word(shadow + 0x4108) != selected or word(state + 36) != pending
+                    or word(command) != 4
+                    or word(0x1ad81c8) != (step == 'stop')):
+                raise RuntimeError(f'{name}: IRQ did not preserve address state and forward the same argument')
+            irq_cases.append({'case': step, 'supplied_irq_status': status,
+                              'programmed_address_shadow': hex(selected),
+                              'supplied_physical_word': hex(physical),
+                              'pending_address': hex(pending),
+                              'stop_request_flag': word(0x1ad81c8),
+                              'callback_argument': hex(uc.reg_read(UC_ARM_REG_R0)),
+                              'irq_register_reads': [hex(address) for address, _ in irq_reads],
+                              'irq_register_stores': stores.copy(), 'passed': True})
+            continue
+
         repeat_stores = []
         if kind == 'repeat':
             stores.clear()
             run(0xfe8395c4)
             if reached != [callback] or stores:
                 raise RuntimeError('Second invocation reused the cleared pending address')
-            put(config, b)
-            put(config + 4, 34)
-            uc.reg_write(UC_ARM_REG_R0, config)
-            uc.reg_write(UC_ARM_REG_R1, 0)
-            run(0xfe8396b0)
-            if word(state + 36) != b:
-                raise RuntimeError('Native republication did not restore pending B')
+            publish_b()
             stores.clear()
             run(0xfe8395c4)
             if reached != [stop] or word(destination) != b & 0x3fffffff or word(state + 36) != 0:
@@ -185,6 +268,7 @@ def probe(data):
                       'irq_mask_restored': True, 'geometry_unchanged': True,
                       'republication_sequence_checked': kind == 'repeat', 'passed': True})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
+            'direct_irq_destination_cases': irq_cases,
             'native_calls_stubbed': False, 'register_addresses_are_artificial_ram': True,
             'dma_or_peripheral_behavior_modeled': False, 'pixel_memory_mapped': False,
             'camera_binding_enabled': False, 'frame_lease_validated': False,
@@ -194,7 +278,9 @@ def probe(data):
                       'validated boot relocation. Full reviewed RAW software handler '
                       'executes register stores and native IRQ helpers; ordinary RAM '
                       'acceptance is not peripheral command acceptance. Empty branches '
-                      'stop before the supplied callback. No scheduler, transport, '
+                      'stop before the supplied callback. Additional direct-IRQ cases '
+                      'use supplied status and physical register markers and stop '
+                      'before the registered driver callback. No scheduler, transport, '
                       'sensor, DMA, pixels, cache coherence or completion is modeled.'}
 
 

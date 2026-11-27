@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- Ten PC sequences now carry address state from the actual RAW start code into the channel-1 IRQ handler. A newly published pending address and the last programmed address can differ, and registration forwards the same callback argument after a second start or a stop request. The checked IRQ route supplies no frame address. See [RAW interrupt address checks](docs/750d-raw-command-order.md#destination-state-at-the-raw-interrupt).
 - The `HEAD2` line interrupt is the source of Live View event 5. Native PC checks trace its line-threshold registration, callback, four-word task message and dispatch in all ten EVF states. States 3 through 6 set the readout flag. The message carries no RAW buffer address or frame identifier. See [the EVF readout source](docs/750d-evf-readout-source.md).
 - [Roadmap](docs/roadmap.md): three PC preparation milestones complete, two target research milestones partial, three camera integration/recording milestones not complete. [Fresh upstream/donor review](docs/upstream-review-2026-11-26.md) found no new 750D RAW bindings in the checked sources.
 - Twenty matrix checks, six constructor/worker scenarios and six flag/readiness cases now characterize SCSState. A later handler publishes owner readiness and reenters completion only for retained flag1; another capture-path slice resets the flag. These are capture-sequencing results, not a RAW-frame lease. See [SCSState dispatch and flag lifecycle](docs/750d-scs-event.md).

@@ -35,6 +35,20 @@ Empty-pending and uninitialized fixtures reach the supplied callback boundary wi
 
 The repeated-invocation scenario runs the complete software handler for A, observes pending zero, then invokes it again without configuration. That second call takes the empty callback path and emits no register commands. Actual setter `0xFE8396B0` republishes B; a third invocation executes the complete command sequence for normalized B=`0x1E000000` and clears pending again. No post-command clear or internal return is supplied by the host in this scenario.
 
+## Destination state at the RAW interrupt
+
+Ten additional runs preserve the same RAM and shadow across the real command path, the native shadow reader at `0xFE753834`, the channel-1 IRQ body and its application forwarder. Each sequence is checked with supplied status words 0 and 4. The IRQ body is invoked explicitly after these five setups.
+
+- Start A. The programmed address is A and the pending slot is empty.
+- Start A, then publish B. The programmed address is A and the pending slot contains B.
+- Start A, publish B, then execute a second start. The programmed address is B and the pending slot is empty.
+- Submit a start with pending A and the skip-address flag set. The fixture's preprogrammed address B is preserved and the pending slot is emptied.
+- Start A, then execute the native stop request. The programmed address is A and the stop flag is set.
+
+The probe supplies a different word at the hardware-register location before the IRQ to distinguish it from the shadow. The native shadow reader still returns the earlier programmed address. The IRQ reads the status word at `0xD0004130` and preserves the destination word, the destination shadow and any pending address. At the driver callback boundary, it forwards the same registered argument in all ten cases. This observed route carries no snapshot of the address chosen at start and no per-transfer identifier. The supplied register word is a marker and has no DMA cursor semantics.
+
+The result narrows the adapter requirement. A buffer reference needs to be retained when its destination is programmed, with separate evidence that a later hardware notification belongs to that transfer and that the buffer remains readable while the recorder copies it. Reading the pending address or the most recently programmed shadow at notification time can identify a later submission. The experiment prescribes no live ordering for these supplied interleavings.
+
 ## Consequence for a 7D2-style recorder
 
 The donor's VSYNC callback redirects an upcoming capture and processes the opposite buffer. On the 750D route reviewed here, pending-address configuration is consumed once by software, normal address programming may replace an earlier override, and skip-address does not prevent command submission. The [two-command queue experiment](750d-task-queue-order.md) also shows that configurations share one pending slot.
@@ -47,6 +61,6 @@ A reliable rotation protocol must therefore identify a destination-selection poi
 python scripts/probe_750d_raw_command_order.py /private/750d-analysis/record-06.bin
 ```
 
-The [evidence](evidence/750d-raw-command-order.json) contains ten cases: six format/IRQ combinations, skip-address, empty, uninitialized and repeated invocation/republication. Exact main-record size `0xCFB688` and SHA-256 `3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2` are checked before Unicorn import.
+The evidence contains the ten command-order checks and ten additional command-to-IRQ address checks. Exact main-record size `0xCFB688` and SHA-256 `3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2` are checked before Unicorn import. [Machine-readable results](evidence/750d-raw-command-order.json).
 
 Unicorn 2.1.4 Cortex-A9 executes a compatible scalar ARM/Thumb subset, not a Cortex-R4 camera model. Main record, scoped runtime/peer-kernel copies and stop page are read/execute. Supplied state, stacks, shadows and three artificial register pages are read/write without execute permission. Code/write guards and 256-instruction / 0.5-second limits apply per invocation. Pixel addresses are unmapped. No native calls are stubbed; there is no scheduler, mailbox, sensor, DMA, cache or completion model. Firmware bytes are not distributed. Camera bindings remain disabled; the camera and SD card are untouched.
