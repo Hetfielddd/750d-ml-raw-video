@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- The enabled descriptor preparation branch now executes through all its native setup calls and return on the PC. It programs four processing blocks and then reaches the existing start-gate sequence. Its tested path performs no physical DMA status or address reads. [Enabled preparation](docs/750d-start-after-timer.md#execution-boundaries).
 - The timer-to-start probe now executes the previously omitted descriptor helper through return for its disabled extra-processing branch. It writes an image-processing configuration register and returns without reading the RAW channel's status or address. The enabled branch remains to be traced. [Descriptor preparation](docs/750d-start-after-timer.md#execution-boundaries).
 - Four PC sequences now connect the timer's real event update to the native start wait and a separately entered RAW call. The executed slices program RAW commands after consuming the timer-produced flags without reading hardware status. Intervening component helpers and live timing remain unverified. [Timer-to-start checks](docs/750d-start-after-timer.md).
 - Both PC disk backends now record finalized MLVs from the two-buffer test source. File readback verifies only the three expected frames after late, duplicate, short, overflow and post-stop completion checks. [Disk verification](docs/raw14-disk-bridge.md#verified-scenarios).

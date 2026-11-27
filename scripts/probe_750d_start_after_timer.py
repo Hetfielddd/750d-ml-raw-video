@@ -42,14 +42,21 @@ def probe(data):
     ranges += tuple((lo - delta, hi - delta) for lo, hi in ranges[-6:])
     ranges += ((0xfe74f434, 0xfe74f438), (0xfe86f080 - app_delta, 0xfe86f08a - app_delta),
                (0xfe8954b8 - app_delta, 0xfe8954c2 - app_delta),
-               (0xfe8b7ddc - app_delta, 0xfe8b7e1a - app_delta),
+               (0xfe8b7ddc - app_delta, 0xfe8b7eee - app_delta),
                (0xfe8b7eee - app_delta, 0xfe8b7ef2 - app_delta))
+    ranges += tuple((lo - app_delta, hi - app_delta) for lo, hi in (
+        (0xfe894358, 0xfe894412), (0xfe89452a, 0xfe8945a4),
+        (0xfe894652, 0xfe89474c), (0xfe89475c, 0xfe894768),
+        (0xfe894970, 0xfe894984), (0xfe89498c, 0xfe8949a0),
+        (0xfe8949a8, 0xfe8949bc), (0xfe8949c6, 0xfe8949da)))
 
     cases = []
     for timer_enabled, initial_flags, pending, prepare in (
             (False, 0x27f, pending_address, False), (True, 0x200, pending_address, False),
             (True, 0x200, 0, False), (False, gate_mask | 0x200, pending_address, False),
-            (True, 0x200, pending_address, True)):
+            (True, 0x200, pending_address, True),
+            (True, 0x200, pending_address, 2)):
+        active_preparation = prepare == 2
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A9)
         rx, rw = UC_PROT_READ | UC_PROT_EXEC, UC_PROT_READ | UC_PROT_WRITE
@@ -63,6 +70,10 @@ def probe(data):
             pages += tuple((page, page + app_delta) for page in (
                 (0xfe8b7ddc - app_delta) & ~4095, (0xfe8954b8 - app_delta) & ~4095,
                 (0xfe86f080 - app_delta) & ~4095))
+        if active_preparation:
+            pages += tuple((page, page + app_delta) for page in range(
+                (0xfe894358 - app_delta) & ~4095,
+                ((0xfe8949da - app_delta) & ~4095) + 4096, 4096))
         for page, source in pages:
             uc.mem_map(page, 4096, rx)
             uc.mem_write(page, data[source - base:source - base + 4096])
@@ -73,6 +84,8 @@ def probe(data):
         if prepare:
             uc.mem_map(preparation_state & ~4095, 4096, rw)
             uc.mem_map(preparation_register & ~4095, 4096, rw)
+        if active_preparation:
+            uc.mem_map(0xd0048000, 4096, rw)
         uc.mem_map(stop, 4096, rx)
 
         def put(address, value):
@@ -94,14 +107,29 @@ def probe(data):
         put(event + 8, initial_flags)
         put(event + 16, 7)
         put(0x1ac40a4, shadow)
+        if active_preparation:
+            put(descriptor + 28, 1)
+            put(preparation_settings + 68, 1080)
+            put(preparation_settings + 72, 2048)
+            for offset, value in ((24, 0), (28, 0), (32, 2048), (36, 1080),
+                                  (40, 0x101), (44, 0x202), (48, 0x303), (52, 0x404)):
+                put(descriptor + 8 + offset, value)
         uc.reg_write(UC_ARM_REG_CPSR, 0x13)
         hardware = (channel, channel + 4, channel + 8, packing, trigger)
         if prepare:
             hardware += (preparation_register,)
+        if active_preparation:
+            hardware += (0xd0048064, 0xd0048068, 0xd0048024, 0xd0048018)
+            hardware += tuple(block + offset for block in (
+                0xd0048000, 0xd0048900, 0xd0048a00, 0xd0048b00)
+                for offset in (8, 12, 16, 0x80, 0x84, 0x88, 0x8c))
+            hardware += (0xd0048918, 0xd0048a18, 0xd0048b18)
         allowed = {driver + 4, event + 8, descriptor + 84, raw + 36, 0x1ad81c8,
                    *hardware, *(shadow + (reg & 0x7ffff) for reg in hardware)}
         if prepare:
             allowed |= {preparation_state + 44, preparation_settings + 80}
+        if active_preparation:
+            allowed |= {preparation_state + offset for offset in (64, 68, 72, 76)}
         boundary, reached, errors, stores = stop, [], [], []
 
         def code_guard(emulator, address, size, _):
@@ -139,7 +167,8 @@ def probe(data):
                 uc.reg_write(UC_ARM_REG_SP, stack)
                 uc.reg_write(UC_ARM_REG_LR, stop | 1)
                 uc.reg_write(UC_ARM_REG_R0, argument)
-            uc.emu_start(entry | 1, base + len(data), count=320, timeout=500_000)
+            uc.emu_start(entry | 1, base + len(data),
+                         count=1024 if active_preparation else 320, timeout=500_000)
             if errors or reached != [target]:
                 raise RuntimeError(f'{entry:#x} failed to reach {target:#x}: {errors}/{reached}')
 
@@ -155,12 +184,21 @@ def probe(data):
         if word(descriptor + 84) != 0x22:
             raise RuntimeError('Wrong saved software component mask or start argument')
         if prepare:
-            if (word(preparation_state + 44) != 0 or word(preparation_settings + 80) != 1
+            if (word(preparation_state + 44) != int(active_preparation)
+                    or word(preparation_settings + 80) != (0x3d if active_preparation else 1)
                     or word(preparation_register) != 0x111
                     or word(shadow + 0x1a014) != 0x111
-                    or preparation_stores != [(preparation_register, 0x111)]
+                    or not active_preparation and preparation_stores != [(preparation_register, 0x111)]
                     or uc.reg_read(UC_ARM_REG_SP) != stack - 16):
-                raise RuntimeError('Native disabled preparation branch did not return correctly')
+                raise RuntimeError('Native preparation branch did not return correctly')
+            if active_preparation:
+                if [word(preparation_state + offset) for offset in (64, 68, 72, 76)] != [0x101, 0x202, 0x303, 0x404]:
+                    raise RuntimeError('Enabled preparation did not retain its four supplied words')
+                for block in (0xd0048000, 0xd0048900, 0xd0048a00, 0xd0048b00):
+                    if [word(block + offset) for offset in (0x84, 0x80, 0x88, 0x8c)] != [0x7ff0437, 1, 0, 0x43707ff]:
+                        raise RuntimeError('Wrong configured processing dimensions or rectangle')
+                if len(preparation_stores) != 39 or word(0xd0048024) != 0x1010101:
+                    raise RuntimeError('Wrong enabled preparation command sequence')
         elif uc.reg_read(UC_ARM_REG_R0) != descriptor + 8:
             raise RuntimeError('Wrong descriptor preparation argument')
         # Preserve the original start frame. The fifth case has executed the
@@ -192,15 +230,16 @@ def probe(data):
                       **({'descriptor_helper_executed': True,
                           'preparation_register_stores': [[hex(a), hex(v)] for a, v in preparation_stores]}
                          if prepare else {}),
+                      **({'extra_processing_enabled': True} if active_preparation else {}),
                       'flags_at_end': hex(word(event + 8)),
                       'final_stage_stores': [[hex(a), hex(v)] for a, v in stores]})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
             'physical_register_reads': False, 'native_calls_stubbed': False,
             'hardware_completion_validated': False, 'camera_binding_enabled': False,
             'limits': 'Supplied enabled timer and no-waiter event object, descriptor, '
-                      'normal RAW state and passive register RAM. The fifth case '
-                      'executes the disabled descriptor preparation branch completely. '
-                      'Other cases omit it. Separate native slices omit intermediate '
+                      'normal RAW state and passive register RAM. The fifth and sixth '
+                      'cases execute disabled and enabled descriptor preparation '
+                      'branches completely. Other cases omit preparation. Separate native slices omit intermediate '
                       'driver and SAF starts. '
                       'No success returns are supplied. Timer invocation and initial '
                       'flags are fixture inputs. Physical DMA, scheduling, frame identity '

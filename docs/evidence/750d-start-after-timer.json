@@ -150,11 +150,208 @@
           "0x1"
         ]
       ]
+    },
+    {
+      "timer_enabled": true,
+      "supplied_flags": "0x200",
+      "flags_after_timer": "0x8000027f",
+      "start_gate_returned": true,
+      "pending_address_before_start": "0x5c62c000",
+      "saved_component_word": "0x22",
+      "timer_stores": [
+        [
+          "0x100008",
+          "0x8000027f"
+        ]
+      ],
+      "descriptor_helper_executed": true,
+      "preparation_register_stores": [
+        [
+          "0xd001a014",
+          "0x111"
+        ],
+        [
+          "0xd0048068",
+          "0x7ff0437"
+        ],
+        [
+          "0xd0048084",
+          "0x7ff0437"
+        ],
+        [
+          "0xd0048080",
+          "0x1"
+        ],
+        [
+          "0xd0048088",
+          "0x0"
+        ],
+        [
+          "0xd004808c",
+          "0x43707ff"
+        ],
+        [
+          "0xd0048984",
+          "0x7ff0437"
+        ],
+        [
+          "0xd0048980",
+          "0x1"
+        ],
+        [
+          "0xd0048988",
+          "0x0"
+        ],
+        [
+          "0xd004898c",
+          "0x43707ff"
+        ],
+        [
+          "0xd0048a84",
+          "0x7ff0437"
+        ],
+        [
+          "0xd0048a80",
+          "0x1"
+        ],
+        [
+          "0xd0048a88",
+          "0x0"
+        ],
+        [
+          "0xd0048a8c",
+          "0x43707ff"
+        ],
+        [
+          "0xd0048b84",
+          "0x7ff0437"
+        ],
+        [
+          "0xd0048b80",
+          "0x1"
+        ],
+        [
+          "0xd0048b88",
+          "0x0"
+        ],
+        [
+          "0xd0048b8c",
+          "0x43707ff"
+        ],
+        [
+          "0xd0048064",
+          "0x1"
+        ],
+        [
+          "0xd0048b18",
+          "0x0"
+        ],
+        [
+          "0xd0048024",
+          "0x1000000"
+        ],
+        [
+          "0xd0048b10",
+          "0x1"
+        ],
+        [
+          "0xd0048b08",
+          "0x4"
+        ],
+        [
+          "0xd0048b0c",
+          "0x4"
+        ],
+        [
+          "0xd0048a18",
+          "0x0"
+        ],
+        [
+          "0xd0048024",
+          "0x1010000"
+        ],
+        [
+          "0xd0048a10",
+          "0x1"
+        ],
+        [
+          "0xd0048a08",
+          "0x4"
+        ],
+        [
+          "0xd0048a0c",
+          "0x4"
+        ],
+        [
+          "0xd0048918",
+          "0x0"
+        ],
+        [
+          "0xd0048024",
+          "0x1010100"
+        ],
+        [
+          "0xd0048910",
+          "0x1"
+        ],
+        [
+          "0xd0048908",
+          "0x4"
+        ],
+        [
+          "0xd004890c",
+          "0x4"
+        ],
+        [
+          "0xd0048018",
+          "0x0"
+        ],
+        [
+          "0xd0048024",
+          "0x1010101"
+        ],
+        [
+          "0xd0048010",
+          "0x1"
+        ],
+        [
+          "0xd0048008",
+          "0x4"
+        ],
+        [
+          "0xd004800c",
+          "0x4"
+        ]
+      ],
+      "extra_processing_enabled": true,
+      "flags_at_end": "0x200",
+      "final_stage_stores": [
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd0004104",
+          "0x20000000"
+        ],
+        [
+          "0xd0004100",
+          "0x1"
+        ],
+        [
+          "0xd0037014",
+          "0x22"
+        ],
+        [
+          "0xd0008090",
+          "0x1"
+        ]
+      ]
     }
   ],
   "physical_register_reads": false,
   "native_calls_stubbed": false,
   "hardware_completion_validated": false,
   "camera_binding_enabled": false,
-  "limits": "Supplied enabled timer and no-waiter event object, descriptor, normal RAW state and passive register RAM. The fifth case executes the disabled descriptor preparation branch completely. Other cases omit it. Separate native slices omit intermediate driver and SAF starts. No success returns are supplied. Timer invocation and initial flags are fixture inputs. Physical DMA, scheduling, frame identity and buffer reuse timing remain unverified."
+  "limits": "Supplied enabled timer and no-waiter event object, descriptor, normal RAW state and passive register RAM. The fifth and sixth cases execute disabled and enabled descriptor preparation branches completely. Other cases omit preparation. Separate native slices omit intermediate driver and SAF starts. No success returns are supplied. Timer invocation and initial flags are fixture inputs. Physical DMA, scheduling, frame identity and buffer reuse timing remain unverified."
 }
