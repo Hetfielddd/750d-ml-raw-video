@@ -48,12 +48,20 @@ Status 4 clears channel control; status zero does not. Both issue the reviewed b
 
 The driver/event path therefore does not preserve a distinction between the reviewed no-work entry and the directly invoked IRQ in its resulting RAW bit. Image-buffer identity, completion qualification and safe source reuse need independent evidence. The 7D2 donor's opposite-buffer/VSYNC contract cannot be replaced with this flag or a zero wait result.
 
+## Peer IRQ vector through native exception return
+
+Four additional PC cases run from the peer's Thumb exception vector at `0x18` through the RAW callback and back to the interrupted context. Native registration at `0x6FC` fills the IRQ `0x41` table slot with the channel-1 handler and its argument. The fixture supplies the CPU's nested IRQ entry state and places `0x41` at controller address `0xD5011000`. The native vector reads this word, stores the IRQ number at `0x01AC0040` and selects the handler through the real dispatcher and the installed table. Optional dispatch hooks are null.
+
+Channel status 0 and 4 exercise two different channel cleanup branches. Each reaches the callback and updates the RAW event flag `0x10`. With the other flags preseeded, both cases reach event word `0x8000007F` and clear the driver component word. The vector then writes the IRQ number to `0xD5011010`, reads that register and returns through its actual exception-return instruction. The probe checks the order, restored stack and selected interrupted registers. It uses passive RAM for controller and channel registers.
+
+This identifies where software obtains the IRQ number and how it uses it. The checked vector does not read a frame address or byte count. Which physical condition makes the controller present `0x41` remains an open question. The fixture supplies an already nested interrupt, so first-level IRQ scheduling and the controller's physical delivery or re-enable behavior remain outside the experiment.
+
 ## Reproduction and limits
 
 ```sh
 python scripts/probe_750d_raw_notification.py /private/750d-analysis/record-06.bin
 ```
 
-The [evidence](evidence/750d-raw-notification.json) records ten passing cases, native mask/event writes, supplied flags, IRQ state, register reads and separate wait results. Exact main-record size `0xCFB688` and SHA-256 `3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2` are checked before Unicorn import.
+The evidence records fourteen passing cases, native mask/event writes, supplied flags, IRQ state, register accesses and separate wait results. Exact main-record size `0xCFB688` and SHA-256 `3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2` are checked before Unicorn import. [Machine-readable results](evidence/750d-raw-notification.json).
 
-Unicorn 2.1.4 Cortex-A9 executes compatible scalar instructions, not a Cortex-R4 camera system. Scoped driver/application and peer-low-kernel copies are explicit experiment mappings. Code pages are read/execute; supplied data/stacks/shadows and optional artificial register RAM are read/write without execute permission. Code/write/read guards and 256-instruction / 0.5-second limits apply to each invocation. Native CPSR helpers execute; no native calls are stubbed. Firmware and pixel data are not distributed. Sensor capture, cache coherence, physical IRQ delivery and frame ownership remain unverified. Camera bindings remain disabled; camera and SD card are untouched.
+Unicorn 2.1.4 Cortex-A9 executes compatible scalar instructions, not a Cortex-R4 camera system. Scoped driver/application and peer-low-kernel copies are explicit experiment mappings. Code pages are read/execute; supplied data/stacks/shadows and optional artificial register RAM are read/write without execute permission. Code/write/read guards and a 0.5-second time limit apply to each invocation. The instruction limits are 384 for vector execution, 64 for its registration and 256 for the other invocations. Native CPSR helpers execute; no native calls are stubbed. Firmware and pixel data are not distributed. Sensor capture, cache coherence, physical IRQ delivery and frame ownership remain unverified. Camera bindings remain disabled; camera and SD card are untouched.

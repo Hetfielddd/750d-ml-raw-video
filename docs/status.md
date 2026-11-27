@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Executed four nested peer IRQ vector scenarios from controller read through the natively registered channel-1 handler, RAW flag update, controller write/readback and exception return. Supplied status 0 and 4 both set the RAW flag. Passive register RAM supplies IRQ `0x41`; real delivery and the physical completion condition remain open. [Peer vector checks](750d-raw-notification.md#peer-irq-vector-through-native-exception-return).
+
 - Verified ten command-to-IRQ scenarios on passive register RAM with native start, address publication, stop request, shadow read and interrupt forwarding. The destination chosen at start and the next pending address can diverge. The checked IRQ path preserves both and forwards the registered context without identifying a transfer. Physical completion and buffer reuse remain unverified. [RAW interrupt address checks](750d-raw-command-order.md#destination-state-at-the-raw-interrupt).
 
 - Confirmed the 750D EVF event-5 producer and traced it through `HEAD2` line timing, native message preparation and task dispatch. Three registration paths and all ten state entries were checked on the PC. Head timing, readout notification and RAW destination ownership are distinct parts of the recording path. The event supplies no destination or frame number. Canon signatures and handler diagnostics associate the preceding SCS work with still capture. [EVF readout source](750d-evf-readout-source.md).

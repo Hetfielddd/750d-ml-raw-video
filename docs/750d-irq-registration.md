@@ -26,7 +26,7 @@ Its actual table-base literal is `0x01ACB05C`. IRQ `0x41` selects slot **`0x01AC
 
 ## Native table consumption by the dispatcher
 
-The peer's IRQ-vector path references dispatcher `0x67D`, whose Thumb body `0x67C` corresponds to source `0xFE7453DC`. Static vector review reads the controller's current IRQ at `0xD5011000` before calling that dispatcher; the vector's mode switching, controller access and IRQ return are not executed.
+The peer's IRQ-vector path references dispatcher `0x67D`, whose Thumb body `0x67C` corresponds to source `0xFE7453DC`. It reads the controller's current IRQ at `0xD5011000` before calling that dispatcher. Later PC cases execute the actual nested vector through the dispatcher, callback and exception return with a supplied controller value in passive RAM. [Peer vector experiment](750d-raw-notification.md#peer-irq-vector-through-native-exception-return).
 
 After each of the four native registrations, a **separate direct invocation** of the actual dispatcher supplies IRQ `0x41` and uses the table just written by registration. Optional before/after dispatch hooks at `0x01AC001C/+4` are supplied null. The dispatcher selects `0x8000D1ED` and loads argument 1 from its table slot. Execution stops before the selected handler's first instruction. These calls do not finish the pending enable operation or simulate hardware delivery. Together with the earlier IRQ-body experiment, this identifies the native software route; it does not join separate experiments into a timed hardware transfer.
 

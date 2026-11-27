@@ -386,13 +386,278 @@
       "driver_component_mask_after_return": "0x0",
       "irq_mask_restored": true,
       "passed": true
+    },
+    {
+      "entry_kind": "peer_vector",
+      "supplied_component_mask": "0x0",
+      "supplied_initial_event_flags": "0x0",
+      "incoming_irq_mask": "0x0",
+      "supplied_irq_status": 0,
+      "native_driver_callback_entries": [
+        {
+          "argument": "0x12345678",
+          "irq_masked": true
+        }
+      ],
+      "native_writes": [
+        {
+          "address": "0xd0004100",
+          "value": "0x4",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x10",
+          "irq_masked": true
+        },
+        {
+          "address": "0x100008",
+          "value": "0x10",
+          "irq_masked": true
+        }
+      ],
+      "register_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "event_flags_after_return": "0x10",
+      "all_start_gate_bits_present": false,
+      "native_all_bit_wait_returned_zero": null,
+      "initial_all_bit_wait_stopped_before_blocking": false,
+      "driver_component_mask_after_return": "0x10",
+      "irq_mask_restored": true,
+      "passed": true,
+      "controller_accesses": [
+        [
+          "read",
+          "0xd5011000",
+          65
+        ],
+        [
+          "write",
+          "0xd5011010",
+          65
+        ],
+        [
+          "read",
+          "0xd5011010",
+          65
+        ]
+      ],
+      "nested_irq_context_restored": true
+    },
+    {
+      "entry_kind": "peer_vector",
+      "supplied_component_mask": "0x0",
+      "supplied_initial_event_flags": "0x0",
+      "incoming_irq_mask": "0x0",
+      "supplied_irq_status": 4,
+      "native_driver_callback_entries": [
+        {
+          "argument": "0x12345678",
+          "irq_masked": true
+        }
+      ],
+      "native_writes": [
+        {
+          "address": "0xd0004104",
+          "value": "0x0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x4",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x10",
+          "irq_masked": true
+        },
+        {
+          "address": "0x100008",
+          "value": "0x10",
+          "irq_masked": true
+        }
+      ],
+      "register_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "event_flags_after_return": "0x10",
+      "all_start_gate_bits_present": false,
+      "native_all_bit_wait_returned_zero": null,
+      "initial_all_bit_wait_stopped_before_blocking": false,
+      "driver_component_mask_after_return": "0x10",
+      "irq_mask_restored": true,
+      "passed": true,
+      "controller_accesses": [
+        [
+          "read",
+          "0xd5011000",
+          65
+        ],
+        [
+          "write",
+          "0xd5011010",
+          65
+        ],
+        [
+          "read",
+          "0xd5011010",
+          65
+        ]
+      ],
+      "nested_irq_context_restored": true
+    },
+    {
+      "entry_kind": "peer_vector",
+      "supplied_component_mask": "0x6f",
+      "supplied_initial_event_flags": "0x8000006f",
+      "incoming_irq_mask": "0x0",
+      "supplied_irq_status": 0,
+      "native_driver_callback_entries": [
+        {
+          "argument": "0x12345678",
+          "irq_masked": true
+        }
+      ],
+      "native_writes": [
+        {
+          "address": "0xd0004100",
+          "value": "0x4",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x7f",
+          "irq_masked": true
+        },
+        {
+          "address": "0x100008",
+          "value": "0x8000007f",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x0",
+          "irq_masked": true
+        }
+      ],
+      "register_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "event_flags_after_return": "0x8000007f",
+      "all_start_gate_bits_present": true,
+      "native_all_bit_wait_returned_zero": null,
+      "initial_all_bit_wait_stopped_before_blocking": false,
+      "driver_component_mask_after_return": "0x0",
+      "irq_mask_restored": true,
+      "passed": true,
+      "controller_accesses": [
+        [
+          "read",
+          "0xd5011000",
+          65
+        ],
+        [
+          "write",
+          "0xd5011010",
+          65
+        ],
+        [
+          "read",
+          "0xd5011010",
+          65
+        ]
+      ],
+      "nested_irq_context_restored": true
+    },
+    {
+      "entry_kind": "peer_vector",
+      "supplied_component_mask": "0x6f",
+      "supplied_initial_event_flags": "0x8000006f",
+      "incoming_irq_mask": "0x0",
+      "supplied_irq_status": 4,
+      "native_driver_callback_entries": [
+        {
+          "argument": "0x12345678",
+          "irq_masked": true
+        }
+      ],
+      "native_writes": [
+        {
+          "address": "0xd0004104",
+          "value": "0x0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x4",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x7f",
+          "irq_masked": true
+        },
+        {
+          "address": "0x100008",
+          "value": "0x8000007f",
+          "irq_masked": true
+        },
+        {
+          "address": "0x1ac1834",
+          "value": "0x0",
+          "irq_masked": true
+        }
+      ],
+      "register_reads": [
+        [
+          "0xd0004130",
+          4
+        ]
+      ],
+      "event_flags_after_return": "0x8000007f",
+      "all_start_gate_bits_present": true,
+      "native_all_bit_wait_returned_zero": null,
+      "initial_all_bit_wait_stopped_before_blocking": false,
+      "driver_component_mask_after_return": "0x0",
+      "irq_mask_restored": true,
+      "passed": true,
+      "controller_accesses": [
+        [
+          "read",
+          "0xd5011000",
+          65
+        ],
+        [
+          "write",
+          "0xd5011010",
+          65
+        ],
+        [
+          "read",
+          "0xd5011010",
+          65
+        ]
+      ],
+      "nested_irq_context_restored": true
     }
   ],
   "native_calls_stubbed": false,
   "native_event_lookup_and_update_executed": true,
   "application_raw_and_aggregate_callbacks_supplied_null": true,
+  "nested_peer_vector_executed_on_passive_register_ram": true,
   "physical_irq_or_dma_modeled": false,
   "frame_lease_validated": false,
   "camera_binding_enabled": false,
-  "limits": "Supplied initialized/empty or uninitialized RAW state, native driver callback, component masks, valid event handle/table/object and no waiters. Application RAW/aggregate callback slots are null; their task notifications do not execute. Initial other-component and high event bits are fixture inputs, not observed completions. A missing-bit wait stops before scheduler bookkeeping; a separate post-notification wait returns normally, not a simulated wakeup. IRQ cases directly invoke the handler on artificial register RAM. No controller delivery, event allocation, task scheduling, pixels, sensor transfer, peripheral acknowledgement or ownership modeled."
+  "limits": "Supplied initialized/empty or uninitialized RAW state, native driver callback, component masks, valid event handle/table/object and no waiters. Application RAW/aggregate callback slots are null; their task notifications do not execute. Initial other-component and high event bits are fixture inputs, not observed completions. A missing-bit wait stops before scheduler bookkeeping; a separate post-notification wait returns normally, not a simulated wakeup. IRQ cases enter either the handler directly or the peer vector in a supplied nested IRQ context on passive register RAM. No controller delivery, first-level IRQ scheduling, event allocation, pixels, sensor transfer, peripheral acknowledgement or ownership modeled."
 }
