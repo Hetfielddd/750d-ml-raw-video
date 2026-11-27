@@ -217,7 +217,8 @@ def main():
         'queue': ['raw14_copy.c', 'raw14_queue.c', 'test_raw14_queue.c'],
         'mlv': ['raw14_copy.c', 'raw14_queue.c', 'raw14_mlv.c', 'test_raw14_mlv.c'],
         'fio': ['raw14_copy.c', 'raw14_queue.c', 'raw14_mlv.c', 'raw14_fio.c', 'test_raw14_fio.c'],
-        'capture': ['raw14_copy.c', 'raw14_queue.c', 'raw14_capture.c', 'test_raw14_capture.c'],
+        'capture': ['raw14_copy.c', 'raw14_queue.c', 'raw14_capture.c',
+                    'raw14_pc_source.c', 'test_raw14_capture.c'],
     }.items():
         elf = build / f'{suite}.elf'
         subprocess.run([str(compiler), *flags,

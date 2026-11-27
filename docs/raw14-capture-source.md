@@ -32,6 +32,12 @@ All calls, queue/writer access, and callbacks must be externally serialized. Cal
 
 ## PC verification
 
+`experimental/raw14_pc_source.{h,c}` supplies an additional two-buffer PC source through the existing capture operations. The synthetic producer assigns each new write a unique ID. A superseded ID is rejected even if the next write uses the same address. Completion publishes a frame only when the ID belongs to the current write and the supplied byte count matches the full frame. Ready buffers remain reserved through the synchronous copy and become reusable on release. The source returns ready frames in start order.
+
+The capture suite injects a delayed notification after switching buffers, another after rearming the same address, a short completion, a duplicate and a notification after stopping. It verifies that these cases publish no extra output. Two valid frames arrive in reverse slot order, and the test checks the order and cropped bytes in the existing writer queue. The copy callback attempts to rearm its borrowed slot and verifies that the source rejects the attempt until release. The model relies on serialized operations and a producer that writes only the currently armed slot.
+
+The PC producer supplies the transfer ID and byte count as test inputs. The current 750D IRQ path has not provided either of those values. The model therefore validates the recorder-side handoff for a future provider with independently verified completion and ownership. [750D IRQ address checks](750d-raw-command-order.md#destination-state-at-the-raw-interrupt).
+
 ```sh
 python scripts/test_raw14_arm.py --toolchain /path/to/arm-toolchain/bin --upstream-source /path/to/magiclantern
 python scripts/test_raw14_disk.py --toolchain /path/to/arm-toolchain/bin --build-dir .tools/raw14-tests

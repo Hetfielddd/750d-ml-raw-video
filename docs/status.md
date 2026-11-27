@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Added a two-buffer PC source through the existing capture API. ARM tests verify rejection of delayed, duplicate and partial completions, including reuse of the same address, plus ordered output and source protection during copy. The test producer supplies transfer identity and byte count. [PC source checks](raw14-capture-source.md#pc-verification).
+
 - Verified native callers of the physical DMA address reader, including the channel-1 Image2 diagnostic and SAF stop path. Two peer teardown routines prepare waits over mask `0x7F`. In separately entered tails the reviewed RAW helper writes its trigger word and the SAF helper reads addresses for logging. Nine PC checks pass with passive registers and explicit wait/cleanup cuts. [Native DMA address callers](750d-dma-address-callers.md).
 
 - Executed the reviewed RAW setup and start for three supplied selectors, including the actual geometry writer and channel route store. RAW and IPC program different routes on the same channel. The target driver has separate native readers for the physical address, low two status bits and bit 2. The PC tests supply the register values. [RAW configuration comparison](750d-raw-command-order.md#native-raw-setup-compared-with-ipc).

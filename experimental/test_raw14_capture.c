@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "raw14_capture.h"
+#include "raw14_pc_source.h"
 static uint8_t data[98], storage[2][56];
 static struct raw14_queue queue;
 static struct raw14_capture capture;
@@ -59,6 +60,74 @@ static void setup(void)
     (void)raw14_capture_init(&capture,&queue,&engine,&ops,&cfg);
 }
 #define CHECK(c) do { if(!(c)) return __LINE__; } while(0)
+
+static int copy_while_borrowed(void *ctx, void *dst, const void *src, size_t bytes)
+{
+    struct raw14_pc_source *source = ctx;
+    unsigned slot = src == (uint8_t *)source->slots[0].frame.data + 28 ? 0 : 1;
+    uint64_t id = 0;
+    if (raw14_pc_source_arm(source, slot, source->last_us, &id) != RAW14_BUSY)
+        return -1;
+    return copy(0, dst, src, bytes);
+}
+
+static int test_delayed_completion(void)
+{
+    static uint8_t input[2][98];
+    struct raw14_pc_source source;
+    struct raw14_frame frames[2];
+    struct raw14_write_view view;
+    uint64_t a, b, c, d;
+    unsigned i;
+    setup();
+    frames[0] = (struct raw14_frame){input[0], sizeof(input[0]), 8, 7, 14, 14};
+    frames[1] = frames[0];
+    CHECK(raw14_pc_source_init(&source, frames, &ops) == RAW14_OVERLAP);
+    frames[1].data = input[1];
+    CHECK(raw14_pc_source_init(&source, frames, &ops) == RAW14_OK);
+    CHECK(raw14_pc_source_arm(&source, 0, 0, &a) == RAW14_NOT_READY);
+    engine = (struct raw14_engine){copy_while_borrowed, &source, 0};
+    CHECK(raw14_capture_init(&capture, &queue, &engine, &ops, &cfg) == RAW14_CAPTURE_OK);
+    CHECK(raw14_capture_start(&capture) == RAW14_CAPTURE_OK);
+
+    /* Completion for A arrives after B starts. A byte count alone can't
+     * authorize publishing B. The same applies when reusing B's address. */
+    CHECK(raw14_pc_source_arm(&source, 0, 100, &a) == RAW14_OK);
+    CHECK(raw14_pc_source_arm(&source, 1, 200, &b) == RAW14_OK && b > a);
+    CHECK(raw14_pc_source_complete(&source, a, sizeof(input[0])) == RAW14_NOT_READY);
+    CHECK(raw14_capture_poll(&capture) == RAW14_CAPTURE_NO_FRAME);
+    CHECK(raw14_pc_source_arm(&source, 1, 300, &c) == RAW14_OK && c > b);
+    CHECK(raw14_pc_source_complete(&source, b, sizeof(input[1])) == RAW14_NOT_READY);
+    CHECK(raw14_pc_source_complete(&source, c, sizeof(input[1]) - 1) == RAW14_BOUNDS);
+    CHECK(raw14_pc_source_complete(&source, c, sizeof(input[1])) == RAW14_NOT_READY);
+    CHECK(raw14_capture_poll(&capture) == RAW14_CAPTURE_NO_FRAME && queue.accepted_frames == 0);
+
+    CHECK(raw14_pc_source_arm(&source, 1, 400, &a) == RAW14_OK);
+    for (i = 0; i < sizeof(input[1]); ++i)
+        input[1][i] = (uint8_t)i;
+    CHECK(raw14_pc_source_complete(&source, a, sizeof(input[1])) == RAW14_OK);
+    CHECK(raw14_pc_source_arm(&source, 1, 401, &b) == RAW14_BUSY);
+    CHECK(raw14_pc_source_arm(&source, 0, 500, &d) == RAW14_OK);
+    for (i = 0; i < sizeof(input[0]); ++i)
+        input[0][i] = (uint8_t)(255 - i);
+    CHECK(raw14_pc_source_complete(&source, d, sizeof(input[0])) == RAW14_OK);
+    CHECK(raw14_capture_poll(&capture) == RAW14_CAPTURE_OK);
+    CHECK(raw14_capture_poll(&capture) == RAW14_CAPTURE_OK);
+    CHECK(raw14_pc_source_complete(&source, d, sizeof(input[1])) == RAW14_NOT_READY);
+    CHECK(raw14_queue_take(&queue, &view) == RAW14_Q_OK && view.frame_id == a);
+    for (i = 0; i < 56; ++i)
+        CHECK(((uint8_t *)view.frame.data)[i] == (uint8_t)(28 + i));
+    CHECK(raw14_queue_release_written(&queue, view.lease) == RAW14_Q_OK);
+    CHECK(raw14_queue_take(&queue, &view) == RAW14_Q_OK && view.frame_id == d);
+    for (i = 0; i < 56; ++i)
+        CHECK(((uint8_t *)view.frame.data)[i] == (uint8_t)(227 - i));
+    CHECK(raw14_queue_release_written(&queue, view.lease) == RAW14_Q_OK);
+    CHECK(raw14_pc_source_arm(&source, 1, 600, &b) == RAW14_OK);
+    CHECK(raw14_capture_stop(&capture) == RAW14_CAPTURE_OK);
+    CHECK(raw14_pc_source_complete(&source, b, sizeof(input[1])) == RAW14_NOT_READY);
+    return 0;
+}
+
 int test_run(void)
 {
     struct raw14_write_view view;
@@ -129,5 +198,5 @@ int test_run(void)
     next_id=1; next_us=9;
     CHECK(raw14_capture_poll(&capture)==RAW14_CAPTURE_INVALID && !held);
     CHECK(raw14_capture_stop(&capture)==RAW14_CAPTURE_OK);
-    return 0;
+    return test_delayed_completion();
 }
