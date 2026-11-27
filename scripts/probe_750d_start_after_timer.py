@@ -23,6 +23,8 @@ def probe(data):
     pending_address, gate_mask = 0x5c62c000, 0x8000007f
     preparation_state, preparation_settings = 0x1ad7ba8, 0x1ac388c
     preparation_register = 0xd001a014
+    component_state, saf_state = 0x1ac22a4, 0x1ac22d0
+    component_registers = (0xd000a100, 0xd000a014, 0xd000a00c)
     ranges = ((0xfe750d04, 0xfe750d16), (0xfe750e1c, 0xfe750e46),
               (0xfe750e46, 0xfe750e4a), (0xfe750e52, 0xfe750e56), (0xfe74f118, 0xfe74f11c),
               (0xfe8395c4 - app_delta, 0xfe839642 - app_delta),
@@ -49,14 +51,24 @@ def probe(data):
         (0xfe894652, 0xfe89474c), (0xfe89475c, 0xfe894768),
         (0xfe894970, 0xfe894984), (0xfe89498c, 0xfe8949a0),
         (0xfe8949a8, 0xfe8949bc), (0xfe8949c6, 0xfe8949da)))
+    ranges += ((0xfe750e4a, 0xfe750e52), (0xfe74f1e0, 0xfe74f1e4),
+               (0xfe74f228, 0xfe74f22c))
+    ranges += tuple((lo - app_delta, hi - app_delta) for lo, hi in (
+        (0xfe839eae, 0xfe839edc), (0xfe8ef62e, 0xfe8ef638),
+        (0xfe8ef544, 0xfe8ef55c), (0xfe83a61a, 0xfe83a632),
+        (0xfe83a6d8, 0xfe83a6da)))
 
     cases = []
     for timer_enabled, initial_flags, pending, prepare in (
             (False, 0x27f, pending_address, False), (True, 0x200, pending_address, False),
             (True, 0x200, 0, False), (False, gate_mask | 0x200, pending_address, False),
             (True, 0x200, pending_address, True),
-            (True, 0x200, pending_address, 2)):
-        active_preparation = prepare == 2
+            (True, 0x200, pending_address, 2),
+            (True, 0x200, pending_address, 3),
+            (True, 0x200, pending_address, 4)):
+        active_preparation = prepare in (2, 3, 4)
+        connected_start = prepare in (3, 4)
+        component_pending = prepare == 3
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A9)
         rx, rw = UC_PROT_READ | UC_PROT_EXEC, UC_PROT_READ | UC_PROT_WRITE
@@ -74,6 +86,9 @@ def probe(data):
             pages += tuple((page, page + app_delta) for page in range(
                 (0xfe894358 - app_delta) & ~4095,
                 ((0xfe8949da - app_delta) & ~4095) + 4096, 4096))
+        if connected_start:
+            pages += tuple((page, page + app_delta) for page in (
+                (0xfe8ef544 - app_delta) & ~4095, (0xfe83a61a - app_delta) & ~4095))
         for page, source in pages:
             uc.mem_map(page, 4096, rx)
             uc.mem_write(page, data[source - base:source - base + 4096])
@@ -86,6 +101,8 @@ def probe(data):
             uc.mem_map(preparation_register & ~4095, 4096, rw)
         if active_preparation:
             uc.mem_map(0xd0048000, 4096, rw)
+        if connected_start:
+            uc.mem_map(0xd000a000, 4096, rw)
         uc.mem_map(stop, 4096, rx)
 
         def put(address, value):
@@ -107,6 +124,10 @@ def probe(data):
         put(event + 8, initial_flags)
         put(event + 16, 7)
         put(0x1ac40a4, shadow)
+        if connected_start:
+            put(component_state, 1)
+            put(component_state + 8, 0x13579bdf if component_pending else 0)
+            put(saf_state, 0)
         if active_preparation:
             put(descriptor + 28, 1)
             put(preparation_settings + 68, 1080)
@@ -124,12 +145,16 @@ def probe(data):
                 0xd0048000, 0xd0048900, 0xd0048a00, 0xd0048b00)
                 for offset in (8, 12, 16, 0x80, 0x84, 0x88, 0x8c))
             hardware += (0xd0048918, 0xd0048a18, 0xd0048b18)
+        if connected_start:
+            hardware += component_registers
         allowed = {driver + 4, event + 8, descriptor + 84, raw + 36, 0x1ad81c8,
                    *hardware, *(shadow + (reg & 0x7ffff) for reg in hardware)}
         if prepare:
             allowed |= {preparation_state + 44, preparation_settings + 80}
         if active_preparation:
             allowed |= {preparation_state + offset for offset in (64, 68, 72, 76)}
+        if connected_start:
+            allowed |= {component_state + 4, component_state + 8}
         boundary, reached, errors, stores = stop, [], [], []
 
         def code_guard(emulator, address, size, _):
@@ -201,15 +226,22 @@ def probe(data):
                     raise RuntimeError('Wrong enabled preparation command sequence')
         elif uc.reg_read(UC_ARM_REG_R0) != descriptor + 8:
             raise RuntimeError('Wrong descriptor preparation argument')
-        # Preserve the original start frame. The fifth case has executed the
-        # disabled preparation branch completely. Other cases enter this
-        # continuation across an explicit unexecuted preparation cut.
+        # Keep the original driver frame throughout. The connected case
+        # executes preparation, event gate, other component and SAF return
+        # without omitting intervening calls or replacing their results.
         ready = ready_flags & gate_mask == gate_mask
-        run(0xfe750e2e, 0xfe74f1e0 if ready else 0xfe74bddc, fresh=False)
+        gate_target = 0xfe750e52 if connected_start else 0xfe74f1e0
+        run(0xfe750e2e, gate_target if ready else 0xfe74bddc, fresh=False)
         if ready:
+            expected_gate_stores = [(event + 8, ready_flags & ~gate_mask), (driver + 4, 0)]
+            if component_pending:
+                expected_gate_stores += list(zip(component_registers, (1, 0, 4)))
             if (word(event + 8) != (ready_flags & ~gate_mask) or word(driver + 4)
-                    or stores != [(event + 8, ready_flags & ~gate_mask), (driver + 4, 0)]):
+                    or stores != expected_gate_stores):
                 raise RuntimeError('Native start did not consume the event and component masks')
+            if connected_start and (word(component_state + 4) != (0x13579bdf if component_pending else 0)
+                                    or word(component_state + 8) or word(saf_state)):
+                raise RuntimeError('Wrong connected component pending-state consumption')
             # Omit the intervening driver and SAF starts. The RAW call itself
             # executes through the actual import, with no synthetic return.
             run(0xfe750e52, 0xfe750e56, fresh=False)
@@ -231,16 +263,23 @@ def probe(data):
                           'preparation_register_stores': [[hex(a), hex(v)] for a, v in preparation_stores]}
                          if prepare else {}),
                       **({'extra_processing_enabled': True} if active_preparation else {}),
+                      **({'continuous_driver_entry_to_raw_return': True,
+                          'saf_initialized': False,
+                          'component_had_pending_work': component_pending,
+                          'intermediate_component_stores': [[hex(a), hex(v)] for a, v in zip(component_registers, (1, 0, 4))]
+                          if component_pending else []}
+                         if connected_start else {}),
                       'flags_at_end': hex(word(event + 8)),
                       'final_stage_stores': [[hex(a), hex(v)] for a, v in stores]})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
             'physical_register_reads': False, 'native_calls_stubbed': False,
             'hardware_completion_validated': False, 'camera_binding_enabled': False,
             'limits': 'Supplied enabled timer and no-waiter event object, descriptor, '
-                      'normal RAW state and passive register RAM. The fifth and sixth '
-                      'cases execute disabled and enabled descriptor preparation '
-                      'branches completely. Other cases omit preparation. Separate native slices omit intermediate '
-                      'driver and SAF starts. '
+                      'normal RAW state and passive register RAM. Cases five through '
+                      'eight execute descriptor preparation. Cases seven and eight '
+                      'also execute intermediate component and inactive SAF paths '
+                      'through RAW return, preserving the driver frame. Earlier cases '
+                      'omit these intervening calls. '
                       'No success returns are supplied. Timer invocation and initial '
                       'flags are fixture inputs. Physical DMA, scheduling, frame identity '
                       'and buffer reuse timing remain unverified.'}

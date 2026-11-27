@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Closed the remaining pre-RAW call cuts in two supplied-state driver-start scenarios. Native execution retains the original frame through enabled descriptor setup, actual event wait/clear, intermediate component start, inactive SAF return and RAW start. The component's pending/empty branches pass, with no physical register reads. [Connected driver-start checks](750d-start-after-timer.md#execution-boundaries).
+
 - Executed the enabled descriptor preparation branch through its native processing setup and return. A sixth timer-to-start case checks 39 physical-location writes, dimension and rectangle packing in four blocks, global parameter retention and the subsequent wait/RAW start slices. All hardware registers are passive RAM. [Enabled preparation](750d-start-after-timer.md#execution-boundaries).
 
 - Executed the descriptor preparation call before the RAW start wait for the supplied disabled extra-processing branch. The real helper returns after its global/configuration stores and is followed by the existing native wait and RAW start checks. This fifth timer-to-start scenario closes one earlier execution cut. [Descriptor preparation](750d-start-after-timer.md#execution-boundaries).

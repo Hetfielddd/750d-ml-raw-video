@@ -1,6 +1,6 @@
 # RAW start consumes timer-produced event flags
 
-Six PC sequences connect the actual timer callback, kernel event lookup and update, driver's start wait and clear, and separately entered RAW start call. In the enabled-timer fixture, the software reaches address and command programming with no physical register reads in the executed slices. This extends the earlier separate start-gate and no-work notification checks across the same event object and driver state. [Start gate](750d-start-gate.md) · [No-work notifications](750d-raw-notification.md).
+Eight PC sequences connect the actual timer callback, kernel event lookup and update, driver's start wait and clear, and RAW start call. Two scenarios now execute the intervening component and inactive SAF paths as well, preserving the native driver frame from entry to the RAW function's return. The software reaches address and command programming with no physical register reads in the executed path. [Start gate](750d-start-gate.md) · [No-work notifications](750d-raw-notification.md).
 
 ## Native sequence
 
@@ -18,6 +18,7 @@ Another independent slice begins at the real RAW call site `0xFE750E52`. It exec
 - Timer disabled, initial word `0x8000027F`. The preseeded full mask permits the native wait and the subsequent RAW start slice.
 - Timer enabled with nonzero pending address and the descriptor preparation helper executed. With its extra-processing selector zero, the actual helper returns to the native start frame, and the subsequent gate and RAW programming match the earlier enabled-timer case.
 - Timer enabled with the extra-processing selector set to one. The entire preparation helper, including all reviewed setup calls, executes and returns before the wait. It configures four processing blocks with the supplied dimensions and rectangle, then the native wait and RAW command slice execute.
+- Two connected driver-start cases use enabled descriptor preparation and run the intermediate component helper with and without pending work. In both, SAF is supplied uninitialized with a null callback. All calls from driver entry through the RAW start and return execute in sequence.
 
 The test guards reject every physical register read. These cases therefore demonstrate how software event state admits the reviewed start path. A successful wait alone leaves the completion state and identity of any earlier physical transfer unresolved.
 
@@ -27,7 +28,11 @@ In the fifth and sixth cases the descriptor helper at source `0xFE8B7DDC` execut
 
 The sixth case supplies selector 1, dimensions 2,048 by 1,080 and an origin of zero. The helper retains four additional supplied words in global memory, packs dimensions as `0x07FF0437` and rectangle bounds as `0x043707FF`, and invokes the native configuration routines for blocks based at `0xD0048000`, `0xD0048900`, `0xD0048A00` and `0xD0048B00`. Its 39 physical-location stores include the initial processing configuration, four dimension/rectangle groups and the later control commands. Every corresponding shadow write executes normally. The read guard rejects any physical register read, including channel status or address. The enabled processing path reaches its real return under that guard. Hardware effects and any later completion of these processing blocks remain unmodeled.
 
-The descriptor helper remains a cut in the original four cases. Driver preparation between the gate and RAW call, and the SAF start are omitted in every case by explicitly entering reviewed continuations. Their behavior may affect the live camera's ordering or state. The probe supplies the enabled-timer word, event object, event flags, pending address and normal RAW configuration. It invokes the timer directly. It establishes neither a live timer policy nor a hardware race. The callback uses null optional application notifications, as in the earlier no-work probe.
+The descriptor helper remains a cut in the original four cases. Driver preparation between the gate and RAW call, and the SAF start are omitted in the first six cases. The last two execute that interval through real ARM imports and native returns, using the unchanged driver stack. Observation stops at instruction boundaries preserve all CPU and memory state between calls. Each resumption starts at the instruction where execution stopped.
+
+The intermediate component helper is source `0xFE839EAE`, selected by import `0xFE74F1E0`. With an initialized component and a nonzero pending field, it calls `0xFE8EF62E` and `0xFE8EF544`. Native writers store 1 at `0xD000A100`, zero at `0xD000A014` and 4 at `0xD000A00C`, updating their shadows. The component moves its pending word into its current field and clears pending. With no pending work and a null callback it simply returns. In both scenarios the next real call reaches `LV_SAF_PATH_Start` at `0xFE83A61A`. The supplied uninitialized SAF state and null callback cause its native return without additional work. The driver then calls the actual RAW start and receives its normal return at `0xFE750E56`.
+
+This removes the omitted calls before RAW start for these two specific states. Initialized SAF has more branches, and other state selections can affect the live path. The rest of the driver after RAW return remains outside this probe. The timer is directly invoked with supplied enabled state and an event object without waiters. Physical register words have ordinary RAM behavior. This verifies a possible native software path and leaves the camera's active state, real DMA completion and timing unresolved.
 
 ```sh
 python scripts/probe_750d_start_after_timer.py /private/750d-analysis/record-06.bin
