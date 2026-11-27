@@ -1,0 +1,94 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "head2_registrations": [
+    {
+      "evf_site": "0xfe2b9832",
+      "supplied_line": 523,
+      "selected_line": 524
+    },
+    {
+      "evf_site": "0xfe2b9e00",
+      "supplied_line": 524,
+      "selected_line": 524
+    },
+    {
+      "evf_site": "0xfe2b9f3c",
+      "supplied_line": 900,
+      "selected_line": 900
+    }
+  ],
+  "native_head2_dispatch": true,
+  "head2_registers": [
+    "0xd0007064",
+    "0xd000705c",
+    "0xd0007060"
+  ],
+  "null_callback_returns": true,
+  "event": 5,
+  "payload": 0,
+  "extra": 0,
+  "native_state_cases": [
+    {
+      "state": 0,
+      "handler": null,
+      "readout_flag": 0
+    },
+    {
+      "state": 1,
+      "handler": null,
+      "readout_flag": 0
+    },
+    {
+      "state": 2,
+      "handler": "0xfe2ba912",
+      "readout_flag": 0
+    },
+    {
+      "state": 3,
+      "handler": "0xfe2b9536",
+      "readout_flag": 1
+    },
+    {
+      "state": 4,
+      "handler": "0xfe2b9536",
+      "readout_flag": 1
+    },
+    {
+      "state": 5,
+      "handler": "0xfe2b9536",
+      "readout_flag": 1
+    },
+    {
+      "state": 6,
+      "handler": "0xfe2b9536",
+      "readout_flag": 1
+    },
+    {
+      "state": 7,
+      "handler": "0xfe2ba912",
+      "readout_flag": 0
+    },
+    {
+      "state": 8,
+      "handler": "0xfe2ba912",
+      "readout_flag": 0
+    },
+    {
+      "state": 9,
+      "handler": null,
+      "readout_flag": 0
+    }
+  ],
+  "native_envelope_words": [
+    "0x100000",
+    "0x5",
+    "0x0",
+    "0x0"
+  ],
+  "native_task_callback_offset": 20,
+  "mailbox_delivery_executed": false,
+  "hardware_irq_or_dma_modeled": false,
+  "camera_binding_enabled": false,
+  "native_calls_stubbed": false
+}

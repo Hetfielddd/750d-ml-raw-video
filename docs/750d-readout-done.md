@@ -2,7 +2,7 @@
 
 The [start/synchronization investigation](750d-raw-start.md) identified actual handler `0xFE2B9536`, labeled `evfReadOutDoneInterrupt`, for the donor's EVF old-state-5/input-5 condition. Following the handler shows that registered methods and additional notifications execute before it returns. A post-transition hook therefore still requires a target-specific buffer-lifetime check.
 
-A later [CCD writer completion trace](750d-ccd-completion.md) identifies a separate conditional channel-2 callback, ShtCapture task event/return operation 13 and native service route `0x00010000`. Its relationship to this EVF event has not been established; the callback name or transport argument 5 must not be treated as proof of the same event.
+A later CCD writer completion trace identifies a separate conditional channel-2 callback, ShtCapture task event/return operation 13 and native service route `0x00010000`. Still-capture routines own the tested SCS continuation. The EVF event-5 producer is registered with the `HEAD2` line interrupt and passes zero payload. [CCD writer completion](750d-ccd-completion.md) · [EVF readout source](750d-evf-readout-source.md).
 
 ## Completion calls before phase updates
 

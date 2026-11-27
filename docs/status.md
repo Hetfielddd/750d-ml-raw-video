@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Confirmed the 750D EVF event-5 producer and traced it through `HEAD2` line timing, native message preparation and task dispatch. Three registration paths and all ten state entries were checked on the PC. Head timing, readout notification and RAW destination ownership are distinct parts of the recording path. The event supplies no destination or frame number. Canon signatures and handler diagnostics associate the preceding SCS work with still capture. [EVF readout source](750d-evf-readout-source.md).
+
 - Added six native SCS flag/readiness/reset scenarios. Exact flag1 causes completion reentry, while 0/2 skip it without clearing the flag. Another handler natively publishes owner +56 readiness before rechecking the retained condition; reentry then reaches the nonzero completion branch's mode-query boundary. A separate actual reset slice clears the completion flag and another software field. Middle helpers, full handlers and live timing remain unexecuted; this is capture-job ordering, not a RAW lease. See [SCS flag lifecycle](750d-scs-event.md).
 
 - Rechecked live upstream, 750D-focused and contributor branch heads and inspected key platform files. No new 750D RAW binding found in the checked sources. Compared 7D2's newer V3 full-width synchronous copy API with DIGIC7 V1/V2 and updated the integration plan without switching our baseline. See [November 26 source audit](upstream-review-2026-11-26.md).

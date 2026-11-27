@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- The `HEAD2` line interrupt is the source of Live View event 5. Native PC checks trace its line-threshold registration, callback, four-word task message and dispatch in all ten EVF states. States 3 through 6 set the readout flag. The message carries no RAW buffer address or frame identifier. See [the EVF readout source](docs/750d-evf-readout-source.md).
 - [Roadmap](docs/roadmap.md): three PC preparation milestones complete, two target research milestones partial, three camera integration/recording milestones not complete. [Fresh upstream/donor review](docs/upstream-review-2026-11-26.md) found no new 750D RAW bindings in the checked sources.
 - Twenty matrix checks, six constructor/worker scenarios and six flag/readiness cases now characterize SCSState. A later handler publishes owner readiness and reenters completion only for retained flag1; another capture-path slice resets the flag. These are capture-sequencing results, not a RAW-frame lease. See [SCSState dispatch and flag lifecycle](docs/750d-scs-event.md).
 - Six native PC cases now identify ShtCapture's primary return receiver, actual CMOS callback publication and operation-13/14 event-mask preparation. A checked CMOS completion continuation prepares a separate primary task event 7 with zero payload. Query/logger/OS/transport cuts remain explicit; this is not a RAW-frame lease or established EVF association. See [primary CCD completion receiver](docs/750d-ccd-receiver.md).

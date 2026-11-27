@@ -1,6 +1,6 @@
 # Roadmap to first Canon 750D RAW recording
 
-Reviewed November 26, 2026. Target: 750D firmware 1.1.0. This consolidates the earlier plan and saved project status into eight acceptance milestones. It separates completed PC preparation from camera integration; the milestone count is not a percentage of development time.
+Reviewed November 27, 2026. Target: 750D firmware 1.1.0. This consolidates the earlier plan and saved project status into eight acceptance milestones. It separates completed PC preparation from camera integration; the milestone count is not a percentage of development time.
 
 ## Completed on the PC: 3 milestones
 
@@ -12,6 +12,8 @@ Reviewed November 26, 2026. Target: 750D firmware 1.1.0. This consolidates the e
 
 4. **Target-specific capture and copy bindings.** Candidate RAW address/channel, parameter routing, register shadows, geometry arithmetic and a primary fast-copy candidate have been traced and tested in bounded fixtures. Live geometry, packing, active mode/channel ownership and safe calling context remain unverified. Camera bindings are disabled.
 5. **Completed-frame ownership and safe copying.** Native command order, notification routes, stop-like requests, event flags and several candidate completion chains are characterized. A qualified whole-frame completion event, its exact buffer identity, safe reuse interval and cross-core/cache contract are not yet established. This is the principal research uncertainty before a real source adapter can be trusted.
+
+   The native EVF event-5 message traces to `HEAD2` line timing with zero payload. Its downstream completion method can prepare the next `StartDriver` before returning. The remaining check is to associate RAW DMA completion with the address consumed at start and validate the copy interval. [EVF readout source](750d-evf-readout-source.md).
 
 ## Not complete: 3 milestones
 

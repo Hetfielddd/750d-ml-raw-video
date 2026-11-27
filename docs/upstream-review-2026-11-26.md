@@ -22,6 +22,8 @@ For a future integration, the distinction matters: older module code manually wa
 
 The same cleanup head selects **V1 on 200D** and **V2 on 6D2**, both DIGIC7. Their implementations use different region/resource/semaphore paths and retain uncacheable destination and source-cache handling. They are useful references for copy ownership and cleanup, not interchangeable DIGIC6 bindings. We do not transplant their channels, addresses or cache assumptions to the 750D.
 
+A November 27 head check found the same upstream `dev` and `edmac_cleanup` revisions and the same four Tragic Lantern branch heads listed above. The pinned 7D2, 200D and 6D2 all enable `CONFIG_EVF_STATE_SYNC`. The recorder redirects the upcoming buffer after the matching transition and sends the opposite buffer to frame processing, with a copy-in-progress check. The 750D's checked event-5 source supplies timing only. [750D HEAD2 comparison](750d-evf-readout-source.md).
+
 `raw_vidx` also changes its worker to use `copy_rectangle()` and removes module-managed copy semaphore callbacks in this branch. A simpler recorder still depends on a valid RAW source, packing/geometry, destination redirection and a real copy backend. It does not bypass milestones 4/5 of the [roadmap](roadmap.md).
 
 ## Decision
