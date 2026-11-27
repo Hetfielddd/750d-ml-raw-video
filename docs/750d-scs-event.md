@@ -45,12 +45,24 @@ In a sixth scenario, owner +56 equal to one instead reaches mode query `0xFE4046
 
 The tested zero branch does not copy pixels or create a per-frame pointer/ownership token. Its flag is a software condition and these supplied-state tests do not define its full lifecycle or authorize reading the RAW buffer. The nonzero branch has further capture-processing calls outside this experiment. The remaining research must distinguish this SCS completion path from the continuous EVF pipeline and establish the actual RAW frame identity/reuse interval.
 
+## Retained completion flag and follow-up readiness
+
+Six additional lifecycle cases trace a reader and reset of global flag `0x26420`. The separately entered decision slice at `0xFE13E17C` compares the flag to **exactly 1**. Value 1 reaches `scsCompleteCapture` again, forwarding owner and two saved arguments. Values 0 and 2 skip it and reach `0xFE13D110`. All three retain the original flag: this read is not a consumption/clear or a frame counter.
+
+Two further cases execute the actual prefix at `0xFE13E05E`, with supplied global +108 equal to 1, and retain its native-produced R7=1 across explicit omitted middle-handler calls. The separately entered slice at `0xFE13E172` writes that value to owner +56 and stops before `0xFE13DDB0`. The following decision uses the retained completion flag. With flag1 it reenters the real completion prefix; after the logger cut, owner +56 is now nonzero and the completion handler reaches mode query `0xFE4046BA`. With flag0 it skips reentry. No intermediate helper, mode query or successful callback return is synthesized.
+
+This explains a concrete ordering mechanism: a completion arriving while owner +56 is zero can leave a retained condition; a later handler publishes readiness and checks that condition to perform the longer completion branch. The experiment supplies the ordering and initial globals; it is not a live timing observation. It does not prove that these are the only writers or that another core cannot alter the state.
+
+Actual reset slice `0xFE13E97E` reloads its global base, produces zero itself, and clears global +92 (`0x26418`) and +100 (`0x26420`). The sixth case verifies both stores. Preceding query/helper calls and subsequent start logic remain unexecuted. This reset is in another capture-handler path, not a proven per-frame RAW lease release.
+
+The retained flag, readiness field and reset have no validated image pointer, byte count, timestamp or copy-ownership token in these reviewed slices. They characterize capture-job sequencing; continuous EVF/RAW-buffer completion and cache safety still require separate evidence.
+
 ## Reproduction
 
 ```sh
 python scripts/probe_750d_scs_event.py /private/750d-analysis/record-06.bin
 ```
 
-The [evidence](evidence/750d-scs-event.json) contains 18 state cases, two rejection controls and six separate constructor/worker routing cases. Exact identified main-record size/SHA-256 gates run before Unicorn import. Compatible Cortex-A9 ARM/Thumb code executes on the PC with code/write guards and 192-instruction / 0.5-second limits per stage.
+The [evidence](evidence/750d-scs-event.json) contains 18 state cases, two rejection controls, six separate constructor/worker routing cases and six flag/readiness/reset cases. Exact identified main-record size/SHA-256 gates run before Unicorn import. Compatible Cortex-A9 ARM/Thumb code executes on the PC with code/write guards and 192-instruction / 0.5-second limits per stage.
 
 Firmware, scoped primary-low pages and the stop page are read/execute; supplied objects, globals and stack pages are read/write without execute permission. No native calls are stubbed. Allocation, OS queue delivery, logger bodies, all capture-handler branches, hardware timing, pixels, cache coherence and a frame lease remain unverified. Camera bindings are disabled; camera and SD card are untouched.

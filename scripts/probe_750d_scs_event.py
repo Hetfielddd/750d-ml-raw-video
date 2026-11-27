@@ -19,7 +19,8 @@ def probe(data):
                          UC_PROT_READ, UC_PROT_WRITE, UC_PROT_EXEC)
     from unicorn.arm_const import (UC_CPU_ARM_CORTEX_A9, UC_ARM_REG_R0, UC_ARM_REG_R1,
                                    UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_R4,
-                                   UC_ARM_REG_R8, UC_ARM_REG_SP, UC_ARM_REG_LR)
+                                   UC_ARM_REG_R6, UC_ARM_REG_R8, UC_ARM_REG_R9, UC_ARM_REG_R10,
+                                   UC_ARM_REG_SP, UC_ARM_REG_LR)
     base, low_source = 0xfe0a0000, 0xfed58b7c
     obj, owner, stack, stop = 0x100000, 0x101000, 0x10d000, 0x10f000
     table, name, handler = 0xfea06d08, 0xfed522f8, 0xfe13dc5e
@@ -54,7 +55,9 @@ def probe(data):
                (0xfe4382a0, 0xfe4382ca), (0xfe4382fa, 0xfe438328),
                (0xfe132b48, 0xfe132ba0), (0xfe3ce004, 0xfe3ce008),
                (0x2090, 0x20ae), (0xfe13dc84, 0xfe13dc94),
-               (0xfe13dd78, 0xfe13ddb0))
+               (0xfe13dd78, 0xfe13ddb0), (0xfe13e17c, 0xfe13e192),
+               (0xfe13e97e, 0xfe13e986), (0xfe13e05e, 0xfe13e096),
+               (0xfe13e172, 0xfe13e17c))
     queue, envelope, loop_sp = 0x102000, 0x103000, stack - 64
 
     def run(entry, target, supplied=(), entry_sp=stack):
@@ -72,9 +75,10 @@ def probe(data):
             if not (stack - 256 <= address and address + size <= stack + 8
                     or obj <= address and address + size <= obj + 32
                     or owner <= address and address + size <= owner + 16
+                    or (address, size) == (owner + 56, 4)
                     or queue <= address and address + size <= queue + 28
                     or envelope <= address and address + size <= envelope + 16
-                    or size == 4 and address in (0x4988, 0x263c4, 0x26420)):
+                    or size == 4 and address in (0x4988, 0x263c4, 0x26418, 0x26420)):
                 errors.append(f'Unexpected SCS write: {address:#x}/{size}')
                 emulator.emu_stop()
 
@@ -212,8 +216,57 @@ def probe(data):
                               'stopped_before': hex(target),
                               'native_worker_returned_to_next_receive': not bool(branch),
                               'queue_delivery_executed': False, 'passed': True})
+    flag_cases = []
+    # Reviewed mid-handler flag consumer. Earlier calls are not executed or
+    # assumed successful; only these supplied-register decision slices run.
+    for initial in (0, 1, 2):
+        put(0x26420, initial)
+        target = handler if initial == 1 else 0xfe13d110
+        run(0xfe13e17c, target,
+            ((UC_ARM_REG_R6, 0x263bc), (UC_ARM_REG_R4, owner),
+             (UC_ARM_REG_R9, 0x12345678), (UC_ARM_REG_R10, 0x87654321)))
+        expected_args = [owner, 0x12345678, 0x87654321] if initial == 1 else [0x1234]
+        if args()[:len(expected_args)] != expected_args or word(0x26420) != initial:
+            raise RuntimeError('SCS retained completion flag did not select the exact-one branch')
+        flag_cases.append({'case': 'completion_flag_reader', 'initial_flag': initial,
+                           'reenters_completion_handler': initial == 1,
+                           'flag_after_read': word(0x26420), 'stopped_before': hex(target), 'passed': True})
+    for initial in (0, 1):
+        put(0x263bc + 108, 1)
+        put(0x26420, initial)
+        put(owner + 56, 0)
+        # Prefix natively produces R7=1; it is retained across the explicit
+        # unexecuted middle-handler/helper cuts, rather than supplied at store.
+        run(0xfe13e05e, 0xfe3ce0fc,
+            ((UC_ARM_REG_R0, owner), (UC_ARM_REG_R1, 0x12345678),
+             (UC_ARM_REG_R2, 0x87654321), (UC_ARM_REG_R9, 0x12345678)))
+        run(0xfe13e172, 0xfe13ddb0, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if word(owner + 56) != 1:
+            raise RuntimeError('Native follow-up handler did not publish owner field56')
+        target = handler if initial == 1 else 0xfe13d110
+        run(0xfe13e17c, target, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if initial == 1:
+            run(handler, 0xfe3ce0fc, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+            run(0xfe13dc84, 0xfe4046ba, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if word(0x26420) != initial or word(owner + 56) != 1:
+            raise RuntimeError('Follow-up changed the retained flag/owner readiness unexpectedly')
+        flag_cases.append({'case': 'native_followup_readiness_publication', 'initial_flag': initial,
+                           'owner_field56_after_native_store': 1,
+                           'reentered_nonzero_completion_branch': initial == 1,
+                           'flag_after_followup': word(0x26420),
+                           'stopped_before': hex(0xfe4046ba if initial else target), 'passed': True})
+    put(0x26418, 0x12345678)
+    put(0x26420, 1)
+    # Actual reset prefix reloads its own global base and zero value. It stops
+    # before a subsequent decision; preceding capture/helper calls are omitted.
+    run(0xfe13e97e, 0xfe13e986)
+    if word(0x26420) != 0 or word(0x26418) != 0:
+        raise RuntimeError('Native capture-path reset did not clear both software fields')
+    flag_cases.append({'case': 'capture_path_completion_flag_reset',
+                       'cleared_addresses': ['0x26418', '0x26420'], 'passed': True})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
             'separate_constructor_worker_routing_cases': routing_cases,
+            'separate_flag_lifecycle_cases': flag_cases,
             'constructor_name': 'SCSState', 'matrix': hex(table), 'event7_active_states': list(active),
             'native_calls_stubbed': False, 'os_queue_delivery_validated': False,
             'native_constructor_worker_object_association_checked': True,
@@ -231,6 +284,9 @@ def probe(data):
                       'Loop stack inputs are supplied from native envelope words; '
                       'one supplied completion branch returns, another stops at its '
                       'first mode query. Active matrix-only cases stop at the logger. '
+                      'Separate flag/readiness slices preserve native-produced readiness '
+                      'value across unexecuted intervening helpers, test exact-one '
+                      'reentry and native reset; they do not execute full capture handlers. '
                       'No sensor transfer, pixels, completed capture or buffer ownership modeled.'}
 
 

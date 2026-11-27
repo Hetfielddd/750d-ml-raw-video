@@ -261,6 +261,58 @@
       "passed": true
     }
   ],
+  "separate_flag_lifecycle_cases": [
+    {
+      "case": "completion_flag_reader",
+      "initial_flag": 0,
+      "reenters_completion_handler": false,
+      "flag_after_read": 0,
+      "stopped_before": "0xfe13d110",
+      "passed": true
+    },
+    {
+      "case": "completion_flag_reader",
+      "initial_flag": 1,
+      "reenters_completion_handler": true,
+      "flag_after_read": 1,
+      "stopped_before": "0xfe13dc5e",
+      "passed": true
+    },
+    {
+      "case": "completion_flag_reader",
+      "initial_flag": 2,
+      "reenters_completion_handler": false,
+      "flag_after_read": 2,
+      "stopped_before": "0xfe13d110",
+      "passed": true
+    },
+    {
+      "case": "native_followup_readiness_publication",
+      "initial_flag": 0,
+      "owner_field56_after_native_store": 1,
+      "reentered_nonzero_completion_branch": false,
+      "flag_after_followup": 0,
+      "stopped_before": "0xfe13d110",
+      "passed": true
+    },
+    {
+      "case": "native_followup_readiness_publication",
+      "initial_flag": 1,
+      "owner_field56_after_native_store": 1,
+      "reentered_nonzero_completion_branch": true,
+      "flag_after_followup": 1,
+      "stopped_before": "0xfe4046ba",
+      "passed": true
+    },
+    {
+      "case": "capture_path_completion_flag_reset",
+      "cleared_addresses": [
+        "0x26418",
+        "0x26420"
+      ],
+      "passed": true
+    }
+  ],
   "constructor_name": "SCSState",
   "matrix": "0xfea06d08",
   "event7_active_states": [
@@ -277,5 +329,5 @@
   "all_handler_branches_completed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Actual constructor argument preparation and primary low-kernel constructor/dispatcher slices. Allocation stops at its boundary; a separate post-allocation slice publishes into supplied scratch. Current states, owner and event delivery are fixtures. Candidate SCSState is distinct from EVF. Additional constructor/worker cases check its static object association across explicit owner, queue, envelope allocation and task-create/delivery/free cuts. No OS queue operation or successful allocator return is fabricated. Loop stack inputs are supplied from native envelope words; one supplied completion branch returns, another stops at its first mode query. Active matrix-only cases stop at the logger. No sensor transfer, pixels, completed capture or buffer ownership modeled."
+  "limits": "Actual constructor argument preparation and primary low-kernel constructor/dispatcher slices. Allocation stops at its boundary; a separate post-allocation slice publishes into supplied scratch. Current states, owner and event delivery are fixtures. Candidate SCSState is distinct from EVF. Additional constructor/worker cases check its static object association across explicit owner, queue, envelope allocation and task-create/delivery/free cuts. No OS queue operation or successful allocator return is fabricated. Loop stack inputs are supplied from native envelope words; one supplied completion branch returns, another stops at its first mode query. Active matrix-only cases stop at the logger. Separate flag/readiness slices preserve native-produced readiness value across unexecuted intervening helpers, test exact-one reentry and native reset; they do not execute full capture handlers. No sensor transfer, pixels, completed capture or buffer ownership modeled."
 }
