@@ -32,6 +32,8 @@ The reviewed cleanup body beginning `0xFE750FE4` contains a separate post-IRQ-di
 
 ## Reproduction and limits
 
+A later same-object sequence executes the timer's actual event update, native start wait and clear, and separately entered RAW command call. Its blocking and empty-address controls further characterize what the event gate permits. [Start after timer](750d-start-after-timer.md).
+
 ```sh
 python scripts/probe_750d_start_gate.py /private/750d-analysis/record-06.bin
 ```

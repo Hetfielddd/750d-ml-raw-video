@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Executed the timer update and native start wait/clear on the same event object, followed by the RAW call site across explicit component-helper cuts. Four scenarios cover enabled/disabled timer, preseeded flags and empty pending address. Register-read guards confirm that these slices accept software flags without consulting channel status. [Timer-to-start checks](750d-start-after-timer.md).
+
 - Ran the two-buffer source through the ARM recorder and both PC file backends. The independent MLV parser verified exactly three valid frames in each delayed-completion run, including their timestamps, crop metadata and payload hashes. The four normal and short-write regression cases also passed. [Disk verification](raw14-disk-bridge.md#verified-scenarios).
 
 - Added a two-buffer PC source through the existing capture API. ARM tests verify rejection of delayed, duplicate and partial completions, including reuse of the same address, plus ordered output and source protection during copy. The test producer supplies transfer identity and byte count. [PC source checks](raw14-capture-source.md#pc-verification).

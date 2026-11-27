@@ -1,0 +1,116 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "cases": [
+    {
+      "timer_enabled": false,
+      "supplied_flags": "0x27f",
+      "flags_after_timer": "0x27f",
+      "start_gate_returned": false,
+      "pending_address_before_start": "0x5c62c000",
+      "saved_component_word": "0x22",
+      "timer_stores": [],
+      "flags_at_end": "0x27f",
+      "final_stage_stores": []
+    },
+    {
+      "timer_enabled": true,
+      "supplied_flags": "0x200",
+      "flags_after_timer": "0x8000027f",
+      "start_gate_returned": true,
+      "pending_address_before_start": "0x5c62c000",
+      "saved_component_word": "0x22",
+      "timer_stores": [
+        [
+          "0x100008",
+          "0x8000027f"
+        ]
+      ],
+      "flags_at_end": "0x200",
+      "final_stage_stores": [
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd0004104",
+          "0x20000000"
+        ],
+        [
+          "0xd0004100",
+          "0x1"
+        ],
+        [
+          "0xd0037014",
+          "0x22"
+        ],
+        [
+          "0xd0008090",
+          "0x1"
+        ]
+      ]
+    },
+    {
+      "timer_enabled": true,
+      "supplied_flags": "0x200",
+      "flags_after_timer": "0x8000027f",
+      "start_gate_returned": true,
+      "pending_address_before_start": "0x0",
+      "saved_component_word": "0x22",
+      "timer_stores": [
+        [
+          "0x100008",
+          "0x8000027f"
+        ]
+      ],
+      "flags_at_end": "0x210",
+      "final_stage_stores": [
+        [
+          "0x1ac1834",
+          "0x10"
+        ],
+        [
+          "0x100008",
+          "0x210"
+        ]
+      ]
+    },
+    {
+      "timer_enabled": false,
+      "supplied_flags": "0x8000027f",
+      "flags_after_timer": "0x8000027f",
+      "start_gate_returned": true,
+      "pending_address_before_start": "0x5c62c000",
+      "saved_component_word": "0x22",
+      "timer_stores": [],
+      "flags_at_end": "0x200",
+      "final_stage_stores": [
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd0004104",
+          "0x20000000"
+        ],
+        [
+          "0xd0004100",
+          "0x1"
+        ],
+        [
+          "0xd0037014",
+          "0x22"
+        ],
+        [
+          "0xd0008090",
+          "0x1"
+        ]
+      ]
+    }
+  ],
+  "physical_register_reads": false,
+  "native_calls_stubbed": false,
+  "hardware_completion_validated": false,
+  "camera_binding_enabled": false,
+  "limits": "Supplied enabled timer and no-waiter event object, descriptor, normal RAW state and passive register RAM. Separate native slices omit descriptor preparation, intermediate driver and SAF starts. No success returns are supplied. Timer invocation and initial flags are fixture inputs. Physical DMA, scheduling, frame identity and buffer reuse timing remain unverified."
+}
