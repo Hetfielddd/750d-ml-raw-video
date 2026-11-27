@@ -619,11 +619,479 @@
       "passed": true
     }
   ],
+  "liveview_configuration_cases": [
+    {
+      "selector": 1,
+      "setup_stores": [
+        {
+          "address": "0xd0005004",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd00370d4",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037074",
+          "value": "0x0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x80000000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008094",
+          "value": "0x20",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004140",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000410c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004110",
+          "value": "0x4370e00",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004114",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004118",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000411c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004120",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004124",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004128",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008264",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008bf0",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008268",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008098",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x40000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x40000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "start_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x60000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "status_samples": [
+        {
+          "supplied_status": "0x2",
+          "low_two_bits": 2,
+          "bit_two": 0
+        },
+        {
+          "supplied_status": "0x6",
+          "low_two_bits": 2,
+          "bit_two": 1
+        },
+        {
+          "supplied_status": "0x102",
+          "low_two_bits": 2,
+          "bit_two": 0
+        }
+      ],
+      "physical_address_word": "0x1c62d000",
+      "programmed_address_shadow": "0x1c62c000",
+      "passed": true
+    },
+    {
+      "selector": 2,
+      "setup_stores": [
+        {
+          "address": "0xd0005004",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd00370d4",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037074",
+          "value": "0x0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x80000000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008094",
+          "value": "0x20",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004140",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000410c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004110",
+          "value": "0x4370e00",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004114",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004118",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000411c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004120",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004124",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004128",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008264",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008bf0",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x1008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x1008",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "start_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20001008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "status_samples": [
+        {
+          "supplied_status": "0x2",
+          "low_two_bits": 2,
+          "bit_two": 0
+        },
+        {
+          "supplied_status": "0x6",
+          "low_two_bits": 2,
+          "bit_two": 1
+        },
+        {
+          "supplied_status": "0x102",
+          "low_two_bits": 2,
+          "bit_two": 0
+        }
+      ],
+      "physical_address_word": "0x1c62d000",
+      "programmed_address_shadow": "0x1c62c000",
+      "passed": true
+    },
+    {
+      "selector": 3,
+      "setup_stores": [
+        {
+          "address": "0xd0005004",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd00370d4",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0037074",
+          "value": "0x0",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x80000000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0008094",
+          "value": "0x20",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004140",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000410c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004110",
+          "value": "0x4370e00",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004114",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004118",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd000411c",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004120",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004124",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004128",
+          "value": "0x0",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x8",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "start_stores": [
+        {
+          "address": "0xd0004108",
+          "value": "0x1c62c000",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004104",
+          "value": "0x20000008",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0004100",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0xd0037014",
+          "value": "0xa5a5b5e2",
+          "irq_masked": true
+        },
+        {
+          "address": "0xd0008090",
+          "value": "0x1",
+          "irq_masked": false
+        },
+        {
+          "address": "0x1ac2244",
+          "value": "0x0",
+          "irq_masked": false
+        }
+      ],
+      "status_samples": [
+        {
+          "supplied_status": "0x2",
+          "low_two_bits": 2,
+          "bit_two": 0
+        },
+        {
+          "supplied_status": "0x6",
+          "low_two_bits": 2,
+          "bit_two": 1
+        },
+        {
+          "supplied_status": "0x102",
+          "low_two_bits": 2,
+          "bit_two": 0
+        }
+      ],
+      "physical_address_word": "0x1c62d000",
+      "programmed_address_shadow": "0x1c62c000",
+      "passed": true
+    }
+  ],
   "native_calls_stubbed": false,
   "register_addresses_are_artificial_ram": true,
   "dma_or_peripheral_behavior_modeled": false,
   "pixel_memory_mapped": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Supplied initialized/non-alternate channel-1 state, shadow base, register RAM, packing markers and optional skip-address flag. Scoped driver/peer-kernel copies are experiment mappings, not validated boot relocation. Full reviewed RAW software handler executes register stores and native IRQ helpers; ordinary RAM acceptance is not peripheral command acceptance. Empty branches stop before the supplied callback. Additional direct-IRQ cases use supplied status and physical register markers and stop before the registered driver callback. No scheduler, transport, sensor, DMA, pixels, cache coherence or completion is modeled."
+  "limits": "Supplied initialized/non-alternate channel-1 state, shadow base, register RAM, packing markers and optional skip-address flag. Scoped driver/peer-kernel copies are experiment mappings, not validated boot relocation. Full reviewed RAW software handler executes register stores and native IRQ helpers; ordinary RAM acceptance is not peripheral command acceptance. Empty branches stop before the supplied callback. Additional direct-IRQ cases use supplied status and physical register markers and stop before the registered driver callback. Configuration cases use supplied local initializer context, omit callback registration and sample supplied register words after start. No scheduler, transport, sensor, DMA, pixels, cache coherence or completion is modeled."
 }

@@ -18,6 +18,8 @@ The upstream Magic Lantern EDMAC diagnostic compares the physical address with t
 
 The peer RAW IRQ tests still permit notification with supplied status 0 or 4. The primary IPC receive gate establishes the exact comparison used by one mode. Before a RAW recorder relies on `status == 2` or an end address, the channel configuration and the behavior of the physical status and address registers must be established in the Live View mode being recorded. [Peer IRQ comparison](750d-raw-notification.md#peer-irq-vector-through-native-exception-return).
 
+The later RAW initialization probe confirms distinct routing and control writes for the same channel. It also executes a driver status reader that masks the low two bits, in contrast to the IPC poll's whole-word comparison. [Native RAW setup](750d-raw-command-order.md#native-raw-setup-compared-with-ipc).
+
 ## Reproduction
 
 ```sh
