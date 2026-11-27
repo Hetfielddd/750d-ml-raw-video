@@ -59,6 +59,8 @@ Separate post-start calls execute three target driver readers against supplied r
 
 ## Consequence for a 7D2-style recorder
 
+The native reader's callers were subsequently traced through the physical-address import. The checked Image2 and Live View SAF shutdown paths pass address words to diagnostics. The reviewed RAW teardown helper performs a separate command write. [Native caller checks](750d-dma-address-callers.md).
+
 The donor's VSYNC callback redirects an upcoming capture and processes the opposite buffer. On the 750D route reviewed here, pending-address configuration is consumed once by software, normal address programming may replace an earlier override, and skip-address does not prevent command submission. The [two-command queue experiment](750d-task-queue-order.md) also shows that configurations share one pending slot.
 
 A reliable rotation protocol must therefore identify a destination-selection point relative to a qualified sensor completion boundary. Neither an empty callback, software handler return, pending clear nor skip-address flag supplies that boundary. This experiment improves the address/command-order evidence; image contents, packing, hardware completion, cache coherence and a safe copy interval remain unverified.

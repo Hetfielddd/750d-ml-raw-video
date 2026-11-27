@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- Nine PC checks trace the physical DMA address reader into a Canon Image2 diagnostic and Live View SAF shutdown. The reviewed RAW shutdown uses a separate command write. The address samples in these paths go to the logger. [Native DMA address callers](docs/750d-dma-address-callers.md).
 - Three PC sequences now execute native RAW routing, initialization and start. The RAW route programs `0xD0005004` with zero, while the IPC receiver uses `0x33`. Native readers distinguish the hardware address from its programmed shadow and return separate status fields. Completion of a sensor frame remains unverified. [RAW configuration comparison](docs/750d-raw-command-order.md#native-raw-setup-compared-with-ipc).
 - A Canon IPC receive routine polls the same channel registers as the 750D RAW writer and accepts an exact status word of 2. The wait branch reads the physical address only for logging. Sixteen PC checks verify this separate path on passive register RAM. Live View completion still needs qualification. [Channel status checks](docs/750d-channel-status.md).
 - Four PC cases now execute the peer IRQ vector, registered RAW handler and event update through native exception return. With IRQ `0x41` supplied in passive controller RAM, both tested channel status words lead to the RAW flag. The physical source and completion condition remain unverified. [Peer vector checks](docs/750d-raw-notification.md#peer-irq-vector-through-native-exception-return).

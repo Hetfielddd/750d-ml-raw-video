@@ -1,0 +1,121 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "teardown_wait_requests": [
+    {
+      "source": "0xfe822560",
+      "wait_mask": "0x7f",
+      "wait_executed": false
+    },
+    {
+      "source": "0xfe822c46",
+      "wait_mask": "0x7f",
+      "wait_executed": false
+    }
+  ],
+  "teardown_tail_cases": [
+    {
+      "source": "0xfe8225ac",
+      "raw_initialized": true,
+      "saf_initialized": false,
+      "saf_channels": [
+        1,
+        2
+      ],
+      "register_reads": [],
+      "raw_trigger_after": "0x80000000"
+    },
+    {
+      "source": "0xfe8225ac",
+      "raw_initialized": false,
+      "saf_initialized": true,
+      "saf_channels": [
+        1,
+        2
+      ],
+      "register_reads": [
+        "0xd0004208",
+        "0xd0004108"
+      ],
+      "raw_trigger_after": "0x0",
+      "logger_address_words": [
+        "0x1c62c100",
+        "0x1e004000"
+      ]
+    },
+    {
+      "source": "0xfe8225ac",
+      "raw_initialized": true,
+      "saf_initialized": true,
+      "saf_channels": [
+        2,
+        1
+      ],
+      "register_reads": [
+        "0xd0004108",
+        "0xd0004208"
+      ],
+      "raw_trigger_after": "0x80000000",
+      "logger_address_words": [
+        "0x1e004000",
+        "0x1c62c100"
+      ]
+    },
+    {
+      "source": "0xfe822c9e",
+      "raw_initialized": true,
+      "saf_initialized": false,
+      "saf_channels": [
+        1,
+        2
+      ],
+      "register_reads": [],
+      "raw_trigger_after": "0x80000000"
+    },
+    {
+      "source": "0xfe822c9e",
+      "raw_initialized": false,
+      "saf_initialized": true,
+      "saf_channels": [
+        1,
+        2
+      ],
+      "register_reads": [
+        "0xd0004208",
+        "0xd0004108"
+      ],
+      "raw_trigger_after": "0x0",
+      "logger_address_words": [
+        "0x1c62c100",
+        "0x1e004000"
+      ]
+    },
+    {
+      "source": "0xfe822c9e",
+      "raw_initialized": true,
+      "saf_initialized": true,
+      "saf_channels": [
+        2,
+        1
+      ],
+      "register_reads": [
+        "0xd0004108",
+        "0xd0004208"
+      ],
+      "raw_trigger_after": "0x80000000",
+      "logger_address_words": [
+        "0x1e004000",
+        "0x1c62c100"
+      ]
+    }
+  ],
+  "image_diagnostic": {
+    "register_reads": [
+      "0xd0004108"
+    ],
+    "logger_address_word": "0x1c62c100"
+  },
+  "native_calls_stubbed": false,
+  "live_frame_completion_validated": false,
+  "camera_binding_enabled": false
+}
