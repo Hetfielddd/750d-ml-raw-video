@@ -106,11 +106,55 @@
           "0x1"
         ]
       ]
+    },
+    {
+      "timer_enabled": true,
+      "supplied_flags": "0x200",
+      "flags_after_timer": "0x8000027f",
+      "start_gate_returned": true,
+      "pending_address_before_start": "0x5c62c000",
+      "saved_component_word": "0x22",
+      "timer_stores": [
+        [
+          "0x100008",
+          "0x8000027f"
+        ]
+      ],
+      "descriptor_helper_executed": true,
+      "preparation_register_stores": [
+        [
+          "0xd001a014",
+          "0x111"
+        ]
+      ],
+      "flags_at_end": "0x200",
+      "final_stage_stores": [
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd0004104",
+          "0x20000000"
+        ],
+        [
+          "0xd0004100",
+          "0x1"
+        ],
+        [
+          "0xd0037014",
+          "0x22"
+        ],
+        [
+          "0xd0008090",
+          "0x1"
+        ]
+      ]
     }
   ],
   "physical_register_reads": false,
   "native_calls_stubbed": false,
   "hardware_completion_validated": false,
   "camera_binding_enabled": false,
-  "limits": "Supplied enabled timer and no-waiter event object, descriptor, normal RAW state and passive register RAM. Separate native slices omit descriptor preparation, intermediate driver and SAF starts. No success returns are supplied. Timer invocation and initial flags are fixture inputs. Physical DMA, scheduling, frame identity and buffer reuse timing remain unverified."
+  "limits": "Supplied enabled timer and no-waiter event object, descriptor, normal RAW state and passive register RAM. The fifth case executes the disabled descriptor preparation branch completely. Other cases omit it. Separate native slices omit intermediate driver and SAF starts. No success returns are supplied. Timer invocation and initial flags are fixture inputs. Physical DMA, scheduling, frame identity and buffer reuse timing remain unverified."
 }

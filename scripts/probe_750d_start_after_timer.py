@@ -21,6 +21,8 @@ def probe(data):
     event, descriptor, stack, stop = 0x100000, 0x101000, 0x10d000, 0x10f000
     channel, packing, trigger = 0xd0004100, 0xd0037014, 0xd0008090
     pending_address, gate_mask = 0x5c62c000, 0x8000007f
+    preparation_state, preparation_settings = 0x1ad7ba8, 0x1ac388c
+    preparation_register = 0xd001a014
     ranges = ((0xfe750d04, 0xfe750d16), (0xfe750e1c, 0xfe750e46),
               (0xfe750e46, 0xfe750e4a), (0xfe750e52, 0xfe750e56), (0xfe74f118, 0xfe74f11c),
               (0xfe8395c4 - app_delta, 0xfe839642 - app_delta),
@@ -38,11 +40,16 @@ def probe(data):
               (0xfe74bbd4, 0xfe74bc06), (0xfe74bcd4, 0xfe74bcf2),
               (0xfe74bda2, 0xfe74bddc), (0xfe74f9b4, 0xfe74f9b8))
     ranges += tuple((lo - delta, hi - delta) for lo, hi in ranges[-6:])
+    ranges += ((0xfe74f434, 0xfe74f438), (0xfe86f080 - app_delta, 0xfe86f08a - app_delta),
+               (0xfe8954b8 - app_delta, 0xfe8954c2 - app_delta),
+               (0xfe8b7ddc - app_delta, 0xfe8b7e1a - app_delta),
+               (0xfe8b7eee - app_delta, 0xfe8b7ef2 - app_delta))
 
     cases = []
-    for timer_enabled, initial_flags, pending in (
-            (False, 0x27f, pending_address), (True, 0x200, pending_address),
-            (True, 0x200, 0), (False, gate_mask | 0x200, pending_address)):
+    for timer_enabled, initial_flags, pending, prepare in (
+            (False, 0x27f, pending_address, False), (True, 0x200, pending_address, False),
+            (True, 0x200, 0, False), (False, gate_mask | 0x200, pending_address, False),
+            (True, 0x200, pending_address, True)):
         uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB)
         uc.ctl_set_cpu_model(UC_CPU_ARM_CORTEX_A9)
         rx, rw = UC_PROT_READ | UC_PROT_EXEC, UC_PROT_READ | UC_PROT_WRITE
@@ -52,6 +59,10 @@ def probe(data):
             0x80002000, 0x80003000, 0x80004000, 0x80007000, 0x80008000,
             0x80009000, 0x8000a000, 0x8000c000, 0x8000f000))
         pages += tuple((page, page + app_delta) for page in (0x1bb7000, 0x1bed000))
+        if prepare:
+            pages += tuple((page, page + app_delta) for page in (
+                (0xfe8b7ddc - app_delta) & ~4095, (0xfe8954b8 - app_delta) & ~4095,
+                (0xfe86f080 - app_delta) & ~4095))
         for page, source in pages:
             uc.mem_map(page, 4096, rx)
             uc.mem_write(page, data[source - base:source - base + 4096])
@@ -59,6 +70,9 @@ def probe(data):
                            (shadow, 0x60000), (channel & ~4095, 4096),
                            (packing & ~4095, 4096), (trigger & ~4095, 4096)):
             uc.mem_map(page, size, rw)
+        if prepare:
+            uc.mem_map(preparation_state & ~4095, 4096, rw)
+            uc.mem_map(preparation_register & ~4095, 4096, rw)
         uc.mem_map(stop, 4096, rx)
 
         def put(address, value):
@@ -82,8 +96,12 @@ def probe(data):
         put(0x1ac40a4, shadow)
         uc.reg_write(UC_ARM_REG_CPSR, 0x13)
         hardware = (channel, channel + 4, channel + 8, packing, trigger)
+        if prepare:
+            hardware += (preparation_register,)
         allowed = {driver + 4, event + 8, descriptor + 84, raw + 36, 0x1ad81c8,
                    *hardware, *(shadow + (reg & 0x7ffff) for reg in hardware)}
+        if prepare:
+            allowed |= {preparation_state + 44, preparation_settings + 80}
         boundary, reached, errors, stores = stop, [], [], []
 
         def code_guard(emulator, address, size, _):
@@ -132,12 +150,22 @@ def probe(data):
                 or timer_stores != ([(event + 8, ready_flags)] if timer_enabled else [])
                 or uc.reg_read(UC_ARM_REG_SP) != stack or uc.reg_read(UC_ARM_REG_CPSR) & 0x80):
             raise RuntimeError('Unexpected timer event update')
-        run(0xfe750e1c, 0xfe74f434, argument=descriptor)
-        if word(descriptor + 84) != 0x22 or uc.reg_read(UC_ARM_REG_R0) != descriptor + 8:
+        run(0xfe750e1c, 0xfe750e2e if prepare else 0xfe74f434, argument=descriptor)
+        preparation_stores = stores.copy()
+        if word(descriptor + 84) != 0x22:
             raise RuntimeError('Wrong saved software component mask or start argument')
-        # Omit the descriptor's other component helper. The actual wait and
-        # clear below preserve the original start frame and consume no return
-        # value from the omitted call.
+        if prepare:
+            if (word(preparation_state + 44) != 0 or word(preparation_settings + 80) != 1
+                    or word(preparation_register) != 0x111
+                    or word(shadow + 0x1a014) != 0x111
+                    or preparation_stores != [(preparation_register, 0x111)]
+                    or uc.reg_read(UC_ARM_REG_SP) != stack - 16):
+                raise RuntimeError('Native disabled preparation branch did not return correctly')
+        elif uc.reg_read(UC_ARM_REG_R0) != descriptor + 8:
+            raise RuntimeError('Wrong descriptor preparation argument')
+        # Preserve the original start frame. The fifth case has executed the
+        # disabled preparation branch completely. Other cases enter this
+        # continuation across an explicit unexecuted preparation cut.
         ready = ready_flags & gate_mask == gate_mask
         run(0xfe750e2e, 0xfe74f1e0 if ready else 0xfe74bddc, fresh=False)
         if ready:
@@ -161,14 +189,19 @@ def probe(data):
                       'pending_address_before_start': hex(pending),
                       'saved_component_word': hex(word(descriptor + 84)),
                       'timer_stores': [[hex(a), hex(v)] for a, v in timer_stores],
+                      **({'descriptor_helper_executed': True,
+                          'preparation_register_stores': [[hex(a), hex(v)] for a, v in preparation_stores]}
+                         if prepare else {}),
                       'flags_at_end': hex(word(event + 8)),
                       'final_stage_stores': [[hex(a), hex(v)] for a, v in stores]})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
             'physical_register_reads': False, 'native_calls_stubbed': False,
             'hardware_completion_validated': False, 'camera_binding_enabled': False,
             'limits': 'Supplied enabled timer and no-waiter event object, descriptor, '
-                      'normal RAW state and passive register RAM. Separate native slices '
-                      'omit descriptor preparation, intermediate driver and SAF starts. '
+                      'normal RAW state and passive register RAM. The fifth case '
+                      'executes the disabled descriptor preparation branch completely. '
+                      'Other cases omit it. Separate native slices omit intermediate '
+                      'driver and SAF starts. '
                       'No success returns are supplied. Timer invocation and initial '
                       'flags are fixture inputs. Physical DMA, scheduling, frame identity '
                       'and buffer reuse timing remain unverified.'}

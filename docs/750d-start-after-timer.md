@@ -1,6 +1,6 @@
 # RAW start consumes timer-produced event flags
 
-Four PC sequences connect the actual timer callback, kernel event lookup and update, driver's start wait and clear, and separately entered RAW start call. In the enabled-timer fixture, the software reaches address and command programming with no physical register reads in the executed slices. This extends the earlier separate start-gate and no-work notification checks across the same event object and driver state. [Start gate](750d-start-gate.md) · [No-work notifications](750d-raw-notification.md).
+Five PC sequences connect the actual timer callback, kernel event lookup and update, driver's start wait and clear, and separately entered RAW start call. In the enabled-timer fixture, the software reaches address and command programming with no physical register reads in the executed slices. This extends the earlier separate start-gate and no-work notification checks across the same event object and driver state. [Start gate](750d-start-gate.md) · [No-work notifications](750d-raw-notification.md).
 
 ## Native sequence
 
@@ -16,12 +16,15 @@ Another independent slice begins at the real RAW call site `0xFE750E52`. It exec
 - Timer enabled, initial word `0x200`, nonzero pending address. Timer update creates `0x8000027F`, the native start wait succeeds, and the RAW slice programs normalized destination `0x1C62C000` and commands.
 - Timer enabled with the same initial event word and zero pending address. The wait and clear succeed. The RAW slice emits no channel commands and leaves event flags at `0x210` after its callback.
 - Timer disabled, initial word `0x8000027F`. The preseeded full mask permits the native wait and the subsequent RAW start slice.
+- Timer enabled with nonzero pending address and the descriptor preparation helper executed. With its extra-processing selector zero, the actual helper returns to the native start frame, and the subsequent gate and RAW programming match the earlier enabled-timer case.
 
 The test guards reject every physical register read. These cases therefore demonstrate how software event state admits the reviewed start path. A successful wait alone leaves the completion state and identity of any earlier physical transfer unresolved.
 
 ## Execution boundaries
 
-The descriptor's component helper, driver preparation between the gate and RAW call, and the SAF start are omitted by explicitly entering reviewed continuations. Their behavior may affect the live camera's ordering or state. The probe supplies the enabled-timer word, event object, event flags, pending address and normal RAW configuration. It invokes the timer directly. It establishes neither a live timer policy nor a hardware race. The callback uses null optional application notifications, as in the earlier no-work probe.
+In the fifth case the descriptor helper at source `0xFE8B7DDC` executes through its real import, configuration writer and return. It receives `descriptor + 8`, stores the input selector at offset 20 in its own global state, and selects an internal configuration value using that state's offset 40. The supplied zero selector skips its longer extra-processing branch. Another supplied input field selects the write of `0x111` to `0xD001A014`, through the actual register writer and shadow update. Neither the channel status nor address is read on this branch. The full helper restores its stack before returning to `0xFE750E2E`. The branch with selector 1 continues into multiple additional setup calls and remains unexecuted.
+
+The descriptor helper remains a cut in the original four cases. Driver preparation between the gate and RAW call, and the SAF start are omitted in every case by explicitly entering reviewed continuations. Their behavior may affect the live camera's ordering or state. The probe supplies the enabled-timer word, event object, event flags, pending address and normal RAW configuration. It invokes the timer directly. It establishes neither a live timer policy nor a hardware race. The callback uses null optional application notifications, as in the earlier no-work probe.
 
 ```sh
 python scripts/probe_750d_start_after_timer.py /private/750d-analysis/record-06.bin
