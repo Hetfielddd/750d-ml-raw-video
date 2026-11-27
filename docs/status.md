@@ -1,6 +1,6 @@
 # Research status
 
-Last updated: November 26, 2026.
+Last updated: November 27, 2026.
 
 Target: Canon EOS 750D / Rebel T6i, Canon firmware 1.1.0.
 Scope: PC-only research. The owner's camera and SD card have not been used.
@@ -11,7 +11,7 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 - Rechecked live upstream, 750D-focused and contributor branch heads and inspected key platform files. No new 750D RAW binding found in the checked sources. Compared 7D2's newer V3 full-width synchronous copy API with DIGIC7 V1/V2 and updated the integration plan without switching our baseline. See [November 26 source audit](upstream-review-2026-11-26.md).
 
-- Found a candidate primary SCSState matrix and executed its native constructor publication and event7 dispatcher across 18 states plus two rejection controls. Five states select `scsCompleteCapture`, thirteen have no handler. The callback queue's link to this object is still unverified; no capture body or frame lease is established. See [SCSState event7](750d-scs-event.md).
+- Executed the primary SCSState constructor/event7 matrix across 18 states plus two rejection controls, then six additional constructor/worker scenarios. Native publication links owner +8 to its queue and +12 to SCSState; the queue-selected worker resolves that same association through the real dispatcher. With owner +56 zero, a native post-logger branch sets a software flag and returns to the next receive boundary. Allocation, queue delivery, live ownership, other handler branches and a RAW-frame lease remain unverified. See [SCSState event7](750d-scs-event.md).
 
 - Identified the primary ShtCapture receiver and actual operation-13/14 callback registrations in six PC scenarios. Two real caller slices publish different CMOS callbacks; a checked operation-13 continuation prepares primary task event 7 with zero payload. Separate receiver epilogues prepare flags `0x1000`/`0x2000`; native null-callback controls still reach those boundaries. No callback completion, query/logger return, OS clear/set, transport delivery or EVF/RAW-frame association is inferred. See [primary CCD completion receiver](750d-ccd-receiver.md).
 

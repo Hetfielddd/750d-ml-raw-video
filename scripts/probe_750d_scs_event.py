@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Check the primary SCSState constructor and its actual event7 matrix dispatch.
 
-The callback queue-to-object link is not established. Allocation and handler
-execution past its first logger remain unexecuted; no frame ownership modeled.
+Native constructor and worker slices check the callback queue/object association
+across explicit allocation/delivery cuts. No frame ownership is modeled.
 """
 import argparse
 import hashlib
@@ -18,7 +18,8 @@ def probe(data):
     from unicorn import (Uc, UC_ARCH_ARM, UC_MODE_THUMB, UC_HOOK_CODE, UC_HOOK_MEM_WRITE,
                          UC_PROT_READ, UC_PROT_WRITE, UC_PROT_EXEC)
     from unicorn.arm_const import (UC_CPU_ARM_CORTEX_A9, UC_ARM_REG_R0, UC_ARM_REG_R1,
-                                   UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_SP, UC_ARM_REG_LR)
+                                   UC_ARM_REG_R2, UC_ARM_REG_R3, UC_ARM_REG_R4,
+                                   UC_ARM_REG_R8, UC_ARM_REG_SP, UC_ARM_REG_LR)
     base, low_source = 0xfe0a0000, 0xfed58b7c
     obj, owner, stack, stop = 0x100000, 0x101000, 0x10d000, 0x10f000
     table, name, handler = 0xfea06d08, 0xfed522f8, 0xfe13dc5e
@@ -30,6 +31,8 @@ def probe(data):
     uc.mem_map(0, 0x4000, UC_PROT_READ | UC_PROT_EXEC)
     uc.mem_write(0, data[low_source - base:low_source - base + 0x4000])
     uc.mem_map(obj, 0xe000, UC_PROT_READ | UC_PROT_WRITE)
+    uc.mem_map(0x4000, 4096, UC_PROT_READ | UC_PROT_WRITE)
+    uc.mem_map(0x26000, 4096, UC_PROT_READ | UC_PROT_WRITE)
     uc.mem_map(stop, 4096, UC_PROT_READ | UC_PROT_EXEC)
 
     def put(address, value):
@@ -43,6 +46,16 @@ def probe(data):
 
     ranges = ((0xfe13ca78, 0xfe13ca8e), (0x211a, 0x2150),
               (0x20ae, 0x211a), (handler, 0xfe13dc84))
+    ranges += ((0xfe13ca8e, 0xfe13ca9a), (0xfe132bd2, 0xfe132bde),
+               (0xfe132bde, 0xfe132be4), (0xfe132bec, 0xfe132c04),
+               (0xfe132bb8, 0xfe132bbe), (0xfe132c0c, 0xfe132c10),
+               (0xfe43832c, 0xfe43835c), (0xfe13e912, 0xfe13e91c),
+               (0xfe13e92a, 0xfe13e938), (0xfe43842e, 0xfe43845a),
+               (0xfe4382a0, 0xfe4382ca), (0xfe4382fa, 0xfe438328),
+               (0xfe132b48, 0xfe132ba0), (0xfe3ce004, 0xfe3ce008),
+               (0x2090, 0x20ae), (0xfe13dc84, 0xfe13dc94),
+               (0xfe13dd78, 0xfe13ddb0))
+    queue, envelope, loop_sp = 0x102000, 0x103000, stack - 64
 
     def run(entry, target, supplied=(), entry_sp=stack):
         errors, reached = [], []
@@ -56,8 +69,12 @@ def probe(data):
                 emulator.emu_stop()
 
         def write_guard(emulator, access, address, size, value, _):
-            if not (stack - 256 <= address and address + size <= stack
-                    or obj <= address and address + size <= obj + 32):
+            if not (stack - 256 <= address and address + size <= stack + 8
+                    or obj <= address and address + size <= obj + 32
+                    or owner <= address and address + size <= owner + 16
+                    or queue <= address and address + size <= queue + 28
+                    or envelope <= address and address + size <= envelope + 16
+                    or size == 4 and address in (0x4988, 0x263c4, 0x26420)):
                 errors.append(f'Unexpected SCS write: {address:#x}/{size}')
                 emulator.emu_stop()
 
@@ -120,17 +137,100 @@ def probe(data):
         if uc.reg_read(UC_ARM_REG_R0) != expected:
             raise RuntimeError('Native SCS rejection returned an unexpected value')
         cases.append({'case': label, 'native_return': expected, 'passed': True})
+    # Native constructor publications and worker routing, across declared
+    # allocation/task-create/queue-delivery cuts. This does NOT execute OS queue
+    # allocation/enqueue/dequeue. The loop consumes native envelope words copied
+    # into supplied post-receive stack slots, not a fabricated OS success return.
+    put(obj, signature)
+    routing_cases = []
+    for current, branch in [(state, 0) for state in active] + [(10, 1)]:
+        uc.mem_protect(envelope, 4096, UC_PROT_READ | UC_PROT_WRITE)
+        put(obj + 28, current)
+        put(owner + 40, 0x1234)
+        put(owner + 56, branch)
+        put(0x4988, 0)
+        put(0x26420, 0)
+        # The actual SCS constructor continuation publishes its native object.
+        run(0xfe13ca8e, 0xfe13ca9a, ((UC_ARM_REG_R0, obj),))
+        # Post-owner-allocation prefix prepares the real owner signature/R7.
+        run(0xfe132bd2, 0xfe132bda, ((UC_ARM_REG_R4, owner),))
+        run(0xfe132bde, 0xfe132bec, ((UC_ARM_REG_R0, obj),))
+        if word(owner + 12) != obj or word(0x263c4) != obj:
+            raise RuntimeError('Native constructor did not publish the SCS object association')
+        run(0xfe132bec, 0xfe43832c, ((UC_ARM_REG_R8, stop + 256),))
+        if word(stack) != 100 or word(stack + 4) != 0xfe132b49:
+            raise RuntimeError('Native context constructor did not select the real queue worker')
+        # Queue constructor prefix to allocation; separately initialize its
+        # post-allocation structural fragment. Queue/sem/task creation is omitted.
+        run(0xfe43832c, 0xfe3ce0e4)
+        if uc.reg_read(UC_ARM_REG_R0) != 28:
+            raise RuntimeError('Primary queue wrapper did not request a 28-byte object')
+        run(0xfe438342, 0xfe43835c, ((UC_ARM_REG_R0, queue),),
+            entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if word(queue + 24) != 0xfe132b49 or word(queue + 8) != 1:
+            raise RuntimeError('Native queue fragment did not publish its callback/active flag')
+        run(0xfe132c00, 0xfe132c04, ((UC_ARM_REG_R0, queue), (UC_ARM_REG_R4, owner)))
+        run(0xfe132bb8, 0xfe132bbe)
+        run(0xfe132c0c, 0xfe132c10)
+        if word(owner + 8) != queue or word(0x4988) != owner:
+            raise RuntimeError('Native context publication did not link queue and global owner')
+        # Real CMOS callback prefix plus separately entered post-logger slice;
+        # the continuation consumes no mode-query/logger return value.
+        run(0xfe13e912, 0xfe3ff59e, ((UC_ARM_REG_R0, owner),))
+        run(0xfe13e92a, 0xfe43842e, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if args() != [queue, owner, 7, 0]:
+            raise RuntimeError('CMOS callback did not use its natively published queue')
+        run(0xfe43842e, 0xfe3ce0e4, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if uc.reg_read(UC_ARM_REG_R0) != 16:
+            raise RuntimeError('Primary event request did not request a 16-byte envelope')
+        run(0xfe438454, 0xfe43845a, ((UC_ARM_REG_R0, envelope),),
+            entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        words = [word(envelope + offset) for offset in (0, 4, 8, 12)]
+        if words != [owner, 7, 0, 0]:
+            raise RuntimeError('Native primary envelope has an unexpected event/payload')
+        for offset, value in zip((24, 20, 16, 12), words):
+            put(loop_sp + offset, value)
+        uc.mem_protect(envelope, 4096, 0)
+        # Explicit unexecuted delivery/removal/free cut. Native loop loads these
+        # stack words and its constructor-selected worker, which resolves the
+        # natively published global-owner+12 state object itself.
+        run(0xfe438310, 0xfe3ce0fc, ((UC_ARM_REG_R4, queue),), entry_sp=loop_sp)
+        if word(obj + 28) != current:
+            raise RuntimeError('Native worker dispatch selected an unexpected SCS transition')
+        target = 0xfe4046ba if branch else 0xfe3cdfdc
+        run(0xfe13dc84, target, entry_sp=uc.reg_read(UC_ARM_REG_SP))
+        if word(0x26420) != (0 if branch else 1) or word(owner + 12) != obj:
+            raise RuntimeError('SCS completion branch changed its flag/object association unexpectedly')
+        if not branch and (uc.reg_read(UC_ARM_REG_SP) != loop_sp - 32
+                           or uc.reg_read(UC_ARM_REG_R0) != word(queue + 16)):
+            raise RuntimeError('Returning SCS worker did not reach the native receive wrapper frame')
+        routing_cases.append({'current_state': current, 'supplied_owner_field56': branch,
+                              'native_queue_callback': '0xfe132b49',
+                              'native_state_object_at_owner_offset': 12,
+                              'native_envelope_words': [hex(value) for value in words],
+                              'completion_flag_after_slice': word(0x26420),
+                              'stopped_before': hex(target),
+                              'native_worker_returned_to_next_receive': not bool(branch),
+                              'queue_delivery_executed': False, 'passed': True})
     return {'main_code_sha256': MAIN_SHA256, 'passed': True, 'cases': cases,
+            'separate_constructor_worker_routing_cases': routing_cases,
             'constructor_name': 'SCSState', 'matrix': hex(table), 'event7_active_states': list(active),
-            'native_calls_stubbed': False, 'queue_to_this_object_validated': False,
-            'allocation_or_handler_body_completed': False, 'camera_binding_enabled': False,
+            'native_calls_stubbed': False, 'os_queue_delivery_validated': False,
+            'native_constructor_worker_object_association_checked': True,
+            'allocation_executed': False, 'all_handler_branches_completed': False,
+            'camera_binding_enabled': False,
             'frame_lease_validated': False,
             'limits': 'Actual constructor argument preparation and primary low-kernel '
                       'constructor/dispatcher slices. Allocation stops at its boundary; '
                       'a separate post-allocation slice publishes into supplied scratch. '
                       'Current states, owner and event delivery are fixtures. Candidate '
-                      'SCSState is distinct from EVF; callback queue routing to this object '
-                      'is not established. Active handlers stop before their first logger. '
+                      'SCSState is distinct from EVF. Additional constructor/worker '
+                      'cases check its static object association across explicit owner, '
+                      'queue, envelope allocation and task-create/delivery/free cuts. '
+                      'No OS queue operation or successful allocator return is fabricated. '
+                      'Loop stack inputs are supplied from native envelope words; '
+                      'one supplied completion branch returns, another stops at its '
+                      'first mode query. Active matrix-only cases stop at the logger. '
                       'No sensor transfer, pixels, completed capture or buffer ownership modeled.'}
 
 

@@ -157,6 +157,110 @@
       "passed": true
     }
   ],
+  "separate_constructor_worker_routing_cases": [
+    {
+      "current_state": 10,
+      "supplied_owner_field56": 0,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 1,
+      "stopped_before": "0xfe3cdfdc",
+      "native_worker_returned_to_next_receive": true,
+      "queue_delivery_executed": false,
+      "passed": true
+    },
+    {
+      "current_state": 11,
+      "supplied_owner_field56": 0,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 1,
+      "stopped_before": "0xfe3cdfdc",
+      "native_worker_returned_to_next_receive": true,
+      "queue_delivery_executed": false,
+      "passed": true
+    },
+    {
+      "current_state": 14,
+      "supplied_owner_field56": 0,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 1,
+      "stopped_before": "0xfe3cdfdc",
+      "native_worker_returned_to_next_receive": true,
+      "queue_delivery_executed": false,
+      "passed": true
+    },
+    {
+      "current_state": 15,
+      "supplied_owner_field56": 0,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 1,
+      "stopped_before": "0xfe3cdfdc",
+      "native_worker_returned_to_next_receive": true,
+      "queue_delivery_executed": false,
+      "passed": true
+    },
+    {
+      "current_state": 16,
+      "supplied_owner_field56": 0,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 1,
+      "stopped_before": "0xfe3cdfdc",
+      "native_worker_returned_to_next_receive": true,
+      "queue_delivery_executed": false,
+      "passed": true
+    },
+    {
+      "current_state": 10,
+      "supplied_owner_field56": 1,
+      "native_queue_callback": "0xfe132b49",
+      "native_state_object_at_owner_offset": 12,
+      "native_envelope_words": [
+        "0x101000",
+        "0x7",
+        "0x0",
+        "0x0"
+      ],
+      "completion_flag_after_slice": 0,
+      "stopped_before": "0xfe4046ba",
+      "native_worker_returned_to_next_receive": false,
+      "queue_delivery_executed": false,
+      "passed": true
+    }
+  ],
   "constructor_name": "SCSState",
   "matrix": "0xfea06d08",
   "event7_active_states": [
@@ -167,9 +271,11 @@
     16
   ],
   "native_calls_stubbed": false,
-  "queue_to_this_object_validated": false,
-  "allocation_or_handler_body_completed": false,
+  "os_queue_delivery_validated": false,
+  "native_constructor_worker_object_association_checked": true,
+  "allocation_executed": false,
+  "all_handler_branches_completed": false,
   "camera_binding_enabled": false,
   "frame_lease_validated": false,
-  "limits": "Actual constructor argument preparation and primary low-kernel constructor/dispatcher slices. Allocation stops at its boundary; a separate post-allocation slice publishes into supplied scratch. Current states, owner and event delivery are fixtures. Candidate SCSState is distinct from EVF; callback queue routing to this object is not established. Active handlers stop before their first logger. No sensor transfer, pixels, completed capture or buffer ownership modeled."
+  "limits": "Actual constructor argument preparation and primary low-kernel constructor/dispatcher slices. Allocation stops at its boundary; a separate post-allocation slice publishes into supplied scratch. Current states, owner and event delivery are fixtures. Candidate SCSState is distinct from EVF. Additional constructor/worker cases check its static object association across explicit owner, queue, envelope allocation and task-create/delivery/free cuts. No OS queue operation or successful allocator return is fabricated. Loop stack inputs are supplied from native envelope words; one supplied completion branch returns, another stops at its first mode query. Active matrix-only cases stop at the logger. No sensor transfer, pixels, completed capture or buffer ownership modeled."
 }
