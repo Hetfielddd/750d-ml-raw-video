@@ -56,6 +56,8 @@ Channel status 0 and 4 exercise two different channel cleanup branches. Each rea
 
 This identifies where software obtains the IRQ number and how it uses it. The checked vector does not read a frame address or byte count. Which physical condition makes the controller present `0x41` remains an open question. The fixture supplies an already nested interrupt, so first-level IRQ scheduling and the controller's physical delivery or re-enable behavior remain outside the experiment.
 
+A later native check found a separate primary IPC receive path that programs the same channel register block and waits for an exact status word of 2. Its address read is diagnostic. Live View uses a separate configuration. [Channel status comparison](750d-channel-status.md).
+
 ## Reproduction and limits
 
 ```sh

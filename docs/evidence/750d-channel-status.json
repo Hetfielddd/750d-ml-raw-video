@@ -1,0 +1,267 @@
+{
+  "main_code_sha256": "3e9839972e28d659275ce27f8013629fbea5a34ff47a00d4f0df0715118f53a2",
+  "passed": true,
+  "diagnostic_dumps": [
+    {
+      "command": "ipcRecvDump",
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "command": "ipcSendDump",
+      "register_reads": [
+        "0xd0030930",
+        "0xd0030908"
+      ],
+      "passed": true
+    }
+  ],
+  "status_polls": [
+    {
+      "phase": 1,
+      "supplied_status": "0x2",
+      "supplied_address_word": "0x1c62c000",
+      "status_accepted": true,
+      "register_reads": [
+        "0xd0004130"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "supplied_status": "0x2",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": true,
+      "register_reads": [
+        "0xd0004130"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "supplied_status": "0x0",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "supplied_status": "0x4",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "supplied_status": "0x6",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "supplied_status": "0x102",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x2",
+      "supplied_address_word": "0x1c62c000",
+      "status_accepted": true,
+      "register_reads": [
+        "0xd0004130"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x2",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": true,
+      "register_reads": [
+        "0xd0004130"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x0",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x4",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x6",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "supplied_status": "0x102",
+      "supplied_address_word": "0x1c62e000",
+      "status_accepted": false,
+      "register_reads": [
+        "0xd0004130",
+        "0xd0004108"
+      ],
+      "passed": true
+    }
+  ],
+  "ipc_receive_configurations": [
+    {
+      "supplied_size": 4096,
+      "rounded_rows": 1,
+      "configuration_stores": [
+        [
+          "0xd0004100",
+          "0x0"
+        ],
+        [
+          "0xd0004104",
+          "0x40000003"
+        ],
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd000410c",
+          "0x0"
+        ],
+        [
+          "0xd0004110",
+          "0x1000"
+        ],
+        [
+          "0xd0004114",
+          "0x0"
+        ],
+        [
+          "0xd0004118",
+          "0x0"
+        ],
+        [
+          "0xd000411c",
+          "0x0"
+        ],
+        [
+          "0xd0004120",
+          "0x0"
+        ],
+        [
+          "0xd0004124",
+          "0x0"
+        ],
+        [
+          "0xd0004128",
+          "0x0"
+        ],
+        [
+          "0xd0005004",
+          "0x33"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "supplied_size": 4097,
+      "rounded_rows": 2,
+      "configuration_stores": [
+        [
+          "0xd0004100",
+          "0x0"
+        ],
+        [
+          "0xd0004104",
+          "0x40000003"
+        ],
+        [
+          "0xd0004108",
+          "0x1c62c000"
+        ],
+        [
+          "0xd000410c",
+          "0x0"
+        ],
+        [
+          "0xd0004110",
+          "0x11000"
+        ],
+        [
+          "0xd0004114",
+          "0x0"
+        ],
+        [
+          "0xd0004118",
+          "0x0"
+        ],
+        [
+          "0xd000411c",
+          "0x0"
+        ],
+        [
+          "0xd0004120",
+          "0x0"
+        ],
+        [
+          "0xd0004124",
+          "0x0"
+        ],
+        [
+          "0xd0004128",
+          "0x0"
+        ],
+        [
+          "0xd0005004",
+          "0x33"
+        ]
+      ],
+      "passed": true
+    }
+  ],
+  "native_calls_stubbed": false,
+  "hardware_completion_validated": false,
+  "camera_binding_enabled": false
+}

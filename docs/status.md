@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Connected the 750D RAW writer's physical register block to a separately configured Canon IPC receive path. Its two native polls accept status 2 exactly and read the physical address for logging while waiting. Sixteen PC checks cover diagnostics, both receive phases and configuration. IPC status behavior remains a candidate to compare with Live View. [Channel status checks](750d-channel-status.md).
+
 - Executed four nested peer IRQ vector scenarios from controller read through the natively registered channel-1 handler, RAW flag update, controller write/readback and exception return. Supplied status 0 and 4 both set the RAW flag. Passive register RAM supplies IRQ `0x41`; real delivery and the physical completion condition remain open. [Peer vector checks](750d-raw-notification.md#peer-irq-vector-through-native-exception-return).
 
 - Verified ten command-to-IRQ scenarios on passive register RAM with native start, address publication, stop request, shadow read and interrupt forwarding. The destination chosen at start and the next pending address can diverge. The checked IRQ path preserves both and forwards the registered context without identifying a transfer. Physical completion and buffer reuse remain unverified. [RAW interrupt address checks](750d-raw-command-order.md#destination-state-at-the-raw-interrupt).
