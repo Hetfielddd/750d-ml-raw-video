@@ -20,10 +20,11 @@ from test_raw14_arm import execute
 class ArmDiskIO:
     """Only the four IO functions cross to Python; recording logic remains ARM C."""
 
-    def __init__(self, file, fault=False, fio=False):
+    def __init__(self, file, fault=False, fio=False, delayed=False):
         self.file = file
         self.fault = fault
         self.fio = fio
+        self.delayed = delayed
         self.calls = dict.fromkeys(('write', 'seek', 'truncate', 'flush'), 0)
         self.injected = False
         self.errors = []
@@ -35,6 +36,7 @@ class ArmDiskIO:
                                        UC_ARM_REG_SP)
         operations = {symbols['bridge_' + name] & ~1: name for name in self.calls}
         emulator.mem_write(symbols['disk_demo_fault'], struct.pack('<I', int(self.fault)))
+        emulator.mem_write(symbols['disk_demo_delayed'], struct.pack('<I', int(self.delayed)))
 
         def intercept(uc, address, size, user_data):
             name = operations.get(address)
@@ -79,7 +81,7 @@ class ArmDiskIO:
         emulator.hook_add(UC_HOOK_CODE, intercept)
 
 
-def verify(path, fault, fio=False):
+def verify(path, fault, fio=False, delayed=False):
     data = path.read_bytes()
     finalized = not (fault and fio)
     if not finalized:
@@ -101,16 +103,19 @@ def verify(path, fault, fio=False):
     else:
         checked = data
     report = inspect_mlv(checked)
-    ids = [0] if fault else [i for i in range(48) if i % 4 != 3]
+    if delayed:
+        ids = [2, 5, 6]
+    else:
+        ids = [0] if fault else [i for i in range(48) if i % 4 != 3]
     expected = []
     for frame_id in ids:
         crop_y = 2
         payload = bytes((frame_id * 17 + i) % 256
                         for i in range(crop_y * 112, crop_y * 112 + 3584))
-        expected.append({'number': frame_id, 'timestamp_us': frame_id * 1000000 // 24,
+        expected.append({'number': frame_id - ids[0], 'timestamp_us': frame_id * 1000000 // 24,
                          'crop_y': crop_y, 'payload_sha256': hashlib.sha256(payload).hexdigest()})
     if report['frames'] != expected or report['flags'] != (8 if fault else 2):
-        raise RuntimeError('Disk output differs from the independent frame model')
+        raise RuntimeError(f'{path.name}: disk output differs from the independent frame model')
     return {'path': str(path), 'complete_frames_verified': len(ids), 'bytes': len(data),
             'finalized': finalized, 'payloads_verified': True}
 
@@ -131,7 +136,8 @@ def main():
                     '-ffreestanding', '-fno-builtin', '-mcpu=cortex-r4', '-mthumb',
                     '-nostdlib', '-Wl,-e,test_run', '-Wl,-Ttext=0x10000', '-Wl,-Tdata=0x20000',
                     *[str(project / 'experimental' / f) for f in
-                      ('raw14_copy.c', 'raw14_queue.c', 'raw14_capture.c', 'raw14_mlv.c', 'raw14_disk_demo.c')],
+                      ('raw14_copy.c', 'raw14_queue.c', 'raw14_capture.c', 'raw14_pc_source.c',
+                       'raw14_mlv.c', 'raw14_disk_demo.c')],
                     '-lgcc']
     nm = compiler.with_name(compiler.name.replace('gcc', 'nm'))
     results = {}
@@ -144,16 +150,18 @@ def main():
             parts = line.split()
             if len(parts) == 3:
                 symbols[parts[2]] = int(parts[0], 16)
-        for name, fault in (('normal', False), ('partial-write', True)):
+        for name in ('normal', 'partial-write', 'delayed-completion'):
+            fault = name == 'partial-write'
+            delayed = name == 'delayed-completion'
             case = backend + '-' + name
             path = run / (case + '.MLV')
             with path.open('xb', buffering=0) as file:
-                bridge = ArmDiskIO(file, fault, fio)
+                bridge = ArmDiskIO(file, fault, fio, delayed)
                 execute(elf, 'raw14_disk_demo.c', symbols, io_bridge=bridge,
                         instruction_limit=30_000_000)
             if bridge.errors or bridge.injected != fault or (fio and bridge.calls['truncate']):
                 raise RuntimeError(f'Unexpected host IO outcome: {bridge.errors}')
-            results[case] = {**verify(path, fault, fio), 'io_calls': bridge.calls,
+            results[case] = {**verify(path, fault, fio, delayed), 'io_calls': bridge.calls,
                              'error_injected': bridge.injected}
     print(json.dumps({'passed': True, 'hardware_validated': False, 'cases': results}, indent=2))
 

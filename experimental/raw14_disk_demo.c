@@ -4,6 +4,7 @@
  */
 #include "raw14_mlv.h"
 #include "raw14_capture.h"
+#include "raw14_pc_source.h"
 #ifdef RAW14_USE_FIO
 #include "raw14_fio.h"
 #endif
@@ -11,16 +12,23 @@
 #define HEIGHT 32
 #define PITCH (WIDTH / 4 * 7)
 #define BYTES (PITCH * HEIGHT)
-static uint8_t capture[PITCH * (HEIGHT + 4)], storage[3][BYTES], info[160];
+static uint8_t capture[PITCH * (HEIGHT + 4)], alternate[sizeof(capture)], storage[3][BYTES], info[160];
 static unsigned demo_id, source_held;
 volatile uint32_t disk_demo_fault;
+volatile uint32_t disk_demo_delayed;
+static void fill(uint8_t *data, unsigned frame_id)
+{
+    unsigned i;
+    for (i = 0; i < sizeof(capture); ++i)
+        data[i] = (uint8_t)(frame_id * 17 + i);
+}
 static int source_begin(void *ctx) { (void)ctx; source_held=0; return 0; }
 static int source_end(void *ctx) { (void)ctx; return source_held ? -1 : 0; }
 static int source_acquire(void *ctx,struct raw14_source_view *view)
 {
-    unsigned i; (void)ctx;
+    (void)ctx;
     if(source_held) return -1;
-    for(i=0;i<sizeof(capture);++i) capture[i]=(uint8_t)(demo_id*17+i);
+    fill(capture, demo_id);
     source_held=1;
     *view=(struct raw14_source_view){
         {capture,sizeof(capture),WIDTH,HEIGHT+4,PITCH,14},
@@ -58,12 +66,65 @@ static int copy(void *ctx, void *dst, const void *src, size_t n)
 static void put32(unsigned offset, uint32_t value)
 { unsigned i; for(i=0;i<4;++i) info[offset+i]=(uint8_t)(value>>(8*i)); }
 #define CHECK(c) do { if(!(c)) return __LINE__; } while(0)
+
+static int arm_frame(struct raw14_pc_source *source, unsigned slot, unsigned sequence)
+{
+    uint64_t id;
+    uint64_t timestamp = 1000000 + (uint64_t)sequence * 1000000 / 24;
+    if (raw14_pc_source_arm(source, slot, timestamp, &id) != RAW14_OK || id != sequence)
+        return -1;
+    fill(slot == 0 ? capture : alternate, sequence);
+    return 0;
+}
+
+static int write_delayed_frames(struct raw14_pc_source *source, struct raw14_capture *input,
+                                struct raw14_queue *queue, struct raw14_mlv_writer *writer)
+{
+    unsigned i;
+    CHECK(!arm_frame(source, 0, 1) && !arm_frame(source, 1, 2));
+    CHECK(raw14_pc_source_complete(source, 1, sizeof(capture)) == RAW14_NOT_READY);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_NO_FRAME);
+    CHECK(raw14_pc_source_complete(source, 2, sizeof(capture)) == RAW14_OK);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_OK);
+
+    CHECK(!arm_frame(source, 0, 3));
+    CHECK(raw14_pc_source_complete(source, 3, sizeof(capture) - 1) == RAW14_BOUNDS);
+    CHECK(raw14_pc_source_complete(source, 3, sizeof(capture)) == RAW14_NOT_READY);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_NO_FRAME);
+
+    CHECK(!arm_frame(source, 0, 4) && !arm_frame(source, 0, 5));
+    CHECK(raw14_pc_source_complete(source, 4, sizeof(capture)) == RAW14_NOT_READY);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_NO_FRAME);
+    CHECK(raw14_pc_source_complete(source, 5, sizeof(capture)) == RAW14_OK);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_OK);
+
+    /* Reuse both source buffers before writing the first queued frame. */
+    CHECK(!arm_frame(source, 1, 6));
+    CHECK(raw14_pc_source_complete(source, 6, sizeof(capture)) == RAW14_OK);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_OK);
+    CHECK(!arm_frame(source, 0, 7));
+    CHECK(raw14_pc_source_complete(source, 7, sizeof(capture)) == RAW14_OK);
+    CHECK(raw14_capture_poll(input) == RAW14_CAPTURE_DROPPED);
+    CHECK(raw14_pc_source_complete(source, 7, sizeof(capture)) == RAW14_NOT_READY);
+
+    CHECK(!arm_frame(source, 0, 8));
+    CHECK(raw14_capture_stop(input) == RAW14_CAPTURE_OK);
+    CHECK(raw14_pc_source_complete(source, 8, sizeof(capture)) == RAW14_NOT_READY);
+    CHECK(queue->accepted_frames == 3 && queue->overflow_frames == 1);
+    for (i = 0; i < 3; ++i)
+        CHECK(raw14_mlv_write_next(writer) == RAW14_MLV_OK);
+    CHECK(raw14_mlv_write_next(writer) == RAW14_MLV_EMPTY);
+    CHECK(raw14_mlv_finish(writer) == RAW14_MLV_OK && writer->frames == 3);
+    return 0;
+}
+
 int test_run(void)
 {
     struct raw14_queue queue;
     struct raw14_engine engine={copy,0,0};
     struct raw14_frame buffers[3];
     struct raw14_capture input;
+    struct raw14_pc_source pc_source;
     struct raw14_source_ops source={0,source_begin,source_end,source_acquire,source_release};
     struct raw14_capture_config input_config={RAW14_SOURCE_PC_SYNTHETIC,WIDTH,HEIGHT+4,2,PITCH};
     struct raw14_mlv_writer writer;
@@ -83,12 +144,21 @@ int test_run(void)
     put32(72,1); put32(76,0x02010100); put32(80,1);
     for(i=0;i<9;++i) { put32(84+i*8,i%4==0 ? 10000 : 0); put32(88+i*8,10000); }
     CHECK(raw14_queue_init(&queue,buffers,3,1)==RAW14_Q_OK);
+    if (disk_demo_delayed) {
+        const struct raw14_frame slots[RAW14_PC_BUFFERS] = {
+            {capture, sizeof(capture), WIDTH, HEIGHT + 4, PITCH, 14},
+            {alternate, sizeof(alternate), WIDTH, HEIGHT + 4, PITCH, 14},
+        };
+        CHECK(raw14_pc_source_init(&pc_source, slots, &source) == RAW14_OK);
+    }
     CHECK(raw14_capture_init(&input,&queue,&engine,&source,&input_config)==RAW14_CAPTURE_OK);
     CHECK(raw14_capture_start(&input)==RAW14_CAPTURE_OK);
 #ifdef RAW14_USE_FIO
     CHECK(raw14_fio_init(&adapter,0,&ops,&io)==0);
 #endif
     CHECK(raw14_mlv_begin(&writer,&queue,&io,&config)==RAW14_MLV_OK);
+    if (disk_demo_delayed)
+        return write_delayed_frames(&pc_source, &input, &queue, &writer);
     if(disk_demo_fault) {
         for(id=0;id<2;++id) {
             demo_id=id;

@@ -18,12 +18,13 @@ The bridge uses the AAPCS32 argument convention: a 64-bit seek/truncate argument
 
 ## Verified scenarios
 
-The synthetic recorder now obtains frames through the [completed-frame source layer](raw14-capture-source.md). It uses a fixed two-row crop and immediately overwrites source memory on release, before queued output is written. Payload verification therefore also checks that the output owns its copy.
+The synthetic recorder obtains frames through the completed-frame source layer and uses a fixed two-row crop. The original scenario overwrites each source buffer on release. The delayed-completion scenario reuses both source slots before the first queue entry is written. In both cases, payload verification checks that the queue owns its copy. [Completed-frame source](raw14-capture-source.md).
 
-The harness now runs both the direct backend below and an [ML-style FIO contract adapter](raw14-fio-adapter.md), producing four files per run. The FIO variant makes no truncate calls: normal output finalizes, while a partial tail remains explicitly unfinalized. The rollback behavior described below applies to the direct backend, which has real host truncation available.
+The harness runs a direct backend and an ML-style FIO contract adapter, producing six files per run. The FIO variant makes no truncate calls. Successful outputs finalize, while a partial tail remains explicitly unfinalized. The direct backend can truncate its PC file to the last complete frame. [FIO contract adapter](raw14-fio-adapter.md).
 
 - Normal: 48 synthetic 64x32 frame submissions into three slots, drained after every four submissions. The fourth submission in each group is rejected because the queue is full. The output contains 36 frames, preserves source frame-number gaps, and sets the dropped-frame flag. File size: 130,408 bytes.
 - Partial write: after one complete frame, the bridge accepts the next frame header and three payload bytes, then returns zero. The C writer rolls the real file back to the complete first frame and finalizes the 3,848-byte prefix with error flag 8. The failed frame remains READY rather than being falsely released as written.
+- Delayed completion uses the two-buffer PC source. It exercises late notifications after switching buffers and after reusing the same address, a short transfer, a duplicate, queue overflow and completion after stopping. Only source IDs 2, 5 and 6 appear in the finalized output. The writer numbers them 0, 3 and 4 relative to the first recorded ID. Each backend produces an 11,080-byte file with verified timestamps, crop offsets and payload hashes. The PC fixture supplies transfer IDs and byte counts.
 
 Every write is limited to 511 bytes to exercise short-write completion. After closing and reopening each file, an independent parser checks block structure, finalized count, flags, timestamps, crop offsets, and every frame payload hash against a separate deterministic source model. The normal run does not model simultaneous producer/writer tasks or measure camera throughput.
 

@@ -6,6 +6,7 @@ Research into adding RAW video recording to Magic Lantern on the Canon EOS 750D 
 
 ## Current progress
 
+- Both PC disk backends now record finalized MLVs from the two-buffer test source. File readback verifies only the three expected frames after late, duplicate, short, overflow and post-stop completion checks. [Disk verification](docs/raw14-disk-bridge.md#verified-scenarios).
 - A two-buffer PC source now exercises delayed, duplicate and short transfer notifications through the existing RAW capture queue. Its ARM check verifies that valid frames retain their order and pixel bytes. Transfer identity and byte count are supplied by the simulated producer. [Source integration](docs/raw14-capture-source.md#pc-verification).
 - Nine PC checks trace the physical DMA address reader into a Canon Image2 diagnostic and Live View SAF shutdown. The reviewed RAW shutdown uses a separate command write. The address samples in these paths go to the logger. [Native DMA address callers](docs/750d-dma-address-callers.md).
 - Three PC sequences now execute native RAW routing, initialization and start. The RAW route programs `0xD0005004` with zero, while the IPC receiver uses `0x33`. Native readers distinguish the hardware address from its programmed shadow and return separate status fields. Completion of a sensor frame remains unverified. [RAW configuration comparison](docs/750d-raw-command-order.md#native-raw-setup-compared-with-ipc).

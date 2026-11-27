@@ -9,6 +9,8 @@ See the [eight-milestone roadmap](roadmap.md): three PC preparation milestones c
 
 ## Completed
 
+- Ran the two-buffer source through the ARM recorder and both PC file backends. The independent MLV parser verified exactly three valid frames in each delayed-completion run, including their timestamps, crop metadata and payload hashes. The four normal and short-write regression cases also passed. [Disk verification](raw14-disk-bridge.md#verified-scenarios).
+
 - Added a two-buffer PC source through the existing capture API. ARM tests verify rejection of delayed, duplicate and partial completions, including reuse of the same address, plus ordered output and source protection during copy. The test producer supplies transfer identity and byte count. [PC source checks](raw14-capture-source.md#pc-verification).
 
 - Verified native callers of the physical DMA address reader, including the channel-1 Image2 diagnostic and SAF stop path. Two peer teardown routines prepare waits over mask `0x7F`. In separately entered tails the reviewed RAW helper writes its trigger word and the SAF helper reads addresses for logging. Nine PC checks pass with passive registers and explicit wait/cleanup cuts. [Native DMA address callers](750d-dma-address-callers.md).
